@@ -36,6 +36,10 @@ router.post("/users/addresses", requireAuth, async (req, res) => {
   try {
     const userId = (req as any).user.id;
     const body = req.body;
+    /* if this is being set as default, unset all others first */
+    if (body.isDefault) {
+      await db.update(addressesTable).set({ isDefault: false }).where(eq(addressesTable.userId, userId));
+    }
     const [address] = await db.insert(addressesTable).values({
       userId, name: body.name, line1: body.line1, line2: body.line2,
       city: body.city, state: body.state, postalCode: body.postalCode,
@@ -48,12 +52,44 @@ router.post("/users/addresses", requireAuth, async (req, res) => {
   }
 });
 
+router.patch("/users/addresses/:id", requireAuth, async (req, res) => {
+  try {
+    const userId = (req as any).user.id;
+    const id = parseInt(req.params.id);
+    const body = req.body;
+    /* if setting as default, clear all other defaults first */
+    if (body.isDefault) {
+      await db.update(addressesTable).set({ isDefault: false }).where(eq(addressesTable.userId, userId));
+    }
+    const [updated] = await db
+      .update(addressesTable)
+      .set({
+        ...(body.name !== undefined && { name: body.name }),
+        ...(body.line1 !== undefined && { line1: body.line1 }),
+        ...(body.line2 !== undefined && { line2: body.line2 }),
+        ...(body.city !== undefined && { city: body.city }),
+        ...(body.state !== undefined && { state: body.state }),
+        ...(body.postalCode !== undefined && { postalCode: body.postalCode }),
+        ...(body.country !== undefined && { country: body.country }),
+        ...(body.phone !== undefined && { phone: body.phone }),
+        ...(body.isDefault !== undefined && { isDefault: body.isDefault }),
+      })
+      .where(and(eq(addressesTable.id, id), eq(addressesTable.userId, userId)))
+      .returning();
+    if (!updated) return res.status(404).json({ error: "Not found" });
+    res.json(toAddress(updated));
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ error: "Failed to update address" });
+  }
+});
+
 router.delete("/users/addresses/:id", requireAuth, async (req, res) => {
   try {
     const userId = (req as any).user.id;
     const id = parseInt(req.params.id);
     await db.delete(addressesTable).where(and(eq(addressesTable.id, id), eq(addressesTable.userId, userId)));
-    res.json({ success: true, message: "Deleted" });
+    res.json({ success: true });
   } catch (err) {
     req.log.error(err);
     res.status(500).json({ error: "Failed" });

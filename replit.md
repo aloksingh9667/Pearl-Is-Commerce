@@ -67,6 +67,9 @@ All routes under `/api`:
 - **`GET /settings`**, **`GET/PUT /settings/:key`** — site-wide settings (key/value JSONB store)
 - **`GET/PUT /page-content/:page`** — per-page content editing
 - **`POST /contact-messages`** (public), **`GET/GET/:id/PUT/:id /contact-messages`** (admin), **`POST /contact-messages/:id/reply`**, **`POST /contact-messages/bulk-reply`**
+- **`GET/POST/PATCH/DELETE /users/addresses`** — saved addresses with set-as-default support
+- **`POST /stock-alerts`** (public) — subscribe to back-in-stock email alert
+- **`GET /admin/stock-alerts`** (admin) — list all alert subscriptions
 
 ## Database Schema
 
@@ -75,6 +78,7 @@ Tables:
 - **`site_settings`** — key/value JSONB pairs (general, announcement, payment, contact, social, instagram, videos, flashSale)
 - **`page_content`** — per-page content JSONB (home, shop, rings, necklaces, bracelets, earrings, gallery, blog, about, contact)
 - **`contact_messages`** — contact form submissions with admin reply tracking
+- **`stock_alerts`** — back-in-stock alert subscriptions (productId, email, notifiedAt)
 
 ## Custom Frontend Hooks
 

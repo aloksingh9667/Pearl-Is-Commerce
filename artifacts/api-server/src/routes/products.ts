@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { productsTable, categoriesTable } from "@workspace/db";
 import { eq, ilike, and, gte, lte, desc, asc, sql } from "drizzle-orm";
 import { requireAdmin } from "../lib/auth";
+import { triggerStockAlerts } from "./stock-alerts";
 
 const router = Router();
 
@@ -162,6 +163,10 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const body = req.body;
+    /* snapshot old stock to detect back-in-stock */
+    const [old] = await db.select({ stock: productsTable.stock }).from(productsTable).where(eq(productsTable.id, id));
+    const wasOutOfStock = old?.stock === 0;
+
     const [product] = await db.update(productsTable).set({
       name: body.name, description: body.description,
       price: body.price?.toString(), discountPrice: body.discountPrice?.toString() || null,
@@ -178,6 +183,13 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
       materialVariants: body.materialVariants || [],
     }).where(eq(productsTable.id, id)).returning();
     if (!product) { res.status(404).json({ error: "Not found" }); return; }
+
+    /* fire-and-forget stock alert emails if product came back in stock */
+    if (wasOutOfStock && body.stock > 0) {
+      const appUrl = process.env.APP_URL || "https://pearlis.in";
+      triggerStockAlerts(id, product.name, `${appUrl}/product/${id}`).catch(() => {});
+    }
+
     res.json(toProduct(product));
   } catch (err) {
     req.log.error(err);

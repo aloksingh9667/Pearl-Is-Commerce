@@ -57,6 +57,7 @@ export default function Account() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [addrForm, setAddrForm] = useState({ name: "", line1: "", line2: "", city: "", state: "", postalCode: "", country: "India", phone: "" });
   const [addrSaving, setAddrSaving] = useState(false);
+  const [settingDefaultId, setSettingDefaultId] = useState<number | null>(null);
 
   if (!user) {
     setLocation("/login");
@@ -154,6 +155,22 @@ export default function Account() {
       setAddresses(prev => prev.filter(a => a.id !== id));
       toast({ title: "Address Removed" });
     } catch { toast({ title: "Error", description: "Could not delete address.", variant: "destructive" }); }
+  };
+
+  const handleSetDefault = async (id: number) => {
+    setSettingDefaultId(id);
+    try {
+      const res = await fetch(`/api/users/addresses/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ isDefault: true }),
+      });
+      if (res.ok) {
+        setAddresses(prev => prev.map(a => ({ ...a, isDefault: a.id === id })));
+        toast({ title: "Default address updated" });
+      }
+    } catch { toast({ title: "Error", variant: "destructive" }); }
+    finally { setSettingDefaultId(null); }
   };
 
   const handleLogout = () => {
@@ -326,17 +343,34 @@ export default function Account() {
                           </div>
                         )}
                         {addresses.map(addr => (
-                          <div key={addr.id} className="border border-border p-5 flex justify-between items-start gap-4">
-                            <div className="text-sm leading-relaxed">
-                              <p className="font-medium">{addr.name}</p>
-                              <p className="text-muted-foreground">{addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}</p>
-                              <p className="text-muted-foreground">{addr.city}, {addr.state} {addr.postalCode}</p>
-                              <p className="text-muted-foreground">{addr.country}</p>
-                              {addr.phone && <p className="text-muted-foreground">{addr.phone}</p>}
+                          <div key={addr.id} className={`border p-5 transition-colors ${addr.isDefault ? "border-accent/50 bg-accent/3" : "border-border"}`}>
+                            <div className="flex justify-between items-start gap-4">
+                              <div className="text-sm leading-relaxed">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <p className="font-medium">{addr.name}</p>
+                                  {addr.isDefault && (
+                                    <span className="text-[9px] uppercase tracking-widest text-accent border border-accent/50 px-1.5 py-0.5 font-semibold">Default</span>
+                                  )}
+                                </div>
+                                <p className="text-muted-foreground">{addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}</p>
+                                <p className="text-muted-foreground">{addr.city}, {addr.state} {addr.postalCode}</p>
+                                <p className="text-muted-foreground">{addr.country}</p>
+                                {addr.phone && <p className="text-muted-foreground">{addr.phone}</p>}
+                              </div>
+                              <button onClick={() => handleDeleteAddress(addr.id)} className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0 p-1">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                             </div>
-                            <button onClick={() => handleDeleteAddress(addr.id)} className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0 p-1">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            {!addr.isDefault && (
+                              <button
+                                onClick={() => handleSetDefault(addr.id)}
+                                disabled={settingDefaultId === addr.id}
+                                className="mt-3 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-accent transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                              >
+                                {settingDefaultId === addr.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
+                                Set as Default
+                              </button>
+                            )}
                           </div>
                         ))}
 

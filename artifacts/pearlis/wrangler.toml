@@ -1,0 +1,6 @@
+name = "pearlis"
+pages_build_output_dir = "dist/public"
+compatibility_date = "2024-01-01"
+
+[build]
+command = "pnpm install && pnpm --filter @workspace/pearlis run build"

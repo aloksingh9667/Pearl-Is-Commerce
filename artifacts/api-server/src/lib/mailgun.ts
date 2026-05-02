@@ -340,6 +340,43 @@ export async function sendOrderStatusEmail(
   }
 }
 
+export async function sendStockAlertEmail(to: string, productName: string, productUrl: string): Promise<boolean> {
+  const mg = getClient();
+  if (!mg) { console.warn("Mailgun not configured — skipping stock alert email"); return false; }
+  try {
+    await mg.client.messages.create(mg.domain, {
+      from: `Pearlis Fine Jewellery <noreply@${mg.domain}>`,
+      to: [to],
+      subject: `Back in Stock: ${productName} | Pearlis`,
+      html: `
+        <div style="font-family:'Georgia',serif;max-width:520px;margin:0 auto;background:#FAF7F2;padding:48px 40px;">
+          <h1 style="font-size:28px;letter-spacing:8px;color:#0F0F0F;margin-bottom:4px;">PEARLIS</h1>
+          <p style="color:#888;font-size:11px;letter-spacing:4px;text-transform:uppercase;margin-bottom:40px;">Fine Jewellery</p>
+          <div style="background:#D4AF37;height:2px;margin-bottom:40px;"></div>
+          <h2 style="font-size:22px;color:#0F0F0F;font-weight:normal;margin-bottom:8px;">Good News!</h2>
+          <p style="color:#555;font-size:15px;line-height:1.8;margin-bottom:8px;">
+            <strong>${productName}</strong> is back in stock and available for purchase.
+          </p>
+          <p style="color:#888;font-size:13px;line-height:1.6;margin-bottom:32px;">
+            Hurry — popular pieces sell out fast. Shop now to secure yours before it's gone again.
+          </p>
+          <div style="text-align:center;margin-bottom:40px;">
+            <a href="${productUrl}" style="display:inline-block;background:#0F0F0F;color:#FAF7F2;text-decoration:none;padding:16px 48px;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-weight:bold;">Shop Now</a>
+          </div>
+          <hr style="border:none;border-top:1px solid #E5E0D8;margin:32px 0;"/>
+          <p style="color:#bbb;font-size:11px;letter-spacing:2px;text-align:center;">© PEARLIS FINE JEWELLERY</p>
+          <p style="color:#ccc;font-size:10px;text-align:center;margin-top:8px;">You requested to be notified when this item is back in stock.</p>
+        </div>
+      `,
+    });
+    console.info(`Stock alert email sent to ${to} for "${productName}"`);
+    return true;
+  } catch (err) {
+    console.error("Mailgun sendStockAlertEmail error:", err);
+    return false;
+  }
+}
+
 export async function sendPasswordResetEmail(to: string, name: string, resetLink: string): Promise<boolean> {
   const mg = getClient();
   if (!mg) { console.warn("Mailgun not configured"); return false; }

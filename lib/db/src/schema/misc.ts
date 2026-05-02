@@ -15,6 +15,14 @@ export const reviewsTable = pgTable("reviews", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const stockAlertsTable = pgTable("stock_alerts", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").references(() => productsTable.id).notNull(),
+  email: text("email").notNull(),
+  notifiedAt: timestamp("notified_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const wishlistTable = pgTable("wishlist", {
   id: serial("id").primaryKey(),
   sessionId: text("session_id").notNull(),

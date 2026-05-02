@@ -20,11 +20,78 @@ import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, Heart, Share2, ShieldCheck, Truck, RefreshCcw,
-  Star, ChevronLeft, ChevronRight, ZoomIn, Award, Minus, Plus, Tag,
+  Star, ChevronLeft, ChevronRight, ZoomIn, Award, Minus, Plus, Tag, Bell, CheckCircle2,
 } from "lucide-react";
 import { BackButton } from "@/components/ui/BackButton";
 
 const INR = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
+
+function NotifyMeForm({ productId }: { productId: number }) {
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/stock-alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId, email }),
+      });
+      if (res.ok) {
+        setDone(true);
+        toast({ title: "You're on the list!", description: "We'll email you when this item is back in stock." });
+      } else {
+        const d = await res.json();
+        toast({ title: "Error", description: d.error || "Could not subscribe.", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Something went wrong.", variant: "destructive" });
+    } finally { setLoading(false); }
+  };
+
+  if (done) {
+    return (
+      <div className="mb-5 border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-4 flex items-center gap-3">
+        <CheckCircle2 className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
+        <p className="text-sm text-[#0F0F0F]/70">
+          We'll notify you at <strong>{email}</strong> when this item is back in stock.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-5 border border-[#0F0F0F]/10 bg-[#FAF7F2] p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Bell className="w-4 h-4 text-[#D4AF37]" />
+        <p className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#0F0F0F]">Notify Me When Available</p>
+      </div>
+      <p className="text-xs text-[#0F0F0F]/50 mb-3 leading-relaxed">This piece is currently sold out. Leave your email and we'll notify you the moment it's back.</p>
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          type="email"
+          required
+          placeholder="your@email.com"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          className="flex-1 h-10 border border-[#0F0F0F]/15 bg-white px-3 text-sm focus:outline-none focus:border-[#D4AF37] transition-colors rounded-none"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="h-10 px-4 bg-[#0F0F0F] text-white text-[10px] tracking-[0.2em] uppercase font-semibold flex items-center gap-1.5 hover:bg-[#1a1a1a] transition-colors disabled:opacity-60"
+        >
+          {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Notify Me"}
+        </button>
+      </form>
+    </div>
+  );
+}
 const DEFAULT_RING_SIZES = ["5", "6", "7", "8", "9", "10", "11", "12"];
 
 type Variant = { name: string; productId?: number | null };
@@ -388,11 +455,14 @@ export default function ProductDetail() {
               </div>
             </div>
 
+            {/* ── Out of Stock: Notify Me ── */}
+            {product.stock === 0 && <NotifyMeForm productId={productId} />}
+
             {/* ── CTAs ── */}
             <div className="flex gap-2 sm:gap-3 mb-7">
-              <button onClick={handleAddToCart} disabled={addToCart.isPending}
-                className="flex-1 h-12 sm:h-14 bg-[#0F0F0F] hover:bg-[#1a1a1a] text-white text-[10px] tracking-[0.25em] sm:tracking-[0.3em] uppercase font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
-                {addToCart.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add to Bag"}
+              <button onClick={handleAddToCart} disabled={addToCart.isPending || product.stock === 0}
+                className="flex-1 h-12 sm:h-14 bg-[#0F0F0F] hover:bg-[#1a1a1a] text-white text-[10px] tracking-[0.25em] sm:tracking-[0.3em] uppercase font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-40">
+                {addToCart.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : product.stock === 0 ? "Out of Stock" : "Add to Bag"}
               </button>
               <button onClick={handleWishlist}
                 className={`w-12 h-12 sm:w-14 sm:h-14 border flex items-center justify-center transition-all duration-200 ${isWishlisted ? "border-[#D4AF37] bg-[#D4AF37]/10" : "border-[#0F0F0F]/15 hover:border-[#D4AF37]"}`}>
