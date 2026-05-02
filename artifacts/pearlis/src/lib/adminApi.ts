@@ -8,7 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 const BASE = "/api";
 
 function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem("pearlis_token");
+  const token = localStorage.getItem("token");
   return token
     ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
     : { "Content-Type": "application/json" };

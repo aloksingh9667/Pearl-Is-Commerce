@@ -31,20 +31,26 @@ const emptyForm: VideoForm = {
 
 const CATEGORIES = ["lookbook", "behind the scenes", "product", "campaign"];
 
+function adminHeaders(extra: Record<string, string> = {}) {
+  const token = localStorage.getItem("token");
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...extra,
+  };
+}
+
 async function fetchVideos(): Promise<VideoItem[]> {
-  const res = await fetch("/api/videos/all", {
-    headers: { "x-admin-token": btoa("admin@pearlis.com:Pearl@Admin2024") },
-  });
+  const res = await fetch("/api/videos/all", { headers: adminHeaders() });
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json();
 }
 
-async function saveVideo(data: VideoForm, id?: number, token?: string) {
+async function saveVideo(data: VideoForm, id?: number) {
   const url = id ? `/api/videos/${id}` : "/api/videos";
   const method = id ? "PUT" : "POST";
   const res = await fetch(url, {
     method,
-    headers: { "Content-Type": "application/json", "x-admin-token": btoa("admin@pearlis.com:Pearl@Admin2024") },
+    headers: adminHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Failed to save");
@@ -54,7 +60,7 @@ async function saveVideo(data: VideoForm, id?: number, token?: string) {
 async function deleteVideo(id: number) {
   const res = await fetch(`/api/videos/${id}`, {
     method: "DELETE",
-    headers: { "x-admin-token": btoa("admin@pearlis.com:Pearl@Admin2024") },
+    headers: adminHeaders(),
   });
   if (!res.ok) throw new Error("Failed to delete");
   return res.json();
