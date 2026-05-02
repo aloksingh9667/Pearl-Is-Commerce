@@ -116,15 +116,27 @@ export function Navbar() {
   const jewelleryActive = jewelleryItems.some(i => location === i.href);
   const exploreActive = EXPLORE_ITEMS.some(i => location === i.href);
 
+  const announcement = siteSettings?.announcement;
+  const showAnnouncement = announcement?.enabled !== false && announcement?.text;
+
   return (
     <>
-      {/* ── Announcement bar ── */}
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#D4AF37] text-white text-center text-[10px] tracking-[0.22em] uppercase py-[7px] font-semibold">
-        Free Shipping Above ₹5,000&nbsp;&nbsp;|&nbsp;&nbsp;Code&nbsp;<span className="font-bold underline underline-offset-2">PEARLIS10</span>&nbsp;for 10% Off
-      </div>
+      {/* ── Announcement bar (dynamic from Admin Settings) ── */}
+      {showAnnouncement && (
+        announcement?.link ? (
+          <a href={announcement.link}
+            className="block fixed top-0 left-0 right-0 z-[60] bg-[#D4AF37] text-white text-center text-[10px] tracking-[0.22em] uppercase py-[7px] font-semibold hover:bg-[#c9a430] transition-colors">
+            {announcement.text}
+          </a>
+        ) : (
+          <div className="fixed top-0 left-0 right-0 z-[60] bg-[#D4AF37] text-white text-center text-[10px] tracking-[0.22em] uppercase py-[7px] font-semibold">
+            {announcement.text}
+          </div>
+        )
+      )}
 
       {/* ── Main navbar ── */}
-      <nav className="fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out" style={{ top: "32px" }}>
+      <nav className="fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out" style={{ top: showAnnouncement ? "32px" : "0px" }}>
         <div className={`absolute inset-0 transition-all duration-500 ${
           isTransparent ? "bg-transparent" : "bg-white/95 backdrop-blur-md border-b border-[#D4AF37]/25 shadow-[0_2px_20px_rgba(0,0,0,0.06)]"
         }`} />
@@ -205,7 +217,7 @@ export function Navbar() {
         </div>
       </nav>
 
-      {!isHome && <div style={{ height: "100px" }} />}
+      {!isHome && <div style={{ height: showAnnouncement ? "100px" : "68px" }} />}
 
       {/* ── Search overlay ── */}
       <AnimatePresence>

@@ -707,49 +707,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 11. YOUTUBE VIDEOS ── */}
-      {settingsVideos.length > 0 && (
-        <section className="py-14 md:py-20 bg-[#0F0F0F]">
-          <div className="max-w-[1440px] mx-auto px-4 md:px-8">
-            <motion.div {...fadeUp()} className="text-center mb-10 md:mb-14">
-              <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-3">Watch & Discover</p>
-              <h2 className="font-serif text-3xl md:text-4xl text-white">Our Videos</h2>
-              <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-4" />
-            </motion.div>
-            <div className={`grid gap-4 md:gap-6 ${settingsVideos.length === 1 ? "grid-cols-1 max-w-2xl mx-auto" : settingsVideos.length === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}`}>
-              {settingsVideos.map((video, i) => {
-                const ytId = getYouTubeId(video.url);
-                const thumb = video.thumbnail && !video.thumbnail.includes("...") ? video.thumbnail : (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : "");
-                const embedUrl = ytId ? `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0` : video.url;
-                return (
-                  <motion.div key={i} {...fadeUp(i * 0.1)} className="group relative">
-                    <a href={video.url} target="_blank" rel="noopener noreferrer" className="block relative aspect-video overflow-hidden bg-[#1a1a1a]">
-                      {thumb ? (
-                        <img src={thumb} alt={video.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100" />
-                      ) : (
-                        <div className="w-full h-full bg-[#1a1a1a]" />
-                      )}
-                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                        <div className="w-14 h-14 rounded-full bg-[#D4AF37]/90 group-hover:bg-[#D4AF37] flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg">
-                          <Play className="w-5 h-5 text-white ml-1" fill="white" />
-                        </div>
-                      </div>
-                    </a>
-                    {video.title && (
-                      <p className="mt-3 text-white/80 text-sm font-medium text-center tracking-wide">{video.title}</p>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div>
-            <motion.div {...fadeUp(0.2)} className="text-center mt-10">
-              <Link href="/videos" className="inline-flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase font-bold text-[#D4AF37] border border-[#D4AF37]/40 hover:border-[#D4AF37] px-7 py-3 transition-all duration-300 hover:bg-[#D4AF37]/10">
-                View All Videos <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </motion.div>
-          </div>
-        </section>
-      )}
 
       {/* ── 12. INSTAGRAM STRIP ── */}
       {igEnabled && (
