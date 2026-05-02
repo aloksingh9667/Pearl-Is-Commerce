@@ -8,6 +8,12 @@ const router = Router();
 
 // Default settings seeded on first request
 const DEFAULT_SETTINGS: Record<string, any> = {
+  branding: {
+    siteName: "Pearlis",
+    tagline: "Fine Jewellery",
+    logoUrl: "",
+    faviconUrl: "",
+  },
   general: {
     siteName: "Pearlis",
     tagline: "Fine Jewellery",

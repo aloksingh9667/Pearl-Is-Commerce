@@ -29,6 +29,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 // ─── SETTINGS ────────────────────────────────────────────────────────────────
 
 export type SiteSettings = {
+  branding: { siteName: string; tagline: string; logoUrl: string; faviconUrl: string };
   general: { siteName: string; tagline: string; currency: string; currencySymbol: string; conversionRate: number };
   announcement: { enabled: boolean; text: string; link: string };
   payment: { codEnabled: boolean; razorpayEnabled: boolean; razorpayKeyId: string };

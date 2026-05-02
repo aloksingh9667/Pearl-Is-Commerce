@@ -72,7 +72,7 @@ export default function ProductDetail() {
 
   /* ── display data — variant overrides base ── */
   const dp = (variantProduct ?? product) as any;
-  const isWishlisted = wishlist?.some((w: { productId: number }) => w.productId === productId);
+  const isWishlisted = wishlist?.some((w: { id: number }) => w.id === productId);
   const avgRating = reviews?.length
     ? reviews.reduce((s: number, r: { rating: number }) => s + r.rating, 0) / reviews.length
     : 0;
@@ -98,10 +98,13 @@ export default function ProductDetail() {
 
   const handleWishlist = () => {
     if (isWishlisted) {
-      const item = wishlist?.find((w: { productId: number }) => w.productId === productId);
-      if (item) removeFromWishlist.mutate({ wishlistId: item.id });
+      removeFromWishlist.mutate(productId, {
+        onSuccess: () => toast({ title: "Removed from wishlist" }),
+      });
     } else {
-      addToWishlist.mutate({ data: { productId } }, { onSuccess: () => toast({ title: "Saved to wishlist", description: product?.name }) });
+      addToWishlist.mutate(productId, {
+        onSuccess: () => toast({ title: "Saved to wishlist", description: product?.name }),
+      });
     }
   };
 
