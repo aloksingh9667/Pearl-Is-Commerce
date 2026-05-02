@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   LayoutDashboard, ShoppingBag, Package, Users, FileText, Tag, LogOut,
-  Settings, FileEdit, MessageSquare, Menu, X, ChevronDown, Video, Layers, Star
+  Settings, FileEdit, MessageSquare, Menu, X, ChevronDown, Video, Layers, Star, Bell
 } from "lucide-react";
 
 const NAV_GROUPS = [
@@ -16,6 +16,7 @@ const NAV_GROUPS = [
       { name: "Orders", href: "/admin/orders", icon: Package },
       { name: "Coupons", href: "/admin/coupons", icon: Tag },
       { name: "Reviews", href: "/admin/reviews", icon: Star },
+      { name: "Stock Alerts", href: "/admin/stock-alerts", icon: Bell },
     ],
   },
   {

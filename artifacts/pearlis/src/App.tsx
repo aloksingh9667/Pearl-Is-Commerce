@@ -42,6 +42,7 @@ import AdminPageContent from "@/pages/admin/page-content";
 import AdminVideos from "@/pages/admin/videos";
 import AdminCategories from "@/pages/admin/categories";
 import AdminReviews from "@/pages/admin/reviews";
+import AdminStockAlerts from "@/pages/admin/stock-alerts";
 
 // Admin guard
 function AdminRoute({ component: Component }: { component: any }) {
@@ -101,6 +102,7 @@ function Router() {
       <Route path="/admin/videos">{() => <AdminRoute component={AdminVideos} />}</Route>
       <Route path="/admin/categories">{() => <AdminRoute component={AdminCategories} />}</Route>
       <Route path="/admin/reviews">{() => <AdminRoute component={AdminReviews} />}</Route>
+      <Route path="/admin/stock-alerts">{() => <AdminRoute component={AdminStockAlerts} />}</Route>
 
       <Route component={NotFound} />
     </Switch>
