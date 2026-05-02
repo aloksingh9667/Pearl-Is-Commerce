@@ -1,63 +1,77 @@
 import { useState } from "react";
-import { useListProducts, useListCategories, getListProductsQueryKey } from "@workspace/api-client-react";
+import { useListProducts, useListCategories } from "@workspace/api-client-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { SlidersHorizontal } from "lucide-react";
 
 export default function Shop() {
   const [category, setCategory] = useState<string>("");
   const [sort, setSort] = useState<string>("latest");
-  
   const { data: categories } = useListCategories();
-  const { data: productsData, isLoading } = useListProducts({
-    category: category || undefined,
-    sort: sort as any,
-  });
+  const { data: productsData, isLoading } = useListProducts({ category: category || undefined, sort: sort as any });
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
-      
-      <div className="pt-32 pb-24 container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h1 className="font-serif text-4xl mb-4">The Collection</h1>
-          <div className="w-16 h-px bg-accent mx-auto mb-6"></div>
-          <p className="text-muted-foreground">Explore our exceptional range of fine jewelry.</p>
-        </div>
 
-        <div className="flex flex-col md:flex-row gap-8 mb-12 items-center justify-between border-y border-border py-4">
-          <div className="flex flex-wrap gap-4 items-center w-full md:w-auto">
-            <span className="text-sm font-medium tracking-widest uppercase">Filter:</span>
-            <div className="flex flex-wrap gap-2">
-              <Button 
-                variant={category === "" ? "default" : "outline"} 
-                size="sm" 
-                onClick={() => setCategory("")}
-                className="rounded-none tracking-widest uppercase text-xs"
+      {/* Hero banner */}
+      <div className="relative w-full overflow-hidden" style={{ height: "240px" }}>
+        <img
+          src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=85&w=2000&h=600"
+          alt="The Collection"
+          className="w-full h-full object-cover"
+          style={{ objectPosition: "center 30%" }}
+        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.25) 100%)" }} />
+        <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <p className="text-[#D4AF37] text-[9px] tracking-[0.4em] uppercase font-bold mb-3">Fine Jewellery</p>
+            <h1 className="font-serif text-4xl md:text-5xl text-white mb-3">The Collection</h1>
+            <div className="w-10 h-[2px] bg-[#D4AF37] mb-3" />
+            <p className="text-white/55 text-sm">Handcrafted pieces for every moment and occasion.</p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Filter bar */}
+      <div className="bg-white border-b border-[#D4AF37]/12 sticky top-[100px] z-30">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+          {/* Category filters */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#0F0F0F]/40 hidden sm:block" strokeWidth={1.5} />
+            <button
+              onClick={() => setCategory("")}
+              className={`px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase font-bold transition-all duration-200 ${
+                category === "" ? "bg-[#0F0F0F] text-white" : "text-[#0F0F0F]/50 hover:text-[#0F0F0F] border border-[#0F0F0F]/15 hover:border-[#0F0F0F]/40"
+              }`}
+            >
+              All
+            </button>
+            {categories?.categories?.map(c => (
+              <button
+                key={c.id}
+                onClick={() => setCategory(c.slug)}
+                className={`px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase font-bold transition-all duration-200 ${
+                  category === c.slug ? "bg-[#0F0F0F] text-white" : "text-[#0F0F0F]/50 hover:text-[#0F0F0F] border border-[#0F0F0F]/15 hover:border-[#0F0F0F]/40"
+                }`}
               >
-                All
-              </Button>
-              {categories?.categories?.map(c => (
-                <Button 
-                  key={c.id} 
-                  variant={category === c.slug ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => setCategory(c.slug)}
-                  className="rounded-none tracking-widest uppercase text-xs"
-                >
-                  {c.name}
-                </Button>
-              ))}
-            </div>
+                {c.name}
+              </button>
+            ))}
           </div>
 
-          <div className="flex items-center gap-4 w-full md:w-auto mt-4 md:mt-0">
-            <span className="text-sm font-medium tracking-widest uppercase">Sort:</span>
+          {/* Sort + count */}
+          <div className="flex items-center gap-4">
+            {!isLoading && productsData?.products && (
+              <span className="text-[9px] tracking-[0.18em] uppercase text-[#0F0F0F]/35 hidden md:block">
+                {productsData.products.length} pieces
+              </span>
+            )}
             <Select value={sort} onValueChange={setSort}>
-              <SelectTrigger className="w-[180px] rounded-none border-border">
+              <SelectTrigger className="w-[160px] h-8 rounded-none border-[#0F0F0F]/15 text-[10px] tracking-wide">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent className="rounded-none">
@@ -69,26 +83,31 @@ export default function Shop() {
             </Select>
           </div>
         </div>
+      </div>
 
+      {/* Products grid */}
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-10 md:py-14 flex-1">
         {isLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-              <div key={i} className="aspect-square sm:aspect-[3/4] bg-muted animate-pulse"></div>
-            ))}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <div key={i} className="aspect-[3/4] bg-[#E8E2D9]/40 animate-pulse" />)}
           </div>
         ) : productsData?.products?.length === 0 ? (
-          <div className="text-center py-24">
-            <p className="text-xl font-serif">No pieces found in this collection.</p>
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <p className="font-serif text-2xl text-[#0F0F0F] mb-3">No pieces in this filter</p>
+            <p className="text-[#0F0F0F]/45 text-sm mb-6">Try a different category or sort option.</p>
+            <button onClick={() => setCategory("")} className="border border-[#D4AF37] text-[#D4AF37] px-8 py-3 text-[10px] tracking-[0.25em] uppercase font-bold hover:bg-[#D4AF37] hover:text-white transition-colors">
+              Clear Filter
+            </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 gap-y-8 sm:gap-y-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 md:gap-x-6 gap-y-8 md:gap-y-14">
             {productsData?.products?.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index % 4} />
             ))}
           </div>
         )}
       </div>
-      
+
       <Footer />
     </div>
   );

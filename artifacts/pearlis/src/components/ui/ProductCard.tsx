@@ -1,12 +1,14 @@
 import { Link } from "wouter";
 import { Product } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, Star } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
   index?: number;
 }
+
+const INR = (n: number) => `₹${Math.round(n * 83).toLocaleString("en-IN")}`;
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const hasDiscount = product.discountPrice && product.discountPrice < product.price;
@@ -16,77 +18,104 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay: index * 0.08 }}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, delay: index * 0.07, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="group relative flex flex-col"
     >
-      {/* Image */}
-      <div className="relative aspect-square sm:aspect-[3/4] overflow-hidden bg-[#F5F0E8] mb-4">
-        {/* Badges */}
-        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
-          {product.isNew && (
-            <span className="bg-[#0F0F0F] text-white text-[9px] font-semibold px-2.5 py-1 tracking-[0.15em] uppercase">
-              New
-            </span>
-          )}
-          {hasDiscount && (
-            <span className="bg-[#D4AF37] text-white text-[9px] font-semibold px-2.5 py-1 tracking-[0.15em] uppercase">
-              -{discountPct}%
-            </span>
-          )}
-        </div>
+      {/* Image container */}
+      <Link href={`/product/${product.id}`}>
+        <div className="relative aspect-[3/4] overflow-hidden bg-[#F5F0E8] mb-3 cursor-pointer">
+          {/* Badges */}
+          <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5">
+            {product.isNew && (
+              <span className="bg-[#0F0F0F] text-white text-[8px] font-bold px-2 py-[3px] tracking-[0.15em] uppercase">
+                New
+              </span>
+            )}
+            {hasDiscount && (
+              <span className="bg-[#D4AF37] text-white text-[8px] font-bold px-2 py-[3px] tracking-[0.15em] uppercase">
+                -{discountPct}%
+              </span>
+            )}
+            {product.isTrending && !product.isNew && !hasDiscount && (
+              <span className="bg-rose-600 text-white text-[8px] font-bold px-2 py-[3px] tracking-[0.12em] uppercase">
+                Hot
+              </span>
+            )}
+          </div>
 
-        {/* Wishlist */}
-        <button className="absolute top-3 right-3 z-10 w-8 h-8 bg-white shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#D4AF37] hover:text-white text-[#0F0F0F]">
-          <Heart className="w-3.5 h-3.5" strokeWidth={1.5} />
-        </button>
+          {/* Wishlist */}
+          <button
+            className="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#D4AF37] hover:text-white text-[#0F0F0F] shadow-md"
+            onClick={e => e.preventDefault()}
+          >
+            <Heart className="w-3 h-3" strokeWidth={1.8} />
+          </button>
 
-        {/* Product image(s) */}
-        <Link href={`/product/${product.id}`}>
-          <div className="w-full h-full cursor-pointer relative">
+          {/* Product images */}
+          <div className="w-full h-full relative overflow-hidden">
             <img
-              src={product.images?.[0] || `https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=80&w=600`}
+              src={product.images?.[0] || "https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=80&w=600"}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-107"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.07]"
+              loading="lazy"
             />
             {product.images?.[1] && (
               <img
                 src={product.images[1]}
-                alt={`${product.name} — alternate view`}
+                alt={`${product.name} alt`}
                 className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
               />
             )}
           </div>
-        </Link>
 
-        {/* Quick add */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-350">
-          <button className="w-full bg-[#0F0F0F] hover:bg-[#D4AF37] text-white py-3 text-[10px] font-semibold tracking-[0.2em] uppercase flex items-center justify-center gap-2 transition-colors duration-300">
-            <ShoppingBag className="w-3.5 h-3.5" />
-            Quick Add
-          </button>
+          {/* Quick view overlay */}
+          <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+            <div className="bg-[#0F0F0F]/95 backdrop-blur-sm text-white py-2.5 text-center text-[9px] font-bold tracking-[0.25em] uppercase hover:bg-[#D4AF37] transition-colors duration-200">
+              View Details
+            </div>
+          </div>
         </div>
-      </div>
+      </Link>
 
-      {/* Info */}
-      <div className="flex flex-col text-center px-1">
-        <p className="text-[9px] tracking-[0.2em] uppercase text-[#D4AF37] font-medium mb-1.5">
-          {product.material || (product as any).categoryName || "Fine Jewellery"}
+      {/* Product info */}
+      <div className="flex flex-col gap-1 px-0.5">
+        <p className="text-[8.5px] tracking-[0.22em] uppercase text-[#D4AF37] font-semibold">
+          {product.material || "Fine Jewellery"}
         </p>
         <Link href={`/product/${product.id}`}>
-          <h3 className="font-serif text-base text-[#0F0F0F] hover:text-[#D4AF37] transition-colors cursor-pointer leading-snug mb-2">
+          <h3 className="font-serif text-[14px] sm:text-[15px] text-[#0F0F0F] hover:text-[#D4AF37] transition-colors cursor-pointer leading-snug line-clamp-2">
             {product.name}
           </h3>
         </Link>
-        <div className="flex justify-center items-center gap-2">
+
+        {/* Rating */}
+        {product.reviewCount > 0 && (
+          <div className="flex items-center gap-1 mt-0.5">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className="w-2.5 h-2.5"
+                fill={i < Math.round(product.rating) ? "#D4AF37" : "none"}
+                stroke={i < Math.round(product.rating) ? "#D4AF37" : "#D4AF37"}
+                strokeWidth={1.5}
+              />
+            ))}
+            <span className="text-[9px] text-[#0F0F0F]/40 ml-0.5">({product.reviewCount})</span>
+          </div>
+        )}
+
+        {/* Price */}
+        <div className="flex items-center gap-2 mt-1">
           {hasDiscount ? (
             <>
-              <span className="text-[#0F0F0F]/40 line-through text-sm">₹{product.price.toLocaleString("en-IN")}</span>
-              <span className="text-[#0F0F0F] font-semibold">₹{product.discountPrice!.toLocaleString("en-IN")}</span>
+              <span className="text-[#0F0F0F] font-semibold text-sm">{INR(product.discountPrice!)}</span>
+              <span className="text-[#0F0F0F]/35 line-through text-xs">{INR(product.price)}</span>
             </>
           ) : (
-            <span className="text-[#0F0F0F] font-semibold">₹{product.price.toLocaleString("en-IN")}</span>
+            <span className="text-[#0F0F0F] font-semibold text-sm">{INR(product.price)}</span>
           )}
         </div>
       </div>
