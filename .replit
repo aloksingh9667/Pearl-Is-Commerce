@@ -32,13 +32,13 @@ args = "Pearlis API"
 name = "Pearlis Store"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "pnpm --filter @workspace/pearlis run dev & pnpm --filter @workspace/api-server run dev & wait"
-waitForPort = 8080
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=8080 pnpm --filter @workspace/api-server run dev & PORT=8081 BASE_PATH=/ pnpm --filter @workspace/pearlis run dev & wait"
+waitForPort = 8081
 
 [[workflows.workflow]]
 name = "Pearlis Frontend"
@@ -86,3 +86,10 @@ externalPort = 3000
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+FRONTEND_PORT = "8081"
+API_PORT = "8080"
+BASE_PATH = "/"

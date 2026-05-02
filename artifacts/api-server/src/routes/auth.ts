@@ -114,4 +114,32 @@ router.put("/users/profile", requireAuth, async (req, res) => {
   }
 });
 
+router.post("/auth/change-password", requireAuth, async (req, res) => {
+  try {
+    const userId = (req as any).user.id;
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: "Current and new passwords are required." });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: "New password must be at least 8 characters." });
+    }
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
+    if (!user || !user.password) {
+      return res.status(400).json({ error: "Cannot change password for this account." });
+    }
+    const { comparePassword, hashPassword } = await import("../lib/auth");
+    const valid = await comparePassword(currentPassword, user.password);
+    if (!valid) {
+      return res.status(401).json({ error: "Current password is incorrect." });
+    }
+    const hashed = await hashPassword(newPassword);
+    await db.update(usersTable).set({ password: hashed }).where(eq(usersTable.id, userId));
+    res.json({ success: true, message: "Password updated successfully." });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ error: "Failed to change password." });
+  }
+});
+
 export default router;

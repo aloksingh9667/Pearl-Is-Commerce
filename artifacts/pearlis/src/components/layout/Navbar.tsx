@@ -184,7 +184,7 @@ export function Navbar() {
               className={`hidden sm:block transition-colors duration-250 ${isTransparent ? "text-white hover:text-[#D4AF37]" : "text-[#0F0F0F] hover:text-[#D4AF37]"}`}>
               <Heart className="w-[17px] h-[17px]" strokeWidth={1.6} />
             </Link>
-            <Link href={user ? (user.role === "admin" ? "/admin" : "/orders") : "/login"} aria-label="Account"
+            <Link href={user ? (user.role === "admin" ? "/admin" : "/account") : "/login"} aria-label="Account"
               className={`transition-colors duration-250 ${isTransparent ? "text-white hover:text-[#D4AF37]" : "text-[#0F0F0F] hover:text-[#D4AF37]"}`}>
               <UserIcon className="w-[17px] h-[17px]" strokeWidth={1.6} />
             </Link>
@@ -335,7 +335,7 @@ export function Navbar() {
               </div>
 
               <div className="px-6 py-6 border-t border-[#D4AF37]/15 space-y-3">
-                <Link href={user ? (user.role === "admin" ? "/admin" : "/orders") : "/login"} onClick={() => setIsMobileMenuOpen(false)}
+                <Link href={user ? (user.role === "admin" ? "/admin" : "/account") : "/login"} onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center gap-3 w-full bg-[#0F0F0F] text-white py-3.5 px-5 text-[10px] tracking-[0.2em] uppercase font-bold justify-center hover:bg-[#D4AF37] transition-colors duration-300">
                   <UserIcon className="w-4 h-4" /> {user ? "My Account" : "Sign In"}
                 </Link>
