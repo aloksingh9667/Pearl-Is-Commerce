@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingBag, User as UserIcon, Menu, X, Heart, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetCart, useListCategories } from "@workspace/api-client-react";
+import { useGetSettings } from "@/lib/adminApi";
 
 const EXPLORE_ITEMS = [
   { label: "Gallery", href: "/gallery" },
@@ -86,6 +87,11 @@ export function Navbar() {
 
   const { data: cart } = useGetCart({ query: { retry: false } });
   const { data: categoriesData } = useListCategories({ query: { staleTime: 60_000 } });
+  const { data: siteSettings } = useGetSettings();
+
+  const siteName = siteSettings?.branding?.siteName || siteSettings?.general?.siteName || "PEARLIS";
+  const siteTagline = siteSettings?.branding?.tagline || siteSettings?.general?.tagline || "Fine Jewellery";
+  const logoUrl = siteSettings?.branding?.logoUrl || "";
 
   const cartItemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
@@ -127,12 +133,16 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 group">
-            <div className="flex flex-col leading-none select-none">
-              <span className={`font-serif text-[1.6rem] tracking-[0.38em] font-bold transition-colors duration-400 ${isTransparent ? "text-white" : "text-[#0F0F0F]"}`}>
-                PEARLIS
-              </span>
-              <span className="text-[7.5px] tracking-[0.45em] uppercase text-[#D4AF37] mt-[2px] font-medium">Fine Jewellery</span>
-            </div>
+            {logoUrl ? (
+              <img src={logoUrl} alt={siteName} className="h-10 w-auto object-contain" />
+            ) : (
+              <div className="flex flex-col leading-none select-none">
+                <span className={`font-serif text-[1.6rem] tracking-[0.38em] font-bold transition-colors duration-400 ${isTransparent ? "text-white" : "text-[#0F0F0F]"}`}>
+                  {siteName.toUpperCase()}
+                </span>
+                <span className="text-[7.5px] tracking-[0.45em] uppercase text-[#D4AF37] mt-[2px] font-medium">{siteTagline}</span>
+              </div>
+            )}
           </Link>
 
           {/* Desktop nav */}
@@ -246,8 +256,14 @@ export function Navbar() {
 
               <div className="flex items-center justify-between px-6 py-5 border-b border-[#D4AF37]/20">
                 <div>
-                  <p className="font-serif text-xl tracking-[0.3em] font-bold text-[#0F0F0F]">PEARLIS</p>
-                  <p className="text-[7.5px] tracking-[0.4em] uppercase text-[#D4AF37]">Fine Jewellery</p>
+                  {logoUrl ? (
+                    <img src={logoUrl} alt={siteName} className="h-8 w-auto object-contain" />
+                  ) : (
+                    <>
+                      <p className="font-serif text-xl tracking-[0.3em] font-bold text-[#0F0F0F]">{siteName.toUpperCase()}</p>
+                      <p className="text-[7.5px] tracking-[0.4em] uppercase text-[#D4AF37]">{siteTagline}</p>
+                    </>
+                  )}
                 </div>
                 <button onClick={() => setIsMobileMenuOpen(false)} className="text-[#0F0F0F]/50 hover:text-[#0F0F0F]"><X className="w-5 h-5" /></button>
               </div>

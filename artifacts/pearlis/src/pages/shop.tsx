@@ -11,7 +11,7 @@ export default function Shop() {
   const [category, setCategory] = useState<string>("");
   const [sort, setSort] = useState<string>("latest");
   const { data: categories } = useListCategories();
-  const { data: productsData, isLoading } = useListProducts({ category: category || undefined, sort: sort as any });
+  const { data: productsData, isLoading } = useListProducts({ category: category || undefined, sort: sort as any, limit: 100 } as any);
 
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
@@ -53,9 +53,9 @@ export default function Shop() {
             {categories?.categories?.map(c => (
               <button
                 key={c.id}
-                onClick={() => setCategory(c.slug)}
+                onClick={() => setCategory(c.name)}
                 className={`px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase font-bold transition-all duration-200 ${
-                  category === c.slug ? "bg-[#0F0F0F] text-white" : "text-[#0F0F0F]/50 hover:text-[#0F0F0F] border border-[#0F0F0F]/15 hover:border-[#0F0F0F]/40"
+                  category === c.name ? "bg-[#0F0F0F] text-white" : "text-[#0F0F0F]/50 hover:text-[#0F0F0F] border border-[#0F0F0F]/15 hover:border-[#0F0F0F]/40"
                 }`}
               >
                 {c.name}

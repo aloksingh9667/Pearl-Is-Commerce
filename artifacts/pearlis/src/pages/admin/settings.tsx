@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Plus, Trash2, Settings, CreditCard, Phone, Share2, Instagram, Video, Zap, Megaphone } from "lucide-react";
+import { Loader2, Save, Plus, Trash2, Settings, CreditCard, Phone, Share2, Instagram, Video, Zap, Megaphone, Palette, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useGetSettings, useUpdateSetting, type SiteSettings } from "@/lib/adminApi";
 
 const TABS = [
+  { id: "branding", label: "Branding", icon: Palette },
   { id: "general", label: "General", icon: Settings },
   { id: "announcement", label: "Announcement", icon: Megaphone },
   { id: "payment", label: "Payment", icon: CreditCard },
@@ -26,7 +27,7 @@ export default function AdminSettings() {
   const { data: settings, isLoading } = useGetSettings();
   const updateSetting = useUpdateSetting();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<TabId>("general");
+  const [activeTab, setActiveTab] = useState<TabId>("branding");
   const [draft, setDraft] = useState<Partial<SiteSettings>>({});
 
   useEffect(() => {
@@ -87,6 +88,43 @@ export default function AdminSettings() {
 
         {/* Content */}
         <div className="flex-1 bg-card border border-border p-6">
+          {/* BRANDING */}
+          {activeTab === "branding" && (
+            <Section title="Branding" onSave={() => save("branding")} saving={saving}>
+              <p className="text-sm text-muted-foreground -mt-2 mb-2">Customize your site name, tagline, logo image, and favicon.</p>
+              <Field label="Site Name">
+                <Input value={draft.branding?.siteName || ""} onChange={e => updateNested("branding", "siteName", e.target.value)} className="rounded-none" placeholder="Pearlis" />
+              </Field>
+              <Field label="Tagline">
+                <Input value={draft.branding?.tagline || ""} onChange={e => updateNested("branding", "tagline", e.target.value)} className="rounded-none" placeholder="Fine Jewellery" />
+              </Field>
+              <Field label="Logo Image URL">
+                <div className="space-y-2">
+                  <Input value={draft.branding?.logoUrl || ""} onChange={e => updateNested("branding", "logoUrl", e.target.value)} className="rounded-none" placeholder="https://... (leave blank for text logo)" />
+                  {draft.branding?.logoUrl && (
+                    <div className="border border-border p-3 bg-muted/30 flex items-center gap-3">
+                      <img src={draft.branding.logoUrl} alt="Logo preview" className="h-10 w-auto object-contain" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      <span className="text-xs text-muted-foreground">Logo preview</span>
+                    </div>
+                  )}
+                  <LogoUploadButton onUrl={url => updateNested("branding", "logoUrl", url)} label="Upload Logo" />
+                </div>
+              </Field>
+              <Field label="Favicon Image URL">
+                <div className="space-y-2">
+                  <Input value={draft.branding?.faviconUrl || ""} onChange={e => updateNested("branding", "faviconUrl", e.target.value)} className="rounded-none" placeholder="https://... (leave blank for default favicon)" />
+                  {draft.branding?.faviconUrl && (
+                    <div className="border border-border p-3 bg-muted/30 flex items-center gap-3">
+                      <img src={draft.branding.faviconUrl} alt="Favicon preview" className="h-8 w-8 object-contain" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      <span className="text-xs text-muted-foreground">Favicon preview (shown in browser tab)</span>
+                    </div>
+                  )}
+                  <LogoUploadButton onUrl={url => updateNested("branding", "faviconUrl", url)} label="Upload Favicon" />
+                </div>
+              </Field>
+            </Section>
+          )}
+
           {/* GENERAL */}
           {activeTab === "general" && (
             <Section title="General" onSave={() => save("general")} saving={saving}>
@@ -317,6 +355,37 @@ export default function AdminSettings() {
         </div>
       </div>
     </AdminLayout>
+  );
+}
+
+function LogoUploadButton({ onUrl, label }: { onUrl: (url: string) => void; label: string }) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFile(file: File) {
+    setUploading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      onUrl(data.url);
+    } catch {
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <>
+      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
+      <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2 w-fit" onClick={() => inputRef.current?.click()} disabled={uploading}>
+        {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+        {uploading ? "Uploading..." : label}
+      </Button>
+    </>
   );
 }
 
