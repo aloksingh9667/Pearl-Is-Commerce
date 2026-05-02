@@ -1,0 +1,91 @@
+2026-05-02T19:02:18.247Z	Initializing build environment...
+2026-05-02T19:02:18.247Z	Initializing build environment...
+2026-05-02T19:02:20.172Z	Success: Finished initializing build environment
+2026-05-02T19:02:20.607Z	Cloning repository...
+2026-05-02T19:02:21.732Z	No build output detected to cache. Skipping.
+2026-05-02T19:02:21.732Z	No dependencies detected to cache. Skipping.
+2026-05-02T19:02:25.452Z	Detected the following tools from environment: nodejs@20.20.2, pnpm@10.26.1
+2026-05-02T19:02:25.457Z	Installing nodejs 20.20.2
+2026-05-02T19:02:33.610Z	Installing project dependencies: bun install
+2026-05-02T19:02:34.781Z	bun install v1.2.15 (df017990)
+2026-05-02T19:02:34.812Z	Resolving dependencies
+2026-05-02T19:02:35.400Z	Resolved, downloaded and extracted [8]
+2026-05-02T19:02:35.427Z	Saved lockfile
+2026-05-02T19:02:35.427Z	
+2026-05-02T19:02:35.431Z	$ sh -c 'rm -f package-lock.json yarn.lock; if [ "$CI" = "true" ]; then exit 0; fi; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-05-02T19:02:35.435Z	
+2026-05-02T19:02:35.437Z	+ prettier@3.8.3
+2026-05-02T19:02:35.437Z	+ typescript@5.9.3 (v6.0.3 available)
+2026-05-02T19:02:35.437Z	
+2026-05-02T19:02:35.438Z	2 packages installed [691.00ms]
+2026-05-02T19:02:36.066Z	Executing user build command: pnpm install && pnpm --filter @workspace/pearlis run build
+2026-05-02T19:02:36.657Z	Scope: all 9 workspace projects
+2026-05-02T19:02:36.720Z	 WARN  Moving typescript that was installed by a different package manager to "node_modules/.ignored"
+2026-05-02T19:02:36.722Z	 WARN  Moving prettier that was installed by a different package manager to "node_modules/.ignored"
+2026-05-02T19:02:36.959Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-05-02T19:02:36.965Z	artifacts/api-server                     |  WARN  deprecated @types/bcryptjs@3.0.0
+2026-05-02T19:02:38.150Z	Progress: resolved 35, reused 0, downloaded 16, added 0
+2026-05-02T19:02:39.171Z	Progress: resolved 72, reused 0, downloaded 32, added 0
+2026-05-02T19:02:40.270Z	Progress: resolved 78, reused 0, downloaded 43, added 0
+2026-05-02T19:02:41.269Z	Progress: resolved 79, reused 0, downloaded 60, added 0
+2026-05-02T19:02:42.666Z	Progress: resolved 81, reused 0, downloaded 61, added 0
+2026-05-02T19:02:44.891Z	Progress: resolved 87, reused 0, downloaded 61, added 0
+2026-05-02T19:02:45.891Z	Progress: resolved 95, reused 0, downloaded 61, added 0
+2026-05-02T19:02:46.892Z	Progress: resolved 197, reused 0, downloaded 69, added 0
+2026-05-02T19:02:47.905Z	Progress: resolved 249, reused 0, downloaded 69, added 0
+2026-05-02T19:02:48.950Z	Progress: resolved 295, reused 0, downloaded 77, added 0
+2026-05-02T19:02:49.952Z	Progress: resolved 295, reused 0, downloaded 94, added 0
+2026-05-02T19:02:50.953Z	Progress: resolved 295, reused 0, downloaded 191, added 0
+2026-05-02T19:02:51.953Z	Progress: resolved 295, reused 0, downloaded 232, added 0
+2026-05-02T19:02:52.955Z	Progress: resolved 368, reused 0, downloaded 340, added 0
+2026-05-02T19:02:53.955Z	Progress: resolved 487, reused 0, downloaded 421, added 0
+2026-05-02T19:02:54.971Z	Packages: +530
+2026-05-02T19:02:54.972Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-05-02T19:02:54.983Z	Progress: resolved 532, reused 0, downloaded 506, added 0
+2026-05-02T19:02:55.982Z	Progress: resolved 532, reused 0, downloaded 530, added 329
+2026-05-02T19:02:56.383Z	Progress: resolved 532, reused 0, downloaded 530, added 530, done
+2026-05-02T19:02:56.542Z	.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+2026-05-02T19:02:56.621Z	.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+2026-05-02T19:02:58.266Z	. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; if [ "$CI" = "true" ]; then exit 0; fi; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-05-02T19:02:58.282Z	. preinstall: Done
+2026-05-02T19:02:58.400Z	
+2026-05-02T19:02:58.401Z	devDependencies:
+2026-05-02T19:02:58.401Z	+ prettier 3.8.3
+2026-05-02T19:02:58.401Z	+ typescript 5.9.3 (6.0.3 is available)
+2026-05-02T19:02:58.402Z	
+2026-05-02T19:02:58.418Z	Done in 22.1s using pnpm v10.26.1
+2026-05-02T19:02:59.048Z	
+2026-05-02T19:02:59.048Z	> @workspace/pearlis@0.0.0 build /opt/buildhome/repo/artifacts/pearlis
+2026-05-02T19:02:59.048Z	> vite build --config vite.config.ts
+2026-05-02T19:02:59.048Z	
+2026-05-02T19:02:59.446Z	vite v7.3.2 building client environment for production...
+2026-05-02T19:02:59.526Z	transforming...
+2026-05-02T19:03:01.032Z	src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-05-02T19:03:02.839Z	src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-05-02T19:03:02.866Z	src/components/ui/select.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-05-02T19:03:05.755Z	✓ 2566 modules transformed.
+2026-05-02T19:03:06.289Z	rendering chunks...
+2026-05-02T19:03:06.305Z	computing gzip size...
+2026-05-02T19:03:06.331Z	dist/public/index.html                   0.82 kB │ gzip:   0.46 kB
+2026-05-02T19:03:06.332Z	dist/public/assets/index-D82LEx6h.css  180.99 kB │ gzip:  27.27 kB
+2026-05-02T19:03:06.332Z	dist/public/assets/index-DJSMrjE2.js   890.26 kB │ gzip: 251.22 kB
+2026-05-02T19:03:06.334Z	
+2026-05-02T19:03:06.334Z	(!) Some chunks are larger than 500 kB after minification. Consider:
+2026-05-02T19:03:06.334Z	- Using dynamic import() to code-split the application
+2026-05-02T19:03:06.334Z	- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-05-02T19:03:06.334Z	- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2026-05-02T19:03:06.335Z	✓ built in 6.84s
+2026-05-02T19:03:06.412Z	Success: Build command completed
+2026-05-02T19:03:06.576Z	Executing user deploy command: npx wrangler deploy
+2026-05-02T19:03:07.625Z	npm warn exec The following package was not found and will be installed: wrangler@4.86.0
+2026-05-02T19:03:15.837Z	
+2026-05-02T19:03:15.837Z	 ⛅️ wrangler 4.86.0
+2026-05-02T19:03:15.837Z	───────────────────
+2026-05-02T19:03:16.391Z	
+2026-05-02T19:03:16.393Z	Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+2026-05-02T19:03:16.394Z	
+2026-05-02T19:03:16.439Z	✘ [ERROR] The Wrangler application detection logic has been run in the root of a workspace instead of targeting a specific project. Change your working directory to one of the applications in the workspace and try again.
+2026-05-02T19:03:16.440Z	
+2026-05-02T19:03:16.440Z	
+2026-05-02T19:03:16.446Z	🪵  Logs were written to "/opt/buildhome/.config/.wrangler/logs/wrangler-2026-05-02_19-03-15_506.log"
+2026-05-02T19:03:16.505Z	Failed: error occurred while running deploy command

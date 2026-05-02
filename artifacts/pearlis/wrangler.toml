@@ -1,3 +1,6 @@
+# Cloudflare Pages — artifact-level config (used for local wrangler dev only).
+# For CI/CD, Cloudflare reads the wrangler.toml at the repo root.
+
 name = "pearlis"
 pages_build_output_dir = "dist/public"
 compatibility_date = "2024-09-23"
