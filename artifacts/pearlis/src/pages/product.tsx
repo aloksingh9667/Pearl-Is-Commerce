@@ -481,41 +481,61 @@ export default function ProductDetail() {
             >
               {activeTab === "Description" && (
                 <div className="space-y-4 text-[#0F0F0F]/65 leading-relaxed text-sm">
-                  <p>{product.description}</p>
-                  <p>
-                    Each Pearlis piece is handcrafted by master artisans with decades of experience, combining
-                    traditional Indian jewellery techniques with contemporary design sensibilities. This piece
-                    undergoes rigorous quality checks before leaving our atelier.
-                  </p>
-                  <ul className="space-y-2 mt-6">
-                    {[
-                      "Handcrafted by certified artisans",
-                      "BIS Hallmarked for purity assurance",
-                      "Ethically sourced gemstones",
-                      "Comes in a Pearlis signature gift box",
-                      "Certificate of authenticity included",
-                    ].map((pt) => (
-                      <li key={pt} className="flex items-center gap-3 text-[11px] tracking-wide">
-                        <span className="w-1 h-1 rounded-full bg-[#D4AF37] flex-shrink-0" />
-                        {pt}
-                      </li>
-                    ))}
-                  </ul>
+                  {product.description && <p>{product.description}</p>}
+                  {(product as any).craftStory && (
+                    <p>{(product as any).craftStory}</p>
+                  )}
+                  {!(product as any).craftStory && (
+                    <p>
+                      Each Pearlis piece is handcrafted by master artisans with decades of experience, combining
+                      traditional Indian jewellery techniques with contemporary design sensibilities. This piece
+                      undergoes rigorous quality checks before leaving our atelier.
+                    </p>
+                  )}
+                  {((product as any).craftPoints?.length > 0) && (
+                    <ul className="space-y-2 mt-6">
+                      {(product as any).craftPoints.map((pt: string) => (
+                        <li key={pt} className="flex items-center gap-3 text-[11px] tracking-wide">
+                          <span className="w-1 h-1 rounded-full bg-[#D4AF37] flex-shrink-0" />
+                          {pt}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {!((product as any).craftPoints?.length > 0) && (
+                    <ul className="space-y-2 mt-6">
+                      {[
+                        "Handcrafted by certified artisans",
+                        "BIS Hallmarked for purity assurance",
+                        "Ethically sourced gemstones",
+                        "Comes in a Pearlis signature gift box",
+                        "Certificate of authenticity included",
+                      ].map((pt) => (
+                        <li key={pt} className="flex items-center gap-3 text-[11px] tracking-wide">
+                          <span className="w-1 h-1 rounded-full bg-[#D4AF37] flex-shrink-0" />
+                          {pt}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               )}
 
               {activeTab === "Specifications" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 divide-y sm:divide-y-0 sm:divide-x-0">
-                  {[
-                    ["Metal", selectedMaterial],
-                    ["Purity", selectedMaterial.includes("18K") ? "75% Pure Gold" : selectedMaterial.includes("14K") ? "58.5% Pure Gold" : "95% Pure Platinum"],
-                    ["Finish", "High Polish"],
-                    ["Material", product.material || "Precious Metal"],
-                    ["Stock", product.stock > 0 ? `${product.stock} units available` : "Made to Order (4-6 weeks)"],
-                    ["SKU", `PRL-${String(product.id).padStart(5, "0")}`],
-                    ["Category", product.category],
-                    ["Weight", "Approx. 4–7g"],
-                  ].map(([k, v]) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-0">
+                  {((product as any).specifications?.length > 0
+                    ? (product as any).specifications
+                    : [
+                        { key: "Metal", value: selectedMaterial },
+                        { key: "Purity", value: selectedMaterial.includes("18K") ? "75% Pure Gold" : selectedMaterial.includes("14K") ? "58.5% Pure Gold" : "95% Pure Platinum" },
+                        { key: "Finish", value: "High Polish" },
+                        { key: "Material", value: product.material || "Precious Metal" },
+                        { key: "Stock", value: product.stock > 0 ? `${product.stock} units available` : "Made to Order (4–6 weeks)" },
+                        { key: "SKU", value: `PRL-${String(product.id).padStart(5, "0")}` },
+                        { key: "Category", value: product.category },
+                        { key: "Weight", value: "Approx. 4–7g" },
+                      ]
+                  ).map(({ key: k, value: v }: { key: string; value: string }) => (
                     <div key={k} className="flex justify-between items-center py-4 border-b border-[#0F0F0F]/6">
                       <span className="text-[10px] tracking-[0.15em] uppercase text-[#0F0F0F]/40 font-semibold">{k}</span>
                       <span className="text-sm text-[#0F0F0F]/80 font-medium">{v}</span>
@@ -590,29 +610,30 @@ export default function ProductDetail() {
 
               {activeTab === "Shipping & Returns" && (
                 <div className="space-y-8 text-sm text-[#0F0F0F]/65 leading-relaxed">
-                  {[
-                    {
-                      title: "Free Standard Shipping",
-                      body: "Complimentary shipping on all orders above ₹5,000 across India. Standard delivery takes 5–7 business days. Tracked and fully insured.",
-                    },
-                    {
-                      title: "Express Delivery",
-                      body: "Need it sooner? Express delivery (2–3 business days) is available for ₹299. Available in all major metros.",
-                    },
-                    {
-                      title: "International Shipping",
-                      body: "We ship worldwide. International orders are delivered in 10–15 business days via DHL Express. Duties and taxes may apply.",
-                    },
-                    {
-                      title: "Easy 30-Day Returns",
-                      body: "Not in love with your purchase? Return it within 30 days in original, unworn condition. We'll arrange a free pickup and process your refund within 5–7 business days.",
-                    },
-                  ].map(({ title, body }) => (
-                    <div key={title}>
-                      <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#0F0F0F] mb-2">{title}</h4>
-                      <p>{body}</p>
-                    </div>
-                  ))}
+                  {(product as any).shippingInfo
+                    ? (product as any).shippingInfo.split(/\n\n+/).map((block: string, i: number) => {
+                        const lines = block.trim().split("\n");
+                        const title = lines[0];
+                        const body = lines.slice(1).join(" ").trim();
+                        return (
+                          <div key={i}>
+                            <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#0F0F0F] mb-2">{title}</h4>
+                            {body && <p>{body}</p>}
+                          </div>
+                        );
+                      })
+                    : [
+                        { title: "Free Standard Shipping", body: "Complimentary shipping on all orders above ₹5,000 across India. Standard delivery takes 5–7 business days. Tracked and fully insured." },
+                        { title: "Express Delivery", body: "Need it sooner? Express delivery (2–3 business days) is available for ₹299. Available in all major metros." },
+                        { title: "International Shipping", body: "We ship worldwide. International orders are delivered in 10–15 business days via DHL Express. Duties and taxes may apply." },
+                        { title: "Easy 30-Day Returns", body: "Not in love with your purchase? Return it within 30 days in original, unworn condition. We'll arrange a free pickup and process your refund within 5–7 business days." },
+                      ].map(({ title, body }) => (
+                        <div key={title}>
+                          <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#0F0F0F] mb-2">{title}</h4>
+                          <p>{body}</p>
+                        </div>
+                      ))
+                  }
                 </div>
               )}
             </motion.div>

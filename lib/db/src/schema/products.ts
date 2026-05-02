@@ -31,6 +31,10 @@ export const productsTable = pgTable("products", {
   rating: numeric("rating", { precision: 3, scale: 2 }).default("0").notNull(),
   reviewCount: integer("review_count").default(0).notNull(),
   tags: jsonb("tags").$type<string[]>().default([]).notNull(),
+  specifications: jsonb("specifications").$type<Array<{key: string; value: string}>>().default([]),
+  craftStory: text("craft_story"),
+  craftPoints: jsonb("craft_points").$type<string[]>().default([]),
+  shippingInfo: text("shipping_info"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

@@ -4,7 +4,6 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2, Plus, Trash2, X, Tag } from "lucide-react";
@@ -12,6 +11,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
+
+const fmtINR = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
+const fromINR = (n: number) => n / 83;
 
 type CouponForm = {
   code: string; discountType: "percentage" | "fixed";
@@ -51,12 +53,21 @@ export default function AdminCoupons() {
       toast({ title: "Code and discount value are required", variant: "destructive" }); return;
     }
     setSaving(true);
+
+    const discountValue = form.discountType === "percentage"
+      ? parseFloat(form.discountValue)
+      : fromINR(parseFloat(form.discountValue));
+
+    const minOrderAmount = form.minOrderAmount
+      ? fromINR(parseFloat(form.minOrderAmount))
+      : undefined;
+
     createCoupon.mutate({
       data: {
         code: form.code.toUpperCase(),
         discountType: form.discountType,
-        discountValue: parseFloat(form.discountValue),
-        minOrderAmount: form.minOrderAmount ? parseFloat(form.minOrderAmount) : undefined,
+        discountValue,
+        minOrderAmount,
         maxUses: form.maxUses ? parseInt(form.maxUses) : undefined,
         expiresAt: form.expiresAt || undefined,
       } as any,
@@ -72,9 +83,10 @@ export default function AdminCoupons() {
     });
   };
 
-  const fmt = (coupon: any) => coupon.discountType === "percentage"
-    ? `${coupon.discountValue}%`
-    : `₹${Math.round(coupon.discountValue * 83).toLocaleString("en-IN")}`;
+  const fmtDiscount = (coupon: any) =>
+    coupon.discountType === "percentage"
+      ? `${coupon.discountValue}%`
+      : fmtINR(Math.round(coupon.discountValue * 83));
 
   return (
     <AdminLayout>
@@ -110,9 +122,9 @@ export default function AdminCoupons() {
                       <span className="font-mono font-medium tracking-widest uppercase">{coupon.code}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium text-accent">{fmt(coupon)}</TableCell>
+                  <TableCell className="font-medium text-accent">{fmtDiscount(coupon)}</TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {coupon.minOrderAmount ? `₹${Math.round(coupon.minOrderAmount * 83).toLocaleString("en-IN")}` : "—"}
+                    {coupon.minOrderAmount ? fmtINR(Math.round(coupon.minOrderAmount * 83)) : "—"}
                   </TableCell>
                   <TableCell className="text-sm">{coupon.usedCount || 0} / {coupon.maxUses || "∞"}</TableCell>
                   <TableCell>
@@ -157,20 +169,28 @@ export default function AdminCoupons() {
                       <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="percentage">Percentage (%)</SelectItem>
-                        <SelectItem value="fixed">Fixed Amount (₹)</SelectItem>
+                        <SelectItem value="fixed">Fixed (₹)</SelectItem>
                       </SelectContent>
                     </Select>
                   </F>
-                  <F label={form.discountType === "percentage" ? "Discount %" : "Discount Amount (USD)"}>
-                    <Input type="number" value={form.discountValue} onChange={e => set("discountValue", e.target.value)} className="rounded-none" placeholder={form.discountType === "percentage" ? "10" : "24.00"} />
+                  <F label={form.discountType === "percentage" ? "Discount %" : "Discount Amount (₹)"}>
+                    <Input type="number" value={form.discountValue} onChange={e => set("discountValue", e.target.value)} className="rounded-none"
+                      placeholder={form.discountType === "percentage" ? "10" : "2000"} />
+                    {form.discountValue && form.discountType === "percentage" && (
+                      <p className="text-xs text-muted-foreground mt-1">{form.discountValue}% off</p>
+                    )}
+                    {form.discountValue && form.discountType === "fixed" && (
+                      <p className="text-xs text-accent mt-1">₹{parseInt(form.discountValue).toLocaleString("en-IN")} off</p>
+                    )}
                   </F>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <F label="Min Order (USD)">
-                    <Input type="number" value={form.minOrderAmount} onChange={e => set("minOrderAmount", e.target.value)} className="rounded-none" placeholder="60.00" />
+                  <F label="Min Order Amount (₹)">
+                    <Input type="number" value={form.minOrderAmount} onChange={e => set("minOrderAmount", e.target.value)} className="rounded-none" placeholder="5000" />
+                    {form.minOrderAmount && <p className="text-xs text-muted-foreground mt-1">₹{parseInt(form.minOrderAmount).toLocaleString("en-IN")}</p>}
                   </F>
                   <F label="Max Uses">
-                    <Input type="number" value={form.maxUses} onChange={e => set("maxUses", e.target.value)} className="rounded-none" placeholder="∞ (unlimited)" />
+                    <Input type="number" value={form.maxUses} onChange={e => set("maxUses", e.target.value)} className="rounded-none" placeholder="Unlimited" />
                   </F>
                 </div>
                 <F label="Expiry Date (Optional)">

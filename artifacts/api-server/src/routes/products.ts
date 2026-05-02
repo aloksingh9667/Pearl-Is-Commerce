@@ -26,6 +26,10 @@ function toProduct(p: any) {
     rating: parseFloat(p.rating || "0"),
     reviewCount: p.reviewCount,
     tags: p.tags || [],
+    specifications: p.specifications || [],
+    craftStory: p.craftStory || null,
+    craftPoints: p.craftPoints || [],
+    shippingInfo: p.shippingInfo || null,
     createdAt: p.createdAt?.toISOString(),
   };
 }
@@ -138,6 +142,10 @@ router.post("/products", requireAdmin, async (req, res) => {
       stock: body.stock || 0,
       isNew: body.isNew ?? false, isTrending: body.isTrending ?? false,
       isFeatured: body.isFeatured ?? false, tags: body.tags || [],
+      specifications: body.specifications || [],
+      craftStory: body.craftStory || null,
+      craftPoints: body.craftPoints || [],
+      shippingInfo: body.shippingInfo || null,
     }).returning();
     res.status(201).json(toProduct(product));
   } catch (err) {
@@ -158,6 +166,10 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
       stock: body.stock,
       isNew: body.isNew, isTrending: body.isTrending, isFeatured: body.isFeatured,
       tags: body.tags,
+      specifications: body.specifications || [],
+      craftStory: body.craftStory || null,
+      craftPoints: body.craftPoints || [],
+      shippingInfo: body.shippingInfo || null,
     }).where(eq(productsTable.id, id)).returning();
     if (!product) { res.status(404).json({ error: "Not found" }); return; }
     res.json(toProduct(product));

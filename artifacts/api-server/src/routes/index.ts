@@ -15,6 +15,7 @@ import searchRouter from "./search";
 import settingsRouter from "./settings";
 import contactMessagesRouter from "./contact-messages";
 import pageContentRouter from "./page-content";
+import uploadRouter from "./upload";
 
 const router: IRouter = Router();
 
@@ -34,5 +35,6 @@ router.use(searchRouter);
 router.use(settingsRouter);
 router.use(contactMessagesRouter);
 router.use(pageContentRouter);
+router.use(uploadRouter);
 
 export default router;
