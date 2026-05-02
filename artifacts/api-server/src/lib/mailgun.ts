@@ -15,6 +15,54 @@ function getClient() {
   return { client: mailgun.client({ username: "api", key: apiKey }), domain };
 }
 
+export async function sendAdminOtpEmail(to: string, otp: string, purpose: "login" | "create" | "reset"): Promise<boolean> {
+  const mg = getClient();
+  if (!mg) { console.warn("Mailgun not configured"); return false; }
+  const subjectMap = {
+    login: "Admin Login OTP — Pearlis",
+    create: "Admin Account Creation OTP — Pearlis",
+    reset: "Admin Password Reset OTP — Pearlis",
+  };
+  const purposeText = {
+    login: "login to the admin panel",
+    create: "create a new admin account",
+    reset: "reset your admin password",
+  };
+  try {
+    await mg.client.messages.create(mg.domain, {
+      from: `Pearlis Admin <noreply@${mg.domain}>`,
+      to: [to],
+      subject: subjectMap[purpose],
+      html: `
+        <div style="font-family:'Georgia',serif;max-width:480px;margin:0 auto;background:#0F0F0F;padding:0;border:1px solid #222;">
+          <div style="background:#0F0F0F;padding:32px 40px;border-bottom:2px solid #D4AF37;text-align:center;">
+            <h1 style="font-size:22px;letter-spacing:10px;color:#fff;margin:0;">PEARLIS</h1>
+            <p style="color:#D4AF37;font-size:9px;letter-spacing:5px;text-transform:uppercase;margin:4px 0 0;">Admin Portal</p>
+          </div>
+          <div style="background:#1A1A1A;padding:40px;">
+            <p style="color:#999;font-size:13px;line-height:1.7;margin-bottom:28px;">
+              Your one-time password to <strong style="color:#D4AF37;">${purposeText[purpose]}</strong>. This code expires in <strong>5 minutes</strong>.
+            </p>
+            <div style="background:#0F0F0F;border:1px solid #D4AF37;padding:24px;text-align:center;margin-bottom:28px;">
+              <span style="font-size:40px;letter-spacing:14px;color:#D4AF37;font-family:monospace;font-weight:bold;">${otp}</span>
+            </div>
+            <p style="color:#555;font-size:11px;line-height:1.6;margin:0;">
+              If you did not request this code, someone may be attempting to access your admin panel. Do not share this code with anyone.
+            </p>
+          </div>
+          <div style="background:#0F0F0F;padding:16px 40px;text-align:center;border-top:1px solid #222;">
+            <p style="color:#444;font-size:10px;letter-spacing:2px;margin:0;">© PEARLIS FINE JEWELLERY — ADMIN</p>
+          </div>
+        </div>
+      `,
+    });
+    return true;
+  } catch (err) {
+    console.error("Mailgun sendAdminOtpEmail error:", err);
+    return false;
+  }
+}
+
 export async function sendOtpEmail(to: string, otp: string, name: string): Promise<boolean> {
   const mg = getClient();
   if (!mg) { console.warn("Mailgun not configured"); return false; }

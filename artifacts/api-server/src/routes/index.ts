@@ -20,6 +20,7 @@ import videosRouter from "./videos";
 import razorpayRouter from "./razorpay";
 import emailAuthRouter from "./email-auth";
 import stockAlertsRouter from "./stock-alerts";
+import adminAuthRouter from "./admin-auth";
 
 const router: IRouter = Router();
 
@@ -44,5 +45,6 @@ router.use(videosRouter);
 router.use(razorpayRouter);
 router.use(emailAuthRouter);
 router.use(stockAlertsRouter);
+router.use(adminAuthRouter);
 
 export default router;

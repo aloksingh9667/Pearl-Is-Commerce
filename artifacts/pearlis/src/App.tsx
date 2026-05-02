@@ -43,6 +43,7 @@ import AdminVideos from "@/pages/admin/videos";
 import AdminCategories from "@/pages/admin/categories";
 import AdminReviews from "@/pages/admin/reviews";
 import AdminStockAlerts from "@/pages/admin/stock-alerts";
+import AdminLoginPage from "@/pages/admin-login";
 
 // Admin guard
 function AdminRoute({ component: Component }: { component: any }) {
@@ -55,7 +56,7 @@ function AdminRoute({ component: Component }: { component: any }) {
     );
   }
   if (!user || user.role !== "admin") {
-    window.location.href = "/login";
+    window.location.href = "/admin-login";
     return null;
   }
   return <Component />;
@@ -103,6 +104,7 @@ function Router() {
       <Route path="/admin/categories">{() => <AdminRoute component={AdminCategories} />}</Route>
       <Route path="/admin/reviews">{() => <AdminRoute component={AdminReviews} />}</Route>
       <Route path="/admin/stock-alerts">{() => <AdminRoute component={AdminStockAlerts} />}</Route>
+      <Route path="/admin-login" component={AdminLoginPage} />
 
       <Route component={NotFound} />
     </Switch>
