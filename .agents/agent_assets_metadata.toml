@@ -1,0 +1,26 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "SPMOU-4zrPYKewxNG1Unn"
+uri = "file://artifacts/pearlis/public/images/hero.png"
+type = "image"
+title = "Luxury jewelry hero background"
+
+[[generated]]
+id = "sKWg71nj471WszC4DPILW"
+uri = "file://artifacts/pearlis/public/images/category-rings.png"
+type = "image"
+title = "Rings category image"
+
+[[generated]]
+id = "TxoFcB-jxBFJ3c9Z3jR5w"
+uri = "file://artifacts/pearlis/public/images/category-necklaces.png"
+type = "image"
+title = "Necklaces category image"
+
+[[generated]]
+id = "f4K7OApuXrWqzAD0c5knR"
+uri = "file://artifacts/pearlis/public/images/category-bracelets.png"
+type = "image"
+title = "Bracelets category image"
