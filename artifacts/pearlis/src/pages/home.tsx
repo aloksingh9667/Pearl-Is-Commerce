@@ -362,107 +362,252 @@ export default function Home() {
       </section>
 
       {/* ════════════════════════════════════════
-          7. FLASH SALE / PROMO BANNER
+          7. FLASH SALE — LUXURY REDESIGN
       ════════════════════════════════════════ */}
-      <section className="py-20 bg-[#0F0F0F] relative overflow-hidden">
-        {/* Decorative circles */}
+      <section className="relative overflow-hidden bg-[#0A0A0A] min-h-[520px] flex items-center">
+
+        {/* Background: radial glow + fine grid */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full border border-[#D4AF37]/10" />
-          <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full border border-[#D4AF37]/10" />
+          {/* Warm gold radial glow centre */}
+          <div className="absolute inset-0"
+            style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(212,175,55,0.10) 0%, transparent 70%)" }}
+          />
+          {/* Subtle diagonal lines texture */}
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: "repeating-linear-gradient(45deg, #D4AF37 0px, #D4AF37 1px, transparent 1px, transparent 40px)" }}
+          />
+          {/* Corner ornaments */}
+          <div className="absolute top-8 left-8 w-16 h-16 border-t border-l border-[#D4AF37]/25" />
+          <div className="absolute top-8 right-8 w-16 h-16 border-t border-r border-[#D4AF37]/25" />
+          <div className="absolute bottom-8 left-8 w-16 h-16 border-b border-l border-[#D4AF37]/25" />
+          <div className="absolute bottom-8 right-8 w-16 h-16 border-b border-r border-[#D4AF37]/25" />
         </div>
-        <div className="max-w-[1440px] mx-auto px-6 text-center relative z-10">
-          <motion.div {...fadeUp()}>
-            <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold mb-4">Limited Time Offer</p>
-            <h2 className="font-serif text-4xl md:text-6xl text-white mb-3">
-              Flat <span className="text-[#D4AF37]">20% OFF</span> Today Only
-            </h2>
-            <p className="text-white/40 text-sm mb-10">Use code <span className="text-[#D4AF37] font-bold">PEARLIS10</span> at checkout</p>
 
-            {/* Countdown */}
-            <div className="flex justify-center gap-6 mb-12">
-              {[
-                { val: h, label: "Hours" },
-                { val: m, label: "Minutes" },
-                { val: s, label: "Seconds" },
-              ].map(({ val, label }) => (
-                <div key={label} className="flex flex-col items-center">
-                  <div className="w-16 h-16 md:w-20 md:h-20 border border-[#D4AF37]/40 flex items-center justify-center mb-2">
-                    <span className="font-serif text-2xl md:text-3xl text-white">{String(val).padStart(2, "0")}</span>
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 py-20">
+          <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+
+            {/* LEFT: Copy */}
+            <motion.div {...fadeUp()} className="flex-1 text-center lg:text-left">
+              {/* Eyebrow */}
+              <div className="inline-flex items-center gap-3 mb-6">
+                <div className="h-px w-8 bg-[#D4AF37]/60" />
+                <span className="text-[#D4AF37] text-[9px] tracking-[0.45em] uppercase font-bold">Limited Time Offer</span>
+                <div className="h-px w-8 bg-[#D4AF37]/60" />
+              </div>
+
+              {/* Headline */}
+              <h2 className="font-serif text-5xl md:text-6xl xl:text-7xl text-white leading-[1.0] mb-5">
+                Flat{" "}
+                <span className="relative inline-block">
+                  <span className="text-[#D4AF37]">20% OFF</span>
+                  <span className="absolute -bottom-1 left-0 right-0 h-px bg-[#D4AF37]/40" />
+                </span>
+                <br />
+                <span className="text-white/60 text-4xl md:text-5xl font-serif">Today Only</span>
+              </h2>
+
+              <p className="text-white/40 text-sm tracking-wide mb-8 max-w-sm mx-auto lg:mx-0">
+                Apply code{" "}
+                <span className="text-[#D4AF37] font-bold tracking-[0.12em] bg-[#D4AF37]/8 px-2 py-0.5">
+                  PEARLIS10
+                </span>{" "}
+                at checkout to unlock exclusive savings on our finest pieces.
+              </p>
+
+              <Link href="/shop">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative overflow-hidden group bg-[#D4AF37] hover:bg-[#c9a430] text-[#0A0A0A] px-12 py-4 text-[10.5px] tracking-[0.3em] uppercase font-extrabold transition-colors shadow-2xl shadow-[#D4AF37]/20"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Shop the Sale <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </motion.button>
+              </Link>
+            </motion.div>
+
+            {/* RIGHT: Countdown */}
+            <motion.div {...fadeUp(0.15)} className="flex-shrink-0">
+              <p className="text-[9px] tracking-[0.3em] uppercase text-white/25 text-center mb-6 font-semibold">Offer Ends In</p>
+              <div className="flex items-start gap-3 md:gap-5">
+                {[
+                  { val: h, label: "Hours" },
+                  { val: m, label: "Minutes" },
+                  { val: s, label: "Seconds" },
+                ].map(({ val, label }, i) => (
+                  <div key={label} className="flex items-start gap-3 md:gap-5">
+                    {i > 0 && (
+                      <div className="flex flex-col gap-3 pt-4">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]/50" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]/50" />
+                      </div>
+                    )}
+                    <div className="flex flex-col items-center">
+                      {/* Number box */}
+                      <div className="relative w-20 h-24 md:w-28 md:h-32 bg-white/4 border border-[#D4AF37]/20 flex items-center justify-center overflow-hidden">
+                        {/* Inner gold glow */}
+                        <div className="absolute inset-0"
+                          style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(212,175,55,0.12) 0%, transparent 70%)" }}
+                        />
+                        <AnimatePresence mode="popLayout">
+                          <motion.span
+                            key={val}
+                            initial={{ y: -20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: 20, opacity: 0 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="relative font-serif text-4xl md:text-5xl text-white tabular-nums"
+                          >
+                            {String(val).padStart(2, "0")}
+                          </motion.span>
+                        </AnimatePresence>
+                        {/* Bottom gold line */}
+                        <div className="absolute bottom-0 left-4 right-4 h-px bg-[#D4AF37]/30" />
+                      </div>
+                      <span className="text-[8px] tracking-[0.3em] uppercase text-white/30 mt-2.5 font-semibold">{label}</span>
+                    </div>
                   </div>
-                  <span className="text-[9px] tracking-[0.2em] uppercase text-white/35">{label}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </motion.div>
 
-            <Link href="/shop">
-              <button className="bg-[#D4AF37] hover:bg-[#c9a430] text-white px-12 py-4 text-[10.5px] tracking-[0.25em] uppercase font-bold transition-colors shadow-lg hover:shadow-[#D4AF37]/25 hover:shadow-xl">
-                Shop the Sale
-              </button>
-            </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════
-          8. BRAND STORY / EDITORIAL
+          8. BRAND STORY — LUXURY REDESIGN
       ════════════════════════════════════════ */}
-      <section className="bg-[#FAF8F3]">
+      <section className="bg-[#0F0F0F] relative overflow-hidden">
+
+        {/* Faint vertical rule decoration */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[#D4AF37]/6 hidden lg:block" />
+
         <div className="max-w-[1440px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch">
-            {/* Image */}
-            <motion.div {...fadeIn()} className="relative aspect-[4/5] lg:aspect-auto min-h-[500px] overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[680px]">
+
+            {/* ── LEFT: Cinematic image panel ── */}
+            <motion.div {...fadeIn()} className="relative overflow-hidden min-h-[480px] lg:min-h-0">
               <img
                 src="https://images.unsplash.com/photo-1583937443943-b50a01b3e301?auto=format&fit=crop&q=85&w=900"
                 alt="Artisan crafting jewelry"
                 loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover scale-105 transition-transform duration-[2s] hover:scale-100"
               />
-              <div className="absolute inset-0 bg-black/15" />
-              {/* Play button overlay */}
+
+              {/* Multi-layer darkening gradient */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+
+              {/* Gold corner frame top-left */}
+              <div className="absolute top-8 left-8 w-14 h-14 pointer-events-none">
+                <div className="absolute top-0 left-0 w-full h-px bg-[#D4AF37]/60" />
+                <div className="absolute top-0 left-0 w-px h-full bg-[#D4AF37]/60" />
+              </div>
+              {/* Gold corner frame bottom-right */}
+              <div className="absolute bottom-8 right-8 w-14 h-14 pointer-events-none">
+                <div className="absolute bottom-0 right-0 w-full h-px bg-[#D4AF37]/60" />
+                <div className="absolute bottom-0 right-0 w-px h-full bg-[#D4AF37]/60" />
+              </div>
+
+              {/* Badge overlay bottom-left */}
+              <div className="absolute bottom-10 left-10 flex flex-col gap-1">
+                <p className="text-[#D4AF37] text-[9px] tracking-[0.35em] uppercase font-bold">Est. 2018</p>
+                <p className="font-serif text-white text-xl">The Pearlis Atelier</p>
+                <div className="w-8 h-px bg-[#D4AF37]/60 mt-1" />
+              </div>
+
+              {/* Play button — centre */}
               <button
                 onClick={() => setIsVideoOpen(true)}
                 className="absolute inset-0 flex items-center justify-center group"
                 aria-label="Play brand video"
               >
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="relative flex items-center justify-center"
-                >
-                  {/* Pulsing ring */}
-                  <span className="absolute w-24 h-24 rounded-full border border-white/30 animate-ping opacity-40" />
-                  <span className="absolute w-20 h-20 rounded-full border border-white/50" />
-                  {/* Button */}
-                  <div className="relative w-16 h-16 rounded-full bg-white/15 backdrop-blur-sm border-2 border-white/80 flex items-center justify-center group-hover:bg-[#D4AF37]/80 group-hover:border-[#D4AF37] transition-all duration-300 shadow-xl">
-                    <Play className="w-6 h-6 text-white ml-1" fill="white" />
-                  </div>
-                </motion.div>
-                <span className="absolute bottom-8 text-white/70 text-[10px] tracking-[0.25em] uppercase font-semibold">
-                  Watch Our Story
-                </span>
+                <div className="flex flex-col items-center">
+                  <motion.div
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative flex items-center justify-center mb-4"
+                  >
+                    {/* Double pulsing rings */}
+                    <span className="absolute w-28 h-28 rounded-full border border-[#D4AF37]/20 animate-ping opacity-50" />
+                    <span className="absolute w-22 h-22 rounded-full border border-[#D4AF37]/30" style={{ width: 88, height: 88 }} />
+                    {/* Core button */}
+                    <div className="relative w-18 h-18 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300"
+                      style={{ width: 72, height: 72, background: "rgba(212,175,55,0.15)", backdropFilter: "blur(8px)", border: "1.5px solid rgba(212,175,55,0.7)" }}
+                    >
+                      <div className="absolute inset-0 rounded-full group-hover:bg-[#D4AF37]/30 transition-colors duration-300" />
+                      <Play className="w-6 h-6 text-white ml-1.5 relative z-10" fill="white" />
+                    </div>
+                  </motion.div>
+                  <span className="text-white/65 text-[9px] tracking-[0.35em] uppercase font-semibold">Watch Our Story</span>
+                </div>
               </button>
             </motion.div>
 
-            {/* Text */}
-            <motion.div {...fadeUp(0.15)} className="flex flex-col justify-center bg-[#0F0F0F] px-10 md:px-16 py-20">
-              <p className="section-eyebrow mb-5">The Pearlis Atelier</p>
-              <h2 className="font-serif text-4xl md:text-5xl text-white mb-6 leading-[1.12]">
-                Where Craft Meets<br /><em className="text-[#D4AF37] not-italic">Passion</em>
+            {/* ── RIGHT: Editorial copy ── */}
+            <motion.div {...fadeUp(0.18)} className="flex flex-col justify-center px-10 md:px-14 xl:px-20 py-20 relative">
+
+              {/* Top accent line */}
+              <div className="flex items-center gap-4 mb-8">
+                <div className="h-px flex-1 bg-[#D4AF37]/15 max-w-[3rem]" />
+                <p className="text-[#D4AF37] text-[9px] tracking-[0.45em] uppercase font-bold">The Pearlis Atelier</p>
+              </div>
+
+              {/* Headline */}
+              <h2 className="font-serif text-4xl md:text-5xl xl:text-6xl text-white leading-[1.08] mb-8">
+                Where Craft<br />
+                Meets{" "}
+                <span className="relative inline-block">
+                  <em className="text-[#D4AF37] not-italic">Passion</em>
+                  <svg className="absolute -bottom-2 left-0 w-full" height="6" viewBox="0 0 100 6" preserveAspectRatio="none">
+                    <path d="M0 5 Q50 0 100 5" stroke="#D4AF37" strokeWidth="1" fill="none" opacity="0.5" />
+                  </svg>
+                </span>
               </h2>
-              <div className="w-10 h-px bg-[#D4AF37] mb-8" />
-              <p className="text-white/55 text-sm leading-[1.9] mb-5">
-                Every Pearlis creation begins with a singular vision. Our master artisans blend centuries-old techniques with contemporary design to create pieces that transcend time.
+
+              <div className="w-12 h-px bg-[#D4AF37] mb-8" />
+
+              <p className="text-white/50 text-sm leading-[1.95] mb-5 max-w-md">
+                Every Pearlis creation begins with a singular vision. Our master artisans blend centuries-old techniques with contemporary design — crafting pieces that transcend time and tell your story.
               </p>
-              <p className="text-white/55 text-sm leading-[1.9] mb-10">
-                We source only the finest ethically-mined diamonds and precious metals — ensuring each piece tells a story of uncompromising quality and responsible luxury.
+              <p className="text-white/50 text-sm leading-[1.95] mb-12 max-w-md">
+                We source only the finest ethically-mined diamonds and precious metals, ensuring each piece is a testament to uncompromising quality and responsible luxury.
               </p>
+
+              {/* Stats row */}
+              <div className="grid grid-cols-3 gap-6 mb-12 py-8 border-y border-[#D4AF37]/10">
+                {[
+                  { num: "7+", label: "Years of Craft" },
+                  { num: "50K+", label: "Pieces Created" },
+                  { num: "98%", label: "Happy Clients" },
+                ].map(({ num, label }) => (
+                  <div key={label} className="text-center">
+                    <p className="font-serif text-3xl text-[#D4AF37] mb-1">{num}</p>
+                    <p className="text-[9px] tracking-[0.2em] uppercase text-white/30 font-semibold">{label}</p>
+                  </div>
+                ))}
+              </div>
+
               <Link href="/about">
-                <button className="group inline-flex items-center gap-3 text-[#D4AF37] text-[10.5px] tracking-[0.25em] uppercase font-bold border-b border-[#D4AF37]/40 pb-1 hover:border-[#D4AF37] transition-colors w-fit">
-                  Discover Our Story
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+                <motion.button
+                  whileHover={{ x: 4 }}
+                  className="group inline-flex items-center gap-3 text-[#D4AF37] text-[10px] tracking-[0.28em] uppercase font-bold w-fit"
+                >
+                  <span className="border-b border-[#D4AF37]/40 pb-0.5 group-hover:border-[#D4AF37] transition-colors">
+                    Discover Our Story
+                  </span>
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </motion.button>
               </Link>
+
+              {/* Decorative Roman numeral watermark */}
+              <div className="absolute bottom-8 right-10 font-serif text-7xl text-white/[0.03] select-none pointer-events-none leading-none">
+                VIII
+              </div>
             </motion.div>
+
           </div>
         </div>
       </section>
