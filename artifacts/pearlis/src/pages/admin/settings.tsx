@@ -388,23 +388,59 @@ export default function AdminSettings() {
 
           {/* FLASH SALE */}
           {activeTab === "flashSale" && (
-            <Section title="Flash Sale" onSave={() => save("flashSale")} saving={saving}>
-              <div className="flex items-center gap-3 mb-4">
+            <Section title="Flash Sale Banner" onSave={() => save("flashSale")} saving={saving}>
+              {/* Enable toggle */}
+              <div className="flex items-center justify-between p-4 bg-muted/40 border border-border mb-6">
+                <div>
+                  <p className="font-medium text-sm">Show Flash Sale Banner</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Displays a prominent banner below the announcement bar, above the navbar.</p>
+                </div>
                 <Switch
-                  checked={draft.flashSale?.enabled ?? true}
+                  checked={draft.flashSale?.enabled ?? false}
                   onCheckedChange={v => updateNested("flashSale", "enabled", v)}
                 />
-                <Label>Show Flash Sale Section on Homepage</Label>
               </div>
-              <Field label="Badge Text">
-                <Input value={draft.flashSale?.title || ""} onChange={e => updateNested("flashSale", "title", e.target.value)} className="rounded-none" placeholder="Flash Sale" />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                <Field label="Badge Text">
+                  <Input value={draft.flashSale?.title || ""} onChange={e => updateNested("flashSale", "title", e.target.value)} className="rounded-none" placeholder="Flash Sale" />
+                </Field>
+                <Field label="Subtitle / Offer Headline">
+                  <Input value={draft.flashSale?.subtitle || ""} onChange={e => updateNested("flashSale", "subtitle", e.target.value)} className="rounded-none" placeholder="Up to 30% Off" />
+                </Field>
+                <Field label="Promo Text (below subtitle)">
+                  <Input value={draft.flashSale?.promoText || ""} onChange={e => updateNested("flashSale", "promoText", e.target.value)} className="rounded-none" placeholder="Today Only — Use code PEARLIS10 at checkout" />
+                </Field>
+                <Field label="Coupon Code (highlighted)">
+                  <Input value={draft.flashSale?.code || ""} onChange={e => updateNested("flashSale", "code", e.target.value)} className="rounded-none" placeholder="PEARLIS10" />
+                </Field>
+                <Field label="CTA Button Text">
+                  <Input value={draft.flashSale?.ctaText || ""} onChange={e => updateNested("flashSale", "ctaText", e.target.value)} className="rounded-none" placeholder="Shop the Sale" />
+                </Field>
+                <Field label="CTA Button Link">
+                  <Input value={draft.flashSale?.ctaLink || ""} onChange={e => updateNested("flashSale", "ctaLink", e.target.value)} className="rounded-none" placeholder="/shop" />
+                </Field>
+              </div>
+
+              <Field label="Sale Ends At (countdown timer target)">
+                <Input
+                  type="datetime-local"
+                  value={draft.flashSale?.endsAt ? draft.flashSale.endsAt.slice(0, 16) : ""}
+                  onChange={e => updateNested("flashSale", "endsAt", new Date(e.target.value).toISOString())}
+                  className="rounded-none max-w-xs"
+                />
+                <p className="text-xs text-muted-foreground mt-1">A live countdown timer will appear in the banner counting down to this time.</p>
               </Field>
-              <Field label="Subtitle">
-                <Input value={draft.flashSale?.subtitle || ""} onChange={e => updateNested("flashSale", "subtitle", e.target.value)} className="rounded-none" placeholder="Up to 30% Off" />
-              </Field>
-              <Field label="Sale Ends At (ISO Date)">
-                <Input type="datetime-local" value={draft.flashSale?.endsAt ? draft.flashSale.endsAt.slice(0, 16) : ""} onChange={e => updateNested("flashSale", "endsAt", new Date(e.target.value).toISOString())} className="rounded-none" />
-              </Field>
+
+              {/* Preview hint */}
+              {draft.flashSale?.enabled && (
+                <div className="mt-4 p-4 bg-[#0F0F0F] text-white text-sm rounded-none flex items-center gap-3">
+                  <span className="bg-[#D4AF37] text-[#0F0F0F] text-[10px] font-bold px-2 py-0.5 tracking-widest uppercase">{draft.flashSale.title || "Flash Sale"}</span>
+                  <span className="font-semibold">{draft.flashSale.subtitle || "Up to 30% Off"}</span>
+                  {draft.flashSale.code && <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/40 px-2 py-0.5">{draft.flashSale.code}</span>}
+                  <span className="ml-auto text-xs text-white/40">Live preview after Save</span>
+                </div>
+              )}
             </Section>
           )}
         </div>

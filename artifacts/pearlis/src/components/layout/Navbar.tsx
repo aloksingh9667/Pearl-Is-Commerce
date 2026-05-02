@@ -1,10 +1,32 @@
 import { Link, useLocation } from "wouter";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingBag, User as UserIcon, Menu, X, Heart, ChevronDown } from "lucide-react";
+import { Search, ShoppingBag, User as UserIcon, Menu, X, Heart, ChevronDown, Zap, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetCart, useListCategories } from "@workspace/api-client-react";
 import { useGetSettings } from "@/lib/adminApi";
+
+/* ── Countdown hook ── */
+function useCountdown(endsAt: string | undefined) {
+  const calc = () => {
+    if (!endsAt) return { h: 0, m: 0, s: 0, expired: true };
+    const diff = new Date(endsAt).getTime() - Date.now();
+    if (diff <= 0) return { h: 0, m: 0, s: 0, expired: true };
+    return {
+      h: Math.floor(diff / 3_600_000),
+      m: Math.floor((diff % 3_600_000) / 60_000),
+      s: Math.floor((diff % 60_000) / 1_000),
+      expired: false,
+    };
+  };
+  const [time, setTime] = useState(calc);
+  useEffect(() => {
+    if (!endsAt) return;
+    const id = setInterval(() => setTime(calc()), 1000);
+    return () => clearInterval(id);
+  }, [endsAt]);
+  return time;
+}
 
 const EXPLORE_ITEMS = [
   { label: "Gallery", href: "/gallery" },
@@ -119,24 +141,92 @@ export function Navbar() {
   const announcement = siteSettings?.announcement;
   const showAnnouncement = announcement?.enabled !== false && announcement?.text;
 
+  const fs = siteSettings?.flashSale;
+  const countdown = useCountdown(fs?.endsAt);
+  const showFlashSale = !!(fs?.enabled && !countdown.expired);
+
+  const announcementH = showAnnouncement ? 32 : 0;
+  const flashSaleH = showFlashSale ? 56 : 0;
+  const navbarTop = announcementH + flashSaleH;
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+
   return (
     <>
-      {/* ── Announcement bar (dynamic from Admin Settings) ── */}
+      {/* ── Announcement bar ── */}
       {showAnnouncement && (
         announcement?.link ? (
           <a href={announcement.link}
-            className="block fixed top-0 left-0 right-0 z-[60] bg-[#D4AF37] text-white text-center text-[10px] tracking-[0.22em] uppercase py-[7px] font-semibold hover:bg-[#c9a430] transition-colors">
+            className="block fixed top-0 left-0 right-0 z-[62] bg-[#D4AF37] text-white text-center text-[10px] tracking-[0.22em] uppercase py-[7px] font-semibold hover:bg-[#c9a430] transition-colors">
             {announcement.text}
           </a>
         ) : (
-          <div className="fixed top-0 left-0 right-0 z-[60] bg-[#D4AF37] text-white text-center text-[10px] tracking-[0.22em] uppercase py-[7px] font-semibold">
+          <div className="fixed top-0 left-0 right-0 z-[62] bg-[#D4AF37] text-white text-center text-[10px] tracking-[0.22em] uppercase py-[7px] font-semibold">
             {announcement.text}
           </div>
         )
       )}
 
+      {/* ── Flash Sale banner ── */}
+      {showFlashSale && (
+        <div
+          className="fixed left-0 right-0 z-[61] bg-[#0F0F0F] border-b border-[#D4AF37]/30"
+          style={{ top: `${announcementH}px`, height: "56px" }}
+        >
+          <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex items-center justify-between gap-4">
+            {/* Left: badge + headline */}
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="hidden sm:flex items-center gap-1 bg-[#D4AF37] text-[#0F0F0F] text-[9px] font-black px-2.5 py-1 tracking-[0.2em] uppercase shrink-0">
+                <Zap className="w-2.5 h-2.5" />{fs?.title || "Flash Sale"}
+              </span>
+              <div className="min-w-0">
+                <p className="text-white font-semibold text-[11px] md:text-[12px] tracking-wide truncate">
+                  {fs?.subtitle || "Up to 30% Off"}
+                  {fs?.code && (
+                    <span className="ml-2 font-mono text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-1.5 py-0.5 text-[10px] tracking-widest">
+                      {fs.code}
+                    </span>
+                  )}
+                </p>
+                {fs?.promoText && (
+                  <p className="text-white/40 text-[9px] tracking-widest uppercase truncate hidden sm:block">{fs.promoText}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Center: countdown */}
+            <div className="flex items-center gap-1 shrink-0">
+              <Clock className="w-3 h-3 text-[#D4AF37]/60 mr-1 hidden sm:block" />
+              {[
+                { v: pad(countdown.h), label: "HRS" },
+                { v: pad(countdown.m), label: "MIN" },
+                { v: pad(countdown.s), label: "SEC" },
+              ].map(({ v, label }, i) => (
+                <span key={label} className="flex items-center gap-1">
+                  {i > 0 && <span className="text-[#D4AF37]/40 text-xs font-bold">:</span>}
+                  <span className="flex flex-col items-center leading-none">
+                    <span className="text-white font-mono font-bold text-[15px] md:text-[17px] tabular-nums">{v}</span>
+                    <span className="text-[#D4AF37]/50 text-[7px] tracking-[0.15em] uppercase">{label}</span>
+                  </span>
+                </span>
+              ))}
+            </div>
+
+            {/* Right: CTA */}
+            {fs?.ctaText && (
+              <Link
+                href={(fs.ctaLink as string) || "/shop"}
+                className="hidden sm:inline-flex items-center shrink-0 bg-[#D4AF37] text-[#0F0F0F] text-[9px] font-black px-4 py-2 tracking-[0.18em] uppercase hover:bg-[#c9a430] transition-colors"
+              >
+                {fs.ctaText}
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ── Main navbar ── */}
-      <nav className="fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out" style={{ top: showAnnouncement ? "32px" : "0px" }}>
+      <nav className="fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out" style={{ top: `${navbarTop}px` }}>
         <div className={`absolute inset-0 transition-all duration-500 ${
           isTransparent ? "bg-transparent" : "bg-white/95 backdrop-blur-md border-b border-[#D4AF37]/25 shadow-[0_2px_20px_rgba(0,0,0,0.06)]"
         }`} />
@@ -217,7 +307,7 @@ export function Navbar() {
         </div>
       </nav>
 
-      {!isHome && <div style={{ height: showAnnouncement ? "100px" : "68px" }} />}
+      {!isHome && <div style={{ height: `${navbarTop + 68}px` }} />}
 
       {/* ── Search overlay ── */}
       <AnimatePresence>

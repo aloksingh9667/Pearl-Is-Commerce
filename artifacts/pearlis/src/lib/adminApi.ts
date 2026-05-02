@@ -38,7 +38,16 @@ export type SiteSettings = {
   instagram: { enabled: boolean; username: string; posts: string[] };
   videos: Array<{ title: string; url: string; thumbnail: string }>;
   atelierVideo: string;
-  flashSale: { enabled: boolean; title: string; subtitle: string; endsAt: string };
+  flashSale: {
+    enabled: boolean;
+    title: string;
+    subtitle: string;
+    promoText: string;
+    endsAt: string;
+    code: string;
+    ctaText: string;
+    ctaLink: string;
+  };
 };
 
 export function useGetSettings() {
