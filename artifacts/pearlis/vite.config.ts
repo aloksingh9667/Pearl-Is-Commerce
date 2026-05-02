@@ -54,11 +54,18 @@ export default defineConfig({
   },
   server: {
     port,
-    strictPort: true,
+    strictPort: false,
     host: "0.0.0.0",
     allowedHosts: true,
     fs: {
       strict: true,
+    },
+    proxy: {
+      "/api": {
+        target: process.env.RENDER_API_URL ?? "http://localhost:8080",
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
   preview: {
