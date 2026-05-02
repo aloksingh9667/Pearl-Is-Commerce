@@ -291,56 +291,72 @@ export default function Home() {
             <div className="gold-divider mx-auto" />
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              {
-                title: "Bridal Collection",
-                sub: "For your forever moments",
-                href: "/category/rings",
-                src: "https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=85&w=800",
-                tall: true,
-              },
-              {
-                title: "Everyday Elegance",
-                sub: "Refined pieces for daily wear",
-                href: "/shop",
-                src: "https://images.unsplash.com/photo-1624913503273-5f9c4e980dba?auto=format&fit=crop&q=85&w=800",
-                tall: false,
-              },
-              {
-                title: "Royal Gold Series",
-                sub: "Heritage-inspired masterpieces",
-                href: "/category/necklaces",
-                src: "https://images.unsplash.com/photo-1600721391776-b5cd0e0048f9?auto=format&fit=crop&q=85&w=800",
-                tall: false,
-              },
-            ].map(({ title, sub, href, src, tall }, i) => (
-              <motion.div
-                {...fadeUp(i * 0.12)}
-                key={title}
-                className={`group relative overflow-hidden cursor-pointer ${tall ? "md:row-span-2" : ""}`}
-              >
-                <Link href={href}>
-                  <div className={`relative overflow-hidden ${tall ? "aspect-[3/4] md:h-full" : "aspect-[4/3]"}`}>
-                    <img
-                      src={src}
-                      alt={title}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-107"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <div className="absolute inset-0 bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/8 transition-colors duration-500" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                      <p className="text-[#D4AF37] text-[9px] tracking-[0.25em] uppercase font-semibold mb-2">{sub}</p>
-                      <h3 className="font-serif text-2xl md:text-3xl text-white mb-4">{title}</h3>
-                      <span className="inline-flex items-center gap-2 text-white/80 group-hover:text-[#D4AF37] text-[10px] tracking-[0.2em] uppercase font-semibold transition-colors border-b border-white/30 group-hover:border-[#D4AF37] pb-0.5">
-                        Explore <ArrowRight className="w-3 h-3" />
-                      </span>
-                    </div>
+          {/* Collections — left tall card + right two stacked cards */}
+          <div className="flex flex-col md:flex-row gap-4">
+
+            {/* ── LEFT: tall feature card ── */}
+            <motion.div {...fadeUp(0)} className="md:w-1/2 group relative overflow-hidden cursor-pointer">
+              <Link href="/category/rings" className="block">
+                <div className="relative overflow-hidden aspect-[4/5] md:aspect-auto md:h-[600px]">
+                  <img
+                    src="https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=85&w=900"
+                    alt="Bridal Collection"
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                  <div className="absolute inset-0 bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/6 transition-colors duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
+                    <p className="text-[#D4AF37] text-[9px] tracking-[0.3em] uppercase font-semibold mb-3">For your forever moments</p>
+                    <h3 className="font-serif text-3xl md:text-4xl text-white mb-5">Bridal Collection</h3>
+                    <span className="inline-flex items-center gap-2 text-white/80 group-hover:text-[#D4AF37] text-[10px] tracking-[0.22em] uppercase font-semibold transition-colors border-b border-white/30 group-hover:border-[#D4AF37] pb-0.5">
+                      Explore <ArrowRight className="w-3 h-3" />
+                    </span>
                   </div>
-                </Link>
-              </motion.div>
-            ))}
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* ── RIGHT: two stacked shorter cards ── */}
+            <div className="md:w-1/2 flex flex-col gap-4">
+              {[
+                {
+                  title: "Everyday Elegance",
+                  sub: "Refined pieces for daily wear",
+                  href: "/shop",
+                  src: "https://images.unsplash.com/photo-1624913503273-5f9c4e980dba?auto=format&fit=crop&q=85&w=800",
+                },
+                {
+                  title: "Royal Gold Series",
+                  sub: "Heritage-inspired masterpieces",
+                  href: "/category/necklaces",
+                  src: "https://images.unsplash.com/photo-1600721391776-b5cd0e0048f9?auto=format&fit=crop&q=85&w=800",
+                },
+              ].map(({ title, sub, href, src }, i) => (
+                <motion.div key={title} {...fadeUp((i + 1) * 0.12)} className="group relative overflow-hidden cursor-pointer flex-1">
+                  <Link href={href} className="block">
+                    <div className="relative overflow-hidden aspect-[16/9] md:aspect-auto md:h-[290px]">
+                      <img
+                        src={src}
+                        alt={title}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/6 transition-colors duration-500" />
+                      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                        <p className="text-[#D4AF37] text-[9px] tracking-[0.3em] uppercase font-semibold mb-2">{sub}</p>
+                        <h3 className="font-serif text-2xl md:text-3xl text-white mb-4">{title}</h3>
+                        <span className="inline-flex items-center gap-2 text-white/80 group-hover:text-[#D4AF37] text-[10px] tracking-[0.22em] uppercase font-semibold transition-colors border-b border-white/30 group-hover:border-[#D4AF37] pb-0.5">
+                          Explore <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
           </div>
         </div>
       </section>
