@@ -1,20 +1,4 @@
-# Cloudflare Pages — root configuration
-# This file is read by Cloudflare Pages CI when deploying from the repo root.
-# The frontend source lives in artifacts/pearlis; the build outputs to artifacts/pearlis/dist/public.
-
 name = "pearlis"
 pages_build_output_dir = "dist"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
-
-[build]
-command = "pnpm install && pnpm --filter @workspace/pearlis run build"
-
-# Environment variables for the Cloudflare Pages Function (functions/api/[[path]].js).
-# Set RENDER_API_URL as a SECRET in the Cloudflare Pages dashboard
-# (Settings → Environment Variables) — do NOT put the real value here.
-#
-# Required dashboard env vars:
-#   RENDER_API_URL  = https://your-service.onrender.com
-#   BASE_PATH       = /
-#   NODE_VERSION    = 20
