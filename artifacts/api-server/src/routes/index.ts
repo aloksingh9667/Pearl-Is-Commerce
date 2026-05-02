@@ -18,6 +18,7 @@ import pageContentRouter from "./page-content";
 import uploadRouter from "./upload";
 import videosRouter from "./videos";
 import razorpayRouter from "./razorpay";
+import emailAuthRouter from "./email-auth";
 
 const router: IRouter = Router();
 
@@ -40,5 +41,6 @@ router.use(pageContentRouter);
 router.use(uploadRouter);
 router.use(videosRouter);
 router.use(razorpayRouter);
+router.use(emailAuthRouter);
 
 export default router;
