@@ -4,16 +4,18 @@ import {
   useGetRelatedProducts,
   useAddToCart,
   useGetProductReviews,
+  useCreateReview,
   useAddToWishlist,
   useRemoveFromWishlist,
   useGetWishlist,
   getGetCartQueryKey,
+  getGetProductReviewsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ui/ProductCard";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -53,6 +55,13 @@ export default function ProductDetail() {
   const imgRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  /* ── review form state ── */
+  const [reviewName, setReviewName] = useState("");
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewHover, setReviewHover] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+
   /* ── base product ── */
   const { data: product, isLoading } = useGetProduct(productId, { query: { enabled: !!productId } });
   const { data: relatedProducts } = useGetRelatedProducts(productId, { query: { enabled: !!productId } });
@@ -62,6 +71,7 @@ export default function ProductDetail() {
   const addToWishlist = useAddToWishlist();
   const removeFromWishlist = useRemoveFromWishlist();
   const queryClient = useQueryClient();
+  const createReview = useCreateReview();
 
   /* ── variant-linked product ── */
   const variants: Variant[] = product ? parseVariants((product as any).materialVariants) : [];
@@ -490,59 +500,164 @@ export default function ProductDetail() {
               )}
 
               {activeTab === "Reviews" && (
-                reviews && reviews.length > 0 ? (
-                  <div className="space-y-8">
-                    <div className="flex flex-col sm:flex-row items-start gap-6 p-5 sm:p-6 bg-white border border-[#0F0F0F]/6 mb-8">
-                      <div className="text-center flex sm:flex-col items-center gap-3 sm:gap-0">
-                        <p className="font-serif text-4xl sm:text-5xl text-[#0F0F0F]">{avgRating.toFixed(1)}</p>
-                        <div>
-                          <div className="flex justify-center mt-2 mb-1">
-                            {[1,2,3,4,5].map(s => <Star key={s} className={`w-3.5 h-3.5 ${s <= Math.round(avgRating) ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#D4AF37]/25"}`} />)}
-                          </div>
-                          <p className="text-[9px] tracking-[0.15em] uppercase text-[#0F0F0F]/40">{reviews.length} reviews</p>
-                        </div>
-                      </div>
-                      <div className="flex-1 w-full space-y-1.5">
-                        {[5,4,3,2,1].map(star => {
-                          const count = reviews.filter((r: { rating: number }) => r.rating === star).length;
-                          return (
-                            <div key={star} className="flex items-center gap-3">
-                              <span className="text-[9px] text-[#0F0F0F]/40 w-4">{star}</span>
-                              <div className="flex-1 h-1.5 bg-[#0F0F0F]/6">
-                                <div className="h-full bg-[#D4AF37]" style={{ width: `${reviews.length ? (count/reviews.length)*100 : 0}%` }} />
-                              </div>
-                              <span className="text-[9px] text-[#0F0F0F]/30 w-5">{count}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    {reviews.map((r: { id: number; rating: number; comment?: string; createdAt: string }, idx: number) => (
-                      <div key={idx} className="border-b border-[#0F0F0F]/6 pb-8">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="w-8 h-8 rounded-full bg-[#D4AF37]/15 flex items-center justify-center text-[#D4AF37] font-bold text-sm">
-                            {String.fromCharCode(65 + (r.id % 26))}
-                          </div>
+                <div className="space-y-10">
+                  {/* ── Rating summary + list ── */}
+                  {reviews && reviews.length > 0 ? (
+                    <div className="space-y-8">
+                      <div className="flex flex-col sm:flex-row items-start gap-6 p-5 sm:p-6 bg-white border border-[#0F0F0F]/6">
+                        <div className="text-center flex sm:flex-col items-center gap-3 sm:gap-0">
+                          <p className="font-serif text-4xl sm:text-5xl text-[#0F0F0F]">{avgRating.toFixed(1)}</p>
                           <div>
-                            <div className="flex">
-                              {[1,2,3,4,5].map(s => <Star key={s} className={`w-3 h-3 ${s <= r.rating ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#D4AF37]/25"}`} />)}
+                            <div className="flex justify-center mt-2 mb-1">
+                              {[1,2,3,4,5].map(s => <Star key={s} className={`w-3.5 h-3.5 ${s <= Math.round(avgRating) ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#D4AF37]/25"}`} />)}
                             </div>
-                            <p className="text-[9px] text-[#0F0F0F]/30 mt-0.5">
-                              {new Date(r.createdAt).toLocaleDateString("en-IN", { year: "numeric", month: "long" })}
-                            </p>
+                            <p className="text-[9px] tracking-[0.15em] uppercase text-[#0F0F0F]/40">{reviews.length} reviews</p>
                           </div>
                         </div>
-                        <p className="text-sm text-[#0F0F0F]/65 leading-relaxed">{r.comment || "Excellent quality, beautifully crafted."}</p>
+                        <div className="flex-1 w-full space-y-1.5">
+                          {[5,4,3,2,1].map(star => {
+                            const cnt = reviews.filter((r: { rating: number }) => r.rating === star).length;
+                            return (
+                              <div key={star} className="flex items-center gap-3">
+                                <span className="text-[9px] text-[#0F0F0F]/40 w-4">{star}</span>
+                                <div className="flex-1 h-1.5 bg-[#0F0F0F]/6">
+                                  <div className="h-full bg-[#D4AF37]" style={{ width: `${reviews.length ? (cnt/reviews.length)*100 : 0}%` }} />
+                                </div>
+                                <span className="text-[9px] text-[#0F0F0F]/30 w-5">{cnt}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    ))}
+                      {reviews.map((r: { id: number; userName?: string; rating: number; comment?: string; createdAt: string }, idx: number) => (
+                        <div key={idx} className="border-b border-[#0F0F0F]/6 pb-8">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-8 h-8 rounded-full bg-[#D4AF37]/15 flex items-center justify-center text-[#D4AF37] font-bold text-sm">
+                              {(r.userName || "A").charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <p className="text-xs font-semibold text-[#0F0F0F]/80 mb-0.5">{r.userName || "Anonymous"}</p>
+                              <div className="flex">
+                                {[1,2,3,4,5].map(s => <Star key={s} className={`w-3 h-3 ${s <= r.rating ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#D4AF37]/25"}`} />)}
+                              </div>
+                              <p className="text-[9px] text-[#0F0F0F]/30 mt-0.5">
+                                {new Date(r.createdAt).toLocaleDateString("en-IN", { year: "numeric", month: "long" })}
+                              </p>
+                            </div>
+                          </div>
+                          <p className="text-sm text-[#0F0F0F]/65 leading-relaxed">{r.comment}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Star className="w-8 h-8 text-[#D4AF37]/30 mx-auto mb-4" />
+                      <p className="font-serif text-xl text-[#0F0F0F]/40 mb-2">No reviews yet</p>
+                      <p className="text-sm text-[#0F0F0F]/30">Be the first to review this piece.</p>
+                    </div>
+                  )}
+
+                  {/* ── Write a Review form ── */}
+                  <div className="border-t border-[#0F0F0F]/8 pt-10">
+                    <h3 className="font-serif text-xl text-[#0F0F0F] mb-6">Write a Review</h3>
+                    {reviewSubmitted ? (
+                      <div className="flex flex-col items-center py-10 text-center">
+                        <div className="w-12 h-12 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-4">
+                          <Star className="w-5 h-5 text-[#D4AF37] fill-[#D4AF37]" />
+                        </div>
+                        <p className="font-serif text-lg text-[#0F0F0F] mb-2">Thank you for your review!</p>
+                        <p className="text-sm text-[#0F0F0F]/40 mb-6">Your feedback helps other customers.</p>
+                        <button
+                          onClick={() => { setReviewSubmitted(false); setReviewName(""); setReviewRating(0); setReviewComment(""); }}
+                          className="text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] hover:text-[#0F0F0F] transition-colors"
+                        >
+                          Write Another Review
+                        </button>
+                      </div>
+                    ) : (
+                      <form
+                        onSubmit={e => {
+                          e.preventDefault();
+                          if (!reviewRating) { toast({ title: "Please select a star rating", variant: "destructive" }); return; }
+                          if (!reviewComment.trim()) { toast({ title: "Please write a comment", variant: "destructive" }); return; }
+                          createReview.mutate(
+                            { id: productId, data: { rating: reviewRating, comment: reviewComment, userName: reviewName || "Anonymous" } },
+                            {
+                              onSuccess: () => {
+                                queryClient.invalidateQueries({ queryKey: getGetProductReviewsQueryKey(productId) });
+                                setReviewSubmitted(true);
+                                toast({ title: "Review submitted!", description: "Thank you for your feedback." });
+                              },
+                              onError: () => toast({ title: "Failed to submit", description: "Please try again.", variant: "destructive" }),
+                            }
+                          );
+                        }}
+                        className="space-y-5 max-w-lg"
+                      >
+                        {/* Star selector */}
+                        <div>
+                          <p className="text-[10px] tracking-[0.2em] uppercase text-[#0F0F0F]/50 font-semibold mb-3">Your Rating *</p>
+                          <div className="flex gap-1">
+                            {[1,2,3,4,5].map(s => (
+                              <button
+                                key={s}
+                                type="button"
+                                onClick={() => setReviewRating(s)}
+                                onMouseEnter={() => setReviewHover(s)}
+                                onMouseLeave={() => setReviewHover(0)}
+                                className="p-0.5 transition-transform hover:scale-110"
+                              >
+                                <Star className={`w-7 h-7 transition-colors ${s <= (reviewHover || reviewRating) ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#0F0F0F]/15"}`} />
+                              </button>
+                            ))}
+                            {reviewRating > 0 && (
+                              <span className="ml-2 text-xs text-[#0F0F0F]/40 self-center">
+                                {["", "Poor", "Fair", "Good", "Very Good", "Excellent"][reviewRating]}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Name */}
+                        <div>
+                          <label className="text-[10px] tracking-[0.2em] uppercase text-[#0F0F0F]/50 font-semibold block mb-2">Your Name</label>
+                          <input
+                            type="text"
+                            value={reviewName}
+                            onChange={e => setReviewName(e.target.value)}
+                            placeholder="e.g. Priya S."
+                            maxLength={60}
+                            className="w-full border border-[#0F0F0F]/12 rounded-none px-3 py-2.5 text-sm focus:outline-none focus:border-[#D4AF37] bg-white placeholder:text-[#0F0F0F]/25"
+                          />
+                        </div>
+
+                        {/* Comment */}
+                        <div>
+                          <label className="text-[10px] tracking-[0.2em] uppercase text-[#0F0F0F]/50 font-semibold block mb-2">Your Review *</label>
+                          <textarea
+                            value={reviewComment}
+                            onChange={e => setReviewComment(e.target.value)}
+                            placeholder="What did you love about this piece?"
+                            rows={4}
+                            maxLength={1000}
+                            required
+                            className="w-full border border-[#0F0F0F]/12 rounded-none px-3 py-2.5 text-sm focus:outline-none focus:border-[#D4AF37] bg-white placeholder:text-[#0F0F0F]/25 resize-none"
+                          />
+                          <p className="text-[9px] text-[#0F0F0F]/25 mt-1 text-right">{reviewComment.length}/1000</p>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={createReview.isPending}
+                          className="flex items-center gap-2 px-8 py-3 bg-[#0F0F0F] text-white text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#D4AF37] hover:text-[#0F0F0F] transition-colors disabled:opacity-50"
+                        >
+                          {createReview.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                          Submit Review
+                        </button>
+                      </form>
+                    )}
                   </div>
-                ) : (
-                  <div className="text-center py-16">
-                    <Star className="w-8 h-8 text-[#D4AF37]/30 mx-auto mb-4" />
-                    <p className="font-serif text-xl text-[#0F0F0F]/40 mb-2">No reviews yet</p>
-                    <p className="text-sm text-[#0F0F0F]/30">Be the first to review this piece.</p>
-                  </div>
-                )
+                </div>
               )}
 
               {activeTab === "Shipping & Returns" && (

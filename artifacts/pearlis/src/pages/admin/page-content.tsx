@@ -16,7 +16,6 @@ const STATIC_PAGES = [
   { id: "gallery", label: "🖼️ Gallery" },
   { id: "blog", label: "📝 Blog" },
   { id: "about", label: "ℹ️ About" },
-  { id: "contact", label: "📧 Contact" },
 ];
 
 const CAT_EMOJIS: Record<string, string> = {
@@ -370,18 +369,6 @@ export default function AdminPageContent() {
                 </>
               )}
 
-              {/* ── CONTACT ── */}
-              {activePage === "contact" && (
-                <SubSection title="Contact Details">
-                  <F label="Address"><Textarea value={draft.address || ""} onChange={e => setDraft((d: any) => ({ ...d, address: e.target.value }))} className="rounded-none min-h-[80px]" /></F>
-                  <F label="Email"><Input value={draft.email || ""} onChange={e => setDraft((d: any) => ({ ...d, email: e.target.value }))} className="rounded-none" /></F>
-                  <F label="Phone"><Input value={draft.phone || ""} onChange={e => setDraft((d: any) => ({ ...d, phone: e.target.value }))} className="rounded-none" /></F>
-                  <F label="WhatsApp"><Input value={draft.whatsapp || ""} onChange={e => setDraft((d: any) => ({ ...d, whatsapp: e.target.value }))} className="rounded-none" /></F>
-                  <F label="Business Hours"><Textarea value={draft.hours || ""} onChange={e => setDraft((d: any) => ({ ...d, hours: e.target.value }))} className="rounded-none min-h-[80px]" /></F>
-                  <F label="Google Maps Embed URL"><Input value={draft.mapEmbed || ""} onChange={e => setDraft((d: any) => ({ ...d, mapEmbed: e.target.value }))} className="rounded-none" /></F>
-                  <ImageUploadField label="Contact Page Background Image" value={draft.bgImage || ""} onChange={v => setDraft((d: any) => ({ ...d, bgImage: v }))} />
-                </SubSection>
-              )}
 
             </div>
           )}
