@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, X, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
-import { Link } from "wouter";
+import { Play, X, ChevronLeft, ChevronRight, Volume2, VolumeX, Instagram } from "lucide-react";
 
 type Video = {
   id: number; title: string; description?: string;
@@ -16,21 +15,31 @@ const CATEGORIES = ["All", "Lookbook", "Behind the Scenes", "Product", "Campaign
 function isYouTube(url: string) {
   return url.includes("youtube.com") || url.includes("youtu.be");
 }
-
 function getYouTubeId(url: string) {
   const m = url.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/);
   return m?.[1] || "";
+}
+function isInstagram(url: string) {
+  return url.includes("instagram.com");
+}
+function getInstagramEmbedUrl(url: string) {
+  const clean = url.split("?")[0].replace(/\/$/, "");
+  return `${clean}/embed/`;
 }
 
 function VideoCard({ video, onClick, index }: { video: Video; onClick: () => void; index: number }) {
   const [hovered, setHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const thumb = video.thumbnailUrl || (isYouTube(video.videoUrl)
+
+  const ytThumb = isYouTube(video.videoUrl)
     ? `https://img.youtube.com/vi/${getYouTubeId(video.videoUrl)}/maxresdefault.jpg`
-    : null);
+    : null;
+  const thumb = video.thumbnailUrl || ytThumb;
+  const isIG = isInstagram(video.videoUrl);
+  const isYT = isYouTube(video.videoUrl);
 
   useEffect(() => {
-    if (hovered && videoRef.current && !isYouTube(video.videoUrl)) {
+    if (hovered && videoRef.current && !isYT && !isIG) {
       videoRef.current.play().catch(() => {});
     } else if (!hovered && videoRef.current) {
       videoRef.current.pause();
@@ -49,9 +58,9 @@ function VideoCard({ video, onClick, index }: { video: Video; onClick: () => voi
       onMouseLeave={() => setHovered(false)}
       onClick={onClick}
     >
-      <div className="relative aspect-[9/16] sm:aspect-video overflow-hidden bg-[#0F0F0F]">
-        {/* Preview video on hover (non-YT) */}
-        {!isYouTube(video.videoUrl) && (
+      <div className={`relative overflow-hidden bg-[#0F0F0F] ${isIG ? "aspect-[9/16]" : "aspect-video"}`}>
+        {/* Preview on hover (uploaded video only) */}
+        {!isYT && !isIG && (
           <video
             ref={videoRef}
             src={video.videoUrl}
@@ -59,17 +68,22 @@ function VideoCard({ video, onClick, index }: { video: Video; onClick: () => voi
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hovered ? "opacity-100" : "opacity-0"}`}
           />
         )}
-        {/* Thumbnail */}
+
+        {/* Thumbnail / background */}
         {thumb ? (
-          <img src={thumb} alt={video.title} className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${hovered && !isYouTube(video.videoUrl) ? "opacity-0" : "opacity-100"}`} />
+          <img src={thumb} alt={video.title}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${hovered && !isYT && !isIG ? "opacity-0" : "opacity-100"}`} />
+        ) : isIG ? (
+          /* Instagram branded bg */
+          <div className="absolute inset-0 bg-gradient-to-br from-[#405DE6] via-[#C13584] to-[#FD1D1D] opacity-60" />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1008] to-[#0F0F0F] flex items-center justify-center">
-            <Play className="w-12 h-12 text-[#D4AF37]/40" />
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1008] to-[#0F0F0F]" />
         )}
+
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
         <div className="absolute inset-0 bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/8 transition-colors duration-500" />
+
         {/* Category pill */}
         {video.category && (
           <div className="absolute top-3 left-3">
@@ -78,6 +92,16 @@ function VideoCard({ video, onClick, index }: { video: Video; onClick: () => voi
             </span>
           </div>
         )}
+
+        {/* Instagram badge */}
+        {isIG && (
+          <div className="absolute top-3 right-3">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#405DE6] via-[#C13584] to-[#FD1D1D] flex items-center justify-center">
+              <Instagram className="w-3.5 h-3.5 text-white" />
+            </div>
+          </div>
+        )}
+
         {/* Play button */}
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
@@ -85,9 +109,13 @@ function VideoCard({ video, onClick, index }: { video: Video; onClick: () => voi
             transition={{ duration: 0.25 }}
             className="w-14 h-14 rounded-full bg-white/15 backdrop-blur-sm border border-white/30 flex items-center justify-center"
           >
-            <Play className="w-5 h-5 text-white fill-white ml-1" />
+            {isIG
+              ? <Instagram className="w-5 h-5 text-white" />
+              : <Play className="w-5 h-5 text-white fill-white ml-1" />
+            }
           </motion.div>
         </div>
+
         {/* Info */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <h3 className="font-serif text-white text-base md:text-lg leading-tight line-clamp-2">{video.title}</h3>
@@ -106,6 +134,8 @@ function VideoLightbox({ video, onClose, onPrev, onNext, hasPrev, hasNext }: {
 }) {
   const [muted, setMuted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const isYT = isYouTube(video.videoUrl);
+  const isIG = isInstagram(video.videoUrl);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -130,7 +160,7 @@ function VideoLightbox({ video, onClose, onPrev, onNext, hasPrev, hasNext }: {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.25 }}
-        className="relative w-full max-w-5xl"
+        className={`relative ${isIG ? "w-full max-w-sm" : "w-full max-w-5xl"}`}
         onClick={e => e.stopPropagation()}
       >
         {/* Close */}
@@ -139,13 +169,22 @@ function VideoLightbox({ video, onClose, onPrev, onNext, hasPrev, hasNext }: {
         </button>
 
         {/* Video */}
-        <div className="relative aspect-video bg-black">
-          {isYouTube(video.videoUrl) ? (
+        <div className={`relative bg-black ${isIG ? "aspect-[9/16]" : "aspect-video"}`}>
+          {isYT ? (
             <iframe
               src={`https://www.youtube.com/embed/${getYouTubeId(video.videoUrl)}?autoplay=1&rel=0`}
               className="absolute inset-0 w-full h-full"
               allow="autoplay; fullscreen"
               allowFullScreen
+            />
+          ) : isIG ? (
+            <iframe
+              src={getInstagramEmbedUrl(video.videoUrl)}
+              className="absolute inset-0 w-full h-full"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+              scrolling="no"
+              frameBorder="0"
             />
           ) : (
             <>
@@ -169,6 +208,13 @@ function VideoLightbox({ video, onClose, onPrev, onNext, hasPrev, hasNext }: {
         {/* Info + Nav */}
         <div className="flex items-start justify-between mt-5 px-1">
           <div>
+            <div className="flex items-center gap-2 mb-1">
+              {isIG && (
+                <span className="flex items-center gap-1 text-[10px] tracking-widest uppercase text-pink-400 font-bold">
+                  <Instagram className="w-3 h-3" /> Instagram
+                </span>
+              )}
+            </div>
             <h2 className="font-serif text-white text-xl md:text-2xl">{video.title}</h2>
             {video.description && <p className="text-white/50 text-sm mt-1">{video.description}</p>}
           </div>
