@@ -23,6 +23,7 @@ import {
   Star, ChevronLeft, ChevronRight, ZoomIn, Award, Minus, Plus, Tag, Bell, CheckCircle2,
 } from "lucide-react";
 import { BackButton } from "@/components/ui/BackButton";
+import { useRecentlyViewed, recordView } from "@/hooks/useRecentlyViewed";
 
 const INR = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
 
@@ -129,6 +130,8 @@ export default function ProductDetail() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
+  const recentlyViewed = useRecentlyViewed(productId);
+
   /* ── base product ── */
   const { data: product, isLoading } = useGetProduct(productId, { query: { enabled: !!productId } });
   const { data: relatedProducts } = useGetRelatedProducts(productId, { query: { enabled: !!productId } });
@@ -162,6 +165,21 @@ export default function ProductDetail() {
     const rect = imgRef.current.getBoundingClientRect();
     setZoomPos({ x: ((e.clientX - rect.left) / rect.width) * 100, y: ((e.clientY - rect.top) / rect.height) * 100 });
   };
+
+  /* record view once product loads */
+  useEffect(() => {
+    if (!product) return;
+    recordView({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      discountPrice: (product as any).discountPrice ?? null,
+      images: (product as any).images?.length
+        ? (product as any).images
+        : ["https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=85&w=900"],
+      category: product.category ?? null,
+    });
+  }, [product?.id]);
 
   /* when variant changes reset image index */
   const selectVariant = (idx: number | null) => {
@@ -754,6 +772,58 @@ export default function ProductDetail() {
             </motion.div>
           </AnimatePresence>
         </div>
+
+        {/* ════ RECENTLY VIEWED ════ */}
+        {recentlyViewed.length > 0 && (
+          <div className="mt-20 sm:mt-28 pt-14 sm:pt-16 border-t border-[#0F0F0F]/8">
+            <div className="mb-8 sm:mb-10">
+              <p className="text-[#D4AF37] text-[10px] tracking-[0.3em] uppercase font-semibold mb-2">Your Journey</p>
+              <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-[#0F0F0F]">Recently Viewed</h2>
+            </div>
+            <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth" style={{ scrollbarWidth: "none" }}>
+              {recentlyViewed.slice(0, 5).map((p, i) => {
+                const img = p.images?.[0] || "https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=85&w=900";
+                const price = Math.round(p.price * 83);
+                const discPrice = p.discountPrice ? Math.round(p.discountPrice * 83) : null;
+                return (
+                  <motion.div
+                    key={p.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: i * 0.07 }}
+                    className="flex-shrink-0 w-44 sm:w-56 md:w-64 snap-start group"
+                  >
+                    <Link href={`/product/${p.id}`}>
+                      <div className="relative overflow-hidden bg-[#F0EDE6]" style={{ aspectRatio: "3/4" }}>
+                        <img
+                          src={img}
+                          alt={p.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                      <div className="pt-3">
+                        {p.category && (
+                          <p className="text-[8px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold mb-1">{p.category}</p>
+                        )}
+                        <p className="font-serif text-sm sm:text-base text-[#0F0F0F] leading-snug line-clamp-2 mb-1.5">{p.name}</p>
+                        <div className="flex items-center gap-2">
+                          {discPrice ? (
+                            <>
+                              <span className="text-sm font-semibold text-[#0F0F0F]">₹{discPrice.toLocaleString("en-IN")}</span>
+                              <span className="text-xs text-[#0F0F0F]/35 line-through">₹{price.toLocaleString("en-IN")}</span>
+                            </>
+                          ) : (
+                            <span className="text-sm font-semibold text-[#0F0F0F]">₹{price.toLocaleString("en-IN")}</span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ════ RELATED PRODUCTS ════ */}
         {relatedProducts && relatedProducts.length > 0 && (
