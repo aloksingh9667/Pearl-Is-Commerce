@@ -3,6 +3,9 @@ import { db } from "@workspace/db";
 import { ordersTable, cartItemsTable, productsTable, couponsTable } from "@workspace/db";
 import { eq, desc, and, sql } from "drizzle-orm";
 import { requireAuth, optionalAuth, getSessionId, requireAdmin } from "../lib/auth";
+import { sendOrderConfirmationEmail, sendOrderStatusEmail } from "../lib/mailgun";
+
+const APP_URL = process.env.APP_URL || "https://pearlis.replit.app";
 
 const router = Router();
 
@@ -120,7 +123,15 @@ router.post("/orders", async (req, res) => {
 
     await db.delete(cartItemsTable).where(eq(cartItemsTable.sessionId, sessionId));
 
-    res.status(201).json(toOrder(order));
+    const orderData = toOrder(order);
+    res.status(201).json(orderData);
+
+    // Fire-and-forget — do not await so the response is not delayed
+    if (orderData.customerEmail) {
+      sendOrderConfirmationEmail(orderData as any, APP_URL).catch((e) =>
+        console.error("Order confirmation email failed:", e)
+      );
+    }
   } catch (err) {
     req.log.error(err);
     res.status(500).json({ error: "Failed to create order" });
@@ -145,7 +156,19 @@ router.put("/orders/:id", requireAdmin, async (req, res) => {
     const { status } = req.body;
     const [order] = await db.update(ordersTable).set({ status }).where(eq(ordersTable.id, id)).returning();
     if (!order) { res.status(404).json({ error: "Not found" }); return; }
-    res.json(toOrder(order));
+    const orderData = toOrder(order);
+    res.json(orderData);
+
+    // Notify customer of status change (fire-and-forget)
+    if (orderData.customerEmail && ["confirmed", "shipped", "delivered", "cancelled"].includes(status)) {
+      sendOrderStatusEmail(
+        orderData.customerEmail,
+        orderData.customerName || "Valued Customer",
+        orderData.id,
+        status,
+        APP_URL,
+      ).catch((e) => console.error("Order status email failed:", e));
+    }
   } catch (err) {
     req.log.error(err);
     res.status(500).json({ error: "Failed to update order" });
