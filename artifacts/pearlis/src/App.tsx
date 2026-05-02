@@ -36,6 +36,7 @@ import AdminSettings from "@/pages/admin/settings";
 import AdminMessages from "@/pages/admin/messages";
 import AdminPageContent from "@/pages/admin/page-content";
 import AdminVideos from "@/pages/admin/videos";
+import AdminCategories from "@/pages/admin/categories";
 
 // Admin guard
 function AdminRoute({ component: Component }: { component: any }) {
@@ -90,6 +91,7 @@ function Router() {
       <Route path="/admin/messages">{() => <AdminRoute component={AdminMessages} />}</Route>
       <Route path="/admin/page-content">{() => <AdminRoute component={AdminPageContent} />}</Route>
       <Route path="/admin/videos">{() => <AdminRoute component={AdminVideos} />}</Route>
+      <Route path="/admin/categories">{() => <AdminRoute component={AdminCategories} />}</Route>
 
       <Route component={NotFound} />
     </Switch>

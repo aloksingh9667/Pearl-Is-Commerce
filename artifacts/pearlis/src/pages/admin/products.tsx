@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { useListProducts, useDeleteProduct, useCreateProduct, useUpdateProduct, getListProductsQueryKey } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, Plus, Edit, Trash2, X, ImagePlus, Upload, Video, PlusCircle, MinusCircle, Link2, GripVertical } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, X, ImagePlus, Upload, Video, PlusCircle, MinusCircle, Link2, GripVertical, Search } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -371,29 +371,15 @@ export default function AdminProducts() {
                           </div>
                         )}
                         {form.materialVariants.map((v, i) => (
-                          <div key={i} className="flex gap-2 items-center">
-                            <GripVertical className="w-4 h-4 text-muted-foreground/40 flex-shrink-0" />
-                            <Input
-                              value={v.name}
-                              onChange={e => updateVariant(i, "name", e.target.value)}
-                              className="rounded-none text-sm flex-1"
-                              placeholder="e.g. 18K Yellow Gold, Platinum…"
-                            />
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
-                              <Link2 className="w-3.5 h-3.5 text-muted-foreground/50" />
-                              <Input
-                                type="number"
-                                value={v.productId}
-                                onChange={e => updateVariant(i, "productId", e.target.value)}
-                                className="rounded-none text-sm w-24"
-                                placeholder="Product ID"
-                              />
-                            </div>
-                            <Button variant="ghost" size="icon" className="rounded-none h-9 w-9 text-muted-foreground hover:text-destructive flex-shrink-0"
-                              onClick={() => removeVariant(i)}>
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
+                          <VariantRow
+                            key={i}
+                            variant={v}
+                            allProducts={data?.products ?? []}
+                            currentProductId={modal.editId}
+                            onChangeName={val => updateVariant(i, "name", val)}
+                            onChangeProductId={val => updateVariant(i, "productId", val)}
+                            onRemove={() => removeVariant(i)}
+                          />
                         ))}
 
                         <div className="flex gap-2 pt-1">
@@ -643,6 +629,159 @@ function F({ label, children }: { label: string; children: React.ReactNode }) {
     <div className="space-y-2">
       <Label className="uppercase tracking-widest text-xs text-muted-foreground">{label}</Label>
       {children}
+    </div>
+  );
+}
+
+/* ── VariantRow: inline product search ── */
+function VariantRow({
+  variant, allProducts, currentProductId,
+  onChangeName, onChangeProductId, onRemove,
+}: {
+  variant: { name: string; productId: string };
+  allProducts: any[];
+  currentProductId: number | null;
+  onChangeName: (v: string) => void;
+  onChangeProductId: (v: string) => void;
+  onRemove: () => void;
+}) {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+
+  const results = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    if (!q) return allProducts.filter(p => p.id !== currentProductId).slice(0, 8);
+    return allProducts
+      .filter(p => p.id !== currentProductId && p.name.toLowerCase().includes(q))
+      .slice(0, 8);
+  }, [query, allProducts, currentProductId]);
+
+  const linked = allProducts.find(p => String(p.id) === variant.productId);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setSearchOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="flex gap-2 items-center">
+      <GripVertical className="w-4 h-4 text-muted-foreground/40 flex-shrink-0" />
+      <Input
+        value={variant.name}
+        onChange={e => onChangeName(e.target.value)}
+        className="rounded-none text-sm flex-1"
+        placeholder="e.g. 18K Yellow Gold, Platinum…"
+      />
+
+      {/* Product link area */}
+      <div ref={ref} className="relative flex items-center gap-1 flex-shrink-0">
+        <Link2 className="w-3.5 h-3.5 text-muted-foreground/50 flex-shrink-0" />
+        <div className="relative">
+          <Input
+            value={variant.productId}
+            onChange={e => onChangeProductId(e.target.value)}
+            className="rounded-none text-sm w-20 pr-6"
+            placeholder="ID"
+          />
+          {/* show ID # or the search button */}
+          <button
+            type="button"
+            onClick={() => { setQuery(""); setSearchOpen(v => !v); }}
+            className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-accent transition-colors"
+            title="Search products"
+          >
+            <Search className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Linked product badge */}
+        {linked && (
+          <span className="hidden sm:flex items-center gap-1 text-[9px] text-accent font-semibold tracking-wide max-w-[90px] truncate">
+            → {linked.name}
+          </span>
+        )}
+
+        {/* Search dropdown */}
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.15 }}
+              className="absolute top-full left-0 mt-1 z-50 bg-background border border-border shadow-lg w-72 max-h-72 overflow-y-auto"
+            >
+              <div className="sticky top-0 bg-background border-b border-border p-2">
+                <div className="flex items-center gap-2">
+                  <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                  <input
+                    autoFocus
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    placeholder="Search by product name…"
+                    className="flex-1 text-xs outline-none bg-transparent text-foreground placeholder:text-muted-foreground/60"
+                  />
+                  {query && (
+                    <button onClick={() => setQuery("")} className="text-muted-foreground hover:text-foreground">
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+              </div>
+              {results.length === 0 ? (
+                <div className="p-3 text-xs text-muted-foreground text-center">No products found</div>
+              ) : (
+                results.map(p => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => {
+                      onChangeProductId(String(p.id));
+                      if (!variant.name) onChangeName(p.name);
+                      setSearchOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-muted transition-colors ${
+                      String(p.id) === variant.productId ? "bg-accent/8" : ""
+                    }`}
+                  >
+                    <img src={p.images?.[0]} alt="" className="w-8 h-8 object-cover bg-muted flex-shrink-0"
+                      onError={e => { (e.target as HTMLImageElement).src = "https://placehold.co/32x32?text=?"; }} />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium truncate">{p.name}</p>
+                      <p className="text-[10px] text-muted-foreground capitalize">
+                        ID {p.id} · {p.category}
+                      </p>
+                    </div>
+                    {String(p.id) === variant.productId && (
+                      <span className="text-[9px] text-accent font-semibold flex-shrink-0">Selected</span>
+                    )}
+                  </button>
+                ))
+              )}
+              {variant.productId && (
+                <div className="sticky bottom-0 bg-background border-t border-border p-2">
+                  <button
+                    type="button"
+                    onClick={() => { onChangeProductId(""); setSearchOpen(false); }}
+                    className="w-full text-[10px] text-destructive hover:text-destructive/80 tracking-wide uppercase font-semibold text-center"
+                  >
+                    Remove link
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <Button variant="ghost" size="icon" className="rounded-none h-9 w-9 text-muted-foreground hover:text-destructive flex-shrink-0"
+        onClick={onRemove}>
+        <X className="w-4 h-4" />
+      </Button>
     </div>
   );
 }

@@ -3,18 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingBag, User as UserIcon, Menu, X, Heart, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useGetCart } from "@workspace/api-client-react";
-
-/* ── Dropdown config ── */
-const JEWELLERY_ITEMS = [
-  { label: "All Jewellery", href: "/shop" },
-  { label: "Rings", href: "/category/rings" },
-  { label: "Necklaces", href: "/category/necklaces" },
-  { label: "Pendants", href: "/category/pendants" },
-  { label: "Bracelets", href: "/category/bracelets" },
-  { label: "Earrings", href: "/category/earrings" },
-  { label: "Accessories", href: "/category/accessories" },
-];
+import { useGetCart, useListCategories } from "@workspace/api-client-react";
 
 const EXPLORE_ITEMS = [
   { label: "Gallery", href: "/gallery" },
@@ -27,7 +16,7 @@ const PLAIN_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
-/* ── Desktop dropdown component ── */
+/* ── Desktop dropdown ── */
 function NavDropdown({
   label, items, isTransparent, activeHrefs,
 }: {
@@ -49,19 +38,14 @@ function NavDropdown({
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className="relative"
+    <div ref={ref} className="relative"
       onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <button
-        className={`relative flex items-center gap-1 text-[10.5px] font-semibold tracking-[0.18em] uppercase transition-colors duration-250 group pb-0.5 ${
-          isTransparent
-            ? isActive ? "text-[#D4AF37]" : "text-white hover:text-[#D4AF37]"
-            : isActive ? "text-[#D4AF37]" : "text-[#0F0F0F] hover:text-[#D4AF37]"
-        }`}
-      >
+      onMouseLeave={() => setOpen(false)}>
+      <button className={`relative flex items-center gap-1 text-[10.5px] font-semibold tracking-[0.18em] uppercase transition-colors duration-250 group pb-0.5 ${
+        isTransparent
+          ? isActive ? "text-[#D4AF37]" : "text-white hover:text-[#D4AF37]"
+          : isActive ? "text-[#D4AF37]" : "text-[#0F0F0F] hover:text-[#D4AF37]"
+      }`}>
         {label}
         <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
         <span className={`absolute -bottom-0.5 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"}`} />
@@ -78,12 +62,8 @@ function NavDropdown({
           >
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-white border-l border-t border-[#D4AF37]/20" />
             {items.map(item => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className="block px-5 py-2.5 text-[10.5px] tracking-[0.15em] uppercase font-semibold text-[#0F0F0F]/70 hover:text-[#D4AF37] hover:bg-[#FAF8F3] transition-colors duration-150"
-              >
+              <Link key={item.href} href={item.href} onClick={() => setOpen(false)}
+                className="block px-5 py-2.5 text-[10.5px] tracking-[0.15em] uppercase font-semibold text-[#0F0F0F]/70 hover:text-[#D4AF37] hover:bg-[#FAF8F3] transition-colors duration-150">
                 {item.label}
               </Link>
             ))}
@@ -105,7 +85,18 @@ export function Navbar() {
   const { user } = useAuth();
 
   const { data: cart } = useGetCart({ query: { retry: false } });
+  const { data: categoriesData } = useListCategories({ query: { staleTime: 60_000 } });
+
   const cartItemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+  /* Build jewellery items dynamically from DB categories */
+  const jewelleryItems = [
+    { label: "All Jewellery", href: "/shop" },
+    ...((categoriesData as any[] | undefined) ?? []).map((c: any) => ({
+      label: c.name,
+      href: `/category/${c.slug}`,
+    })),
+  ];
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 80);
@@ -116,7 +107,7 @@ export function Navbar() {
   const isHome = location === "/";
   const isTransparent = isHome && !isScrolled;
 
-  const jewelleryActive = JEWELLERY_ITEMS.some(i => location === i.href);
+  const jewelleryActive = jewelleryItems.some(i => location === i.href);
   const exploreActive = EXPLORE_ITEMS.some(i => location === i.href);
 
   return (
@@ -146,7 +137,6 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden xl:flex items-center gap-6">
-            {/* Home */}
             <Link href="/" className={`relative text-[10.5px] font-semibold tracking-[0.18em] uppercase transition-colors duration-250 group ${
               isTransparent ? (location === "/" ? "text-[#D4AF37]" : "text-white hover:text-[#D4AF37]") : (location === "/" ? "text-[#D4AF37]" : "text-[#0F0F0F] hover:text-[#D4AF37]")
             }`}>
@@ -154,7 +144,6 @@ export function Navbar() {
               <span className={`absolute -bottom-0.5 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${location === "/" ? "w-full" : "w-0 group-hover:w-full"}`} />
             </Link>
 
-            {/* Shop */}
             <Link href="/shop" className={`relative text-[10.5px] font-semibold tracking-[0.18em] uppercase transition-colors duration-250 group ${
               isTransparent ? (location === "/shop" ? "text-[#D4AF37]" : "text-white hover:text-[#D4AF37]") : (location === "/shop" ? "text-[#D4AF37]" : "text-[#0F0F0F] hover:text-[#D4AF37]")
             }`}>
@@ -162,23 +151,9 @@ export function Navbar() {
               <span className={`absolute -bottom-0.5 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${location === "/shop" ? "w-full" : "w-0 group-hover:w-full"}`} />
             </Link>
 
-            {/* Jewellery dropdown */}
-            <NavDropdown
-              label="Jewellery"
-              items={JEWELLERY_ITEMS}
-              isTransparent={isTransparent}
-              activeHrefs={JEWELLERY_ITEMS.map(i => i.href)}
-            />
+            <NavDropdown label="Jewellery" items={jewelleryItems} isTransparent={isTransparent} activeHrefs={jewelleryItems.map(i => i.href)} />
+            <NavDropdown label="Explore" items={EXPLORE_ITEMS} isTransparent={isTransparent} activeHrefs={EXPLORE_ITEMS.map(i => i.href)} />
 
-            {/* Explore dropdown */}
-            <NavDropdown
-              label="Explore"
-              items={EXPLORE_ITEMS}
-              isTransparent={isTransparent}
-              activeHrefs={EXPLORE_ITEMS.map(i => i.href)}
-            />
-
-            {/* Plain links */}
             {PLAIN_LINKS.map(link => (
               <Link key={link.href} href={link.href} className={`relative text-[10.5px] font-semibold tracking-[0.18em] uppercase transition-colors duration-250 group ${
                 isTransparent ? (location === link.href ? "text-[#D4AF37]" : "text-white hover:text-[#D4AF37]") : (location === link.href ? "text-[#D4AF37]" : "text-[#0F0F0F] hover:text-[#D4AF37]")
@@ -244,12 +219,12 @@ export function Navbar() {
                 </button>
               </div>
               <div className="px-5 py-4">
-                <p className="text-[9px] tracking-[0.25em] uppercase text-[#0F0F0F]/35 mb-3">Popular Searches</p>
+                <p className="text-[9px] tracking-[0.25em] uppercase text-[#0F0F0F]/35 mb-3">Browse by Category</p>
                 <div className="flex flex-wrap gap-2">
-                  {["Diamond Ring", "Gold Necklace", "Pearl Bracelet", "Emerald Pendant", "Gold Earrings"].map(term => (
-                    <button key={term} onClick={() => { window.location.href = `/shop?q=${encodeURIComponent(term)}`; }}
-                      className="text-[11px] px-3 py-1.5 border border-[#D4AF37]/25 text-[#0F0F0F]/65 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors tracking-wide">
-                      {term}
+                  {jewelleryItems.slice(1).map(item => (
+                    <button key={item.href} onClick={() => { window.location.href = item.href; }}
+                      className="text-[11px] px-3 py-1.5 border border-[#D4AF37]/25 text-[#0F0F0F]/65 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors tracking-wide capitalize">
+                      {item.label}
                     </button>
                   ))}
                 </div>
@@ -274,25 +249,20 @@ export function Navbar() {
                   <p className="font-serif text-xl tracking-[0.3em] font-bold text-[#0F0F0F]">PEARLIS</p>
                   <p className="text-[7.5px] tracking-[0.4em] uppercase text-[#D4AF37]">Fine Jewellery</p>
                 </div>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="text-[#0F0F0F]/50 hover:text-[#0F0F0F]">
-                  <X className="w-5 h-5" />
-                </button>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="text-[#0F0F0F]/50 hover:text-[#0F0F0F]"><X className="w-5 h-5" /></button>
               </div>
 
               <div className="flex-1 overflow-y-auto py-4 px-6 space-y-0">
-                {/* Home */}
                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center py-3.5 border-b border-[#0F0F0F]/6 text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${location === "/" ? "text-[#D4AF37]" : "text-[#0F0F0F]/75 hover:text-[#D4AF37]"}`}>
                   Home
                 </Link>
-
-                {/* Shop */}
                 <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center py-3.5 border-b border-[#0F0F0F]/6 text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${location === "/shop" ? "text-[#D4AF37]" : "text-[#0F0F0F]/75 hover:text-[#D4AF37]"}`}>
                   Shop
                 </Link>
 
-                {/* Jewellery accordion */}
+                {/* Jewellery accordion — dynamic */}
                 <div className="border-b border-[#0F0F0F]/6">
                   <button onClick={() => setMobileJewelleryOpen(v => !v)}
                     className={`w-full flex items-center justify-between py-3.5 text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${jewelleryActive ? "text-[#D4AF37]" : "text-[#0F0F0F]/75 hover:text-[#D4AF37]"}`}>
@@ -304,9 +274,9 @@ export function Navbar() {
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}
                         className="overflow-hidden">
                         <div className="pl-4 pb-2 space-y-0">
-                          {JEWELLERY_ITEMS.map(item => (
+                          {jewelleryItems.map(item => (
                             <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center py-2.5 text-[10px] tracking-[0.15em] uppercase font-medium transition-colors ${location === item.href ? "text-[#D4AF37]" : "text-[#0F0F0F]/60 hover:text-[#D4AF37]"}`}>
+                              className={`flex items-center py-2.5 text-[10px] tracking-[0.15em] uppercase font-medium transition-colors capitalize ${location === item.href ? "text-[#D4AF37]" : "text-[#0F0F0F]/60 hover:text-[#D4AF37]"}`}>
                               {item.label}
                             </Link>
                           ))}
@@ -340,7 +310,6 @@ export function Navbar() {
                   </AnimatePresence>
                 </div>
 
-                {/* Plain links */}
                 {PLAIN_LINKS.map(link => (
                   <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center py-3.5 border-b border-[#0F0F0F]/6 text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${location === link.href ? "text-[#D4AF37]" : "text-[#0F0F0F]/75 hover:text-[#D4AF37]"}`}>
