@@ -1,8 +1,9 @@
 import { Link } from "wouter";
-import { Product, useAddToCart, useAddToWishlist, useRemoveFromWishlist, useGetWishlist } from "@workspace/api-client-react";
+import { Product, useAddToCart, useAddToWishlist, useRemoveFromWishlist, useGetWishlist, getGetCartQueryKey } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
 import { Heart, Star, ShoppingBag, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ProductCardProps {
   product: Product;
@@ -22,6 +23,7 @@ export function ProductCard({ product, index = 0, showCartButton = true }: Produ
   const removeFromWishlist = useRemoveFromWishlist();
   const { data: wishlist } = useGetWishlist();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const isWishlisted = wishlist?.some((w: any) => w.id === product.id);
 
@@ -31,7 +33,10 @@ export function ProductCard({ product, index = 0, showCartButton = true }: Produ
     addToCart.mutate(
       { data: { productId: product.id, quantity: 1 } },
       {
-        onSuccess: () => toast({ title: "Added to bag", description: product.name }),
+        onSuccess: (updatedCart) => {
+          queryClient.setQueryData(getGetCartQueryKey(), updatedCart);
+          toast({ title: "Added to bag", description: product.name });
+        },
         onError: () => toast({ title: "Could not add to bag", variant: "destructive" }),
       }
     );

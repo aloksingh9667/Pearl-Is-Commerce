@@ -7,7 +7,9 @@ import {
   useAddToWishlist,
   useRemoveFromWishlist,
   useGetWishlist,
+  getGetCartQueryKey,
 } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ui/ProductCard";
@@ -59,6 +61,7 @@ export default function ProductDetail() {
   const addToCart = useAddToCart();
   const addToWishlist = useAddToWishlist();
   const removeFromWishlist = useRemoveFromWishlist();
+  const queryClient = useQueryClient();
 
   /* ── variant-linked product ── */
   const variants: Variant[] = product ? parseVariants((product as any).materialVariants) : [];
@@ -92,7 +95,11 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     const cartProductId = linkedProductId ?? productId;
     addToCart.mutate({ data: { productId: cartProductId, quantity } }, {
-      onSuccess: () => toast({ title: "Added to bag", description: `${dp?.name} × ${quantity}` }),
+      onSuccess: (updatedCart) => {
+        queryClient.setQueryData(getGetCartQueryKey(), updatedCart);
+        toast({ title: "Added to bag", description: `${dp?.name} × ${quantity}` });
+      },
+      onError: () => toast({ title: "Could not add to bag", variant: "destructive" }),
     });
   };
 

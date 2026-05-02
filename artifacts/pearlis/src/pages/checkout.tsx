@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useGetCart, useCreateOrder } from "@workspace/api-client-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Tag, CheckCircle2, Truck, Shield, CreditCard, Banknote } from "lucide-react";
+import { Loader2, Tag, CheckCircle2, Truck, Shield, CreditCard, Banknote, MapPin } from "lucide-react";
 import { BackButton } from "@/components/ui/BackButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetSettings } from "@/lib/adminApi";
+import { useAuth } from "@/contexts/AuthContext";
 
 declare global {
   interface Window {
@@ -42,9 +43,15 @@ async function validateCoupon(code: string, subtotalINR: number) {
   return res.json() as Promise<{ valid: boolean; discountType: string; discountValue: number; discount: number; message: string }>;
 }
 
+type SavedAddress = {
+  id: number; name: string; line1: string; line2?: string;
+  city: string; state: string; postalCode: string; country: string; phone: string; isDefault?: boolean;
+};
+
 export default function Checkout() {
   const { data: cart, isLoading: cartLoading } = useGetCart();
   const { data: settings } = useGetSettings();
+  const { user } = useAuth();
   const createOrder = useCreateOrder();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -56,6 +63,49 @@ export default function Checkout() {
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState<null | { code: string; discount: number; message: string }>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  const [razorpayLoading, setRazorpayLoading] = useState(false);
+
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [selectedAddrId, setSelectedAddrId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const token = localStorage.getItem("token");
+    fetch("/api/users/addresses", { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => { if (!r.ok) throw new Error("unauth"); return r.json(); })
+      .then((data: SavedAddress[]) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setSavedAddresses(data);
+          const def = data.find(a => a.isDefault) || data[0];
+          setSelectedAddrId(def.id);
+          setForm({
+            name: def.name || "",
+            line1: def.line1 || "",
+            line2: def.line2 || "",
+            city: def.city || "",
+            state: def.state || "",
+            postalCode: def.postalCode || "",
+            country: def.country || "India",
+            phone: def.phone || "",
+          });
+        }
+      })
+      .catch(() => {});
+  }, [user]);
+
+  const handleSelectAddress = (addr: SavedAddress) => {
+    setSelectedAddrId(addr.id);
+    setForm({
+      name: addr.name || "",
+      line1: addr.line1 || "",
+      line2: addr.line2 || "",
+      city: addr.city || "",
+      state: addr.state || "",
+      postalCode: addr.postalCode || "",
+      country: addr.country || "India",
+      phone: addr.phone || "",
+    });
+  };
 
   const codEnabled = settings?.payment?.codEnabled !== false;
   const razorpayEnabled = settings?.payment?.razorpayEnabled === true;
@@ -87,8 +137,6 @@ export default function Checkout() {
   const subtotalINR = cart ? INR(cart.subtotal) : 0;
   const discountINR = couponApplied?.discount || 0;
   const totalINR = Math.max(0, subtotalINR - discountINR);
-
-  const [razorpayLoading, setRazorpayLoading] = useState(false);
 
   const placeOrderDirectly = useCallback((extraData?: Record<string, any>) => {
     createOrder.mutate(
@@ -198,6 +246,12 @@ export default function Checkout() {
     placeOrderDirectly();
   };
 
+  useEffect(() => {
+    if (!cartLoading && (!cart || cart.items.length === 0)) {
+      setLocation("/cart");
+    }
+  }, [cart, cartLoading, setLocation]);
+
   if (cartLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -207,7 +261,6 @@ export default function Checkout() {
   }
 
   if (!cart || cart.items.length === 0) {
-    setLocation("/cart");
     return null;
   }
 
@@ -236,6 +289,50 @@ export default function Checkout() {
                   <span className="w-7 h-7 rounded-full bg-accent text-accent-foreground text-xs flex items-center justify-center font-bold">1</span>
                   Shipping Details
                 </h2>
+
+                {/* Saved addresses – only shown when logged in and addresses exist */}
+                {savedAddresses.length > 0 && (
+                  <div className="mb-6">
+                    <p className="uppercase tracking-widest text-xs text-muted-foreground mb-3 flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5" /> Saved Addresses
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {savedAddresses.map(addr => (
+                        <button
+                          key={addr.id}
+                          type="button"
+                          onClick={() => handleSelectAddress(addr)}
+                          className={`text-left p-4 border transition-colors ${
+                            selectedAddrId === addr.id
+                              ? "border-accent bg-accent/5"
+                              : "border-border hover:border-accent/50"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="font-medium text-sm truncate">{addr.name}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                                {addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}<br />
+                                {addr.city}, {addr.state} – {addr.postalCode}
+                              </p>
+                              {addr.phone && (
+                                <p className="text-xs text-muted-foreground mt-0.5">{addr.phone}</p>
+                              )}
+                            </div>
+                            {selectedAddrId === addr.id && (
+                              <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                            )}
+                          </div>
+                          {addr.isDefault && (
+                            <span className="mt-2 inline-block text-[10px] uppercase tracking-widest text-accent border border-accent px-1.5 py-0.5">Default</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-3">Or edit the fields below to use a different address.</p>
+                  </div>
+                )}
+
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="uppercase tracking-widest text-xs text-muted-foreground">Full Name *</Label>
