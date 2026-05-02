@@ -267,7 +267,7 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <div style={{ height: "100px" }} />
+      <div style={{ height: "124px" }} />
 
       <div className="flex-1 pb-24">
         <div className="container mx-auto px-4 max-w-7xl">

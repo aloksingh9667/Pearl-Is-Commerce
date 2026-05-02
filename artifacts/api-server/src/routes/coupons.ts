@@ -43,6 +43,22 @@ router.post("/coupons", requireAdmin, async (req, res) => {
   }
 });
 
+// PATCH /coupons/:id — toggle isActive
+router.patch("/coupons/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { isActive } = req.body;
+    const [coupon] = await db.update(couponsTable)
+      .set({ isActive })
+      .where(eq(couponsTable.id, id))
+      .returning();
+    res.json(toCoupon(coupon));
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ error: "Failed to update coupon" });
+  }
+});
+
 router.delete("/coupons/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);

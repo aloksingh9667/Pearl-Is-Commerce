@@ -87,7 +87,7 @@ export default function AdminSettings() {
         </nav>
 
         {/* Content */}
-        <div className="flex-1 bg-card border border-border p-6">
+        <div className="flex-1 bg-card border border-border p-6 overflow-y-auto">
           {/* BRANDING */}
           {activeTab === "branding" && (
             <Section title="Branding" onSave={() => save("branding")} saving={saving}>

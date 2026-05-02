@@ -53,10 +53,14 @@ const DEFAULT_SETTINGS: Record<string, any> = {
   videos: [] as Array<{ title: string; url: string; thumbnail: string }>,
   atelierVideo: "",
   flashSale: {
-    enabled: true,
+    enabled: false,
     title: "Flash Sale",
     subtitle: "Up to 30% Off",
+    promoText: "Today Only — Use code PEARLIS10 at checkout",
     endsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+    code: "PEARLIS10",
+    ctaText: "Shop the Sale",
+    ctaLink: "/shop",
   },
 };
 
