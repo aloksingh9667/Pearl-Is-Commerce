@@ -12,8 +12,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import {
   ArrowRight, Star, Shield, Truck, RefreshCcw, Award, Gem,
-  Clock, Instagram, Play, ChevronLeft, ChevronRight,
+  Clock, Instagram, Play, ChevronLeft, ChevronRight, ExternalLink,
 } from "lucide-react";
+import { useGetSettings } from "@/lib/adminApi";
 
 /* ══════════════════════════════════════════════════════════
    CATEGORIES CAROUSEL
@@ -336,13 +337,35 @@ function HeroSlider() {
 /* ══════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════ */
+function getYouTubeId(url: string) {
+  const m = url.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/);
+  return m?.[1] || "";
+}
+
 export default function Home() {
   const { data: featured } = useGetFeaturedProducts();
   const { data: trending } = useGetTrendingProducts();
   const { data: arrivals } = useGetNewArrivals();
   const { data: blogsData } = useListBlogs();
+  const { data: settings } = useGetSettings();
   const saleEnd = new Date(Date.now() + 23 * 3600000 + 47 * 60000 + 33000);
   const { h, m, s } = useCountdown(saleEnd);
+
+  const igEnabled = settings?.instagram?.enabled !== false;
+  const igUsername = settings?.instagram?.username || "pearlisjewels";
+  const igPosts = settings?.instagram?.posts?.filter(Boolean) || [];
+  const DEFAULT_IG = [
+    "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=400&h=400",
+    "https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=80&w=400&h=400",
+    "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=400&h=400",
+    "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&q=80&w=400&h=400",
+    "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=400&h=400",
+    "https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=80&w=400&h=400",
+  ];
+  const displayPosts = igPosts.length > 0 ? igPosts : DEFAULT_IG;
+
+  const settingsVideos = (settings?.videos || []).filter(v => v.url);
+
 
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col overflow-x-hidden">
@@ -657,36 +680,83 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 11. INSTAGRAM STRIP ── */}
-      <section className="py-14 md:py-20 bg-white">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-8">
-          <motion.div {...fadeUp()} className="text-center mb-8 md:mb-12">
-            <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-3">Follow Us</p>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Instagram className="w-5 h-5 text-[#D4AF37]" strokeWidth={1.5} />
-              <h2 className="font-serif text-2xl md:text-3xl text-[#0F0F0F]">@pearlisjewels</h2>
+      {/* ── 11. YOUTUBE VIDEOS ── */}
+      {settingsVideos.length > 0 && (
+        <section className="py-14 md:py-20 bg-[#0F0F0F]">
+          <div className="max-w-[1440px] mx-auto px-4 md:px-8">
+            <motion.div {...fadeUp()} className="text-center mb-10 md:mb-14">
+              <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-3">Watch & Discover</p>
+              <h2 className="font-serif text-3xl md:text-4xl text-white">Our Videos</h2>
+              <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-4" />
+            </motion.div>
+            <div className={`grid gap-4 md:gap-6 ${settingsVideos.length === 1 ? "grid-cols-1 max-w-2xl mx-auto" : settingsVideos.length === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}`}>
+              {settingsVideos.map((video, i) => {
+                const ytId = getYouTubeId(video.url);
+                const thumb = video.thumbnail && !video.thumbnail.includes("...") ? video.thumbnail : (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : "");
+                const embedUrl = ytId ? `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0` : video.url;
+                return (
+                  <motion.div key={i} {...fadeUp(i * 0.1)} className="group relative">
+                    <a href={video.url} target="_blank" rel="noopener noreferrer" className="block relative aspect-video overflow-hidden bg-[#1a1a1a]">
+                      {thumb ? (
+                        <img src={thumb} alt={video.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100" />
+                      ) : (
+                        <div className="w-full h-full bg-[#1a1a1a]" />
+                      )}
+                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
+                        <div className="w-14 h-14 rounded-full bg-[#D4AF37]/90 group-hover:bg-[#D4AF37] flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg">
+                          <Play className="w-5 h-5 text-white ml-1" fill="white" />
+                        </div>
+                      </div>
+                    </a>
+                    {video.title && (
+                      <p className="mt-3 text-white/80 text-sm font-medium text-center tracking-wide">{video.title}</p>
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
-            <p className="text-[#0F0F0F]/45 text-xs">Tag us in your photos for a chance to be featured</p>
-          </motion.div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 md:gap-2">
-            {[
-              "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=400&h=400",
-              "https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=80&w=400&h=400",
-              "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=400&h=400",
-              "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&q=80&w=400&h=400",
-              "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=400&h=400",
-              "https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=80&w=400&h=400",
-            ].map((src, i) => (
-              <motion.div key={i} {...fadeUp(i * 0.06)} className="group relative aspect-square overflow-hidden">
-                <img src={src} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-[#0F0F0F]/0 group-hover:bg-[#0F0F0F]/40 flex items-center justify-center transition-all duration-300">
-                  <Instagram className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1.5} />
-                </div>
-              </motion.div>
-            ))}
+            <motion.div {...fadeUp(0.2)} className="text-center mt-10">
+              <Link href="/videos" className="inline-flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase font-bold text-[#D4AF37] border border-[#D4AF37]/40 hover:border-[#D4AF37] px-7 py-3 transition-all duration-300 hover:bg-[#D4AF37]/10">
+                View All Videos <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* ── 12. INSTAGRAM STRIP ── */}
+      {igEnabled && (
+        <section className="py-14 md:py-20 bg-white">
+          <div className="max-w-[1440px] mx-auto px-4 md:px-8">
+            <motion.div {...fadeUp()} className="text-center mb-8 md:mb-12">
+              <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-3">Follow Us</p>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Instagram className="w-5 h-5 text-[#D4AF37]" strokeWidth={1.5} />
+                <h2 className="font-serif text-2xl md:text-3xl text-[#0F0F0F]">@{igUsername}</h2>
+              </div>
+              <p className="text-[#0F0F0F]/45 text-xs mb-5">Tag us in your photos for a chance to be featured</p>
+              <a
+                href={`https://instagram.com/${igUsername}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#405DE6] via-[#C13584] to-[#FD1D1D] text-white text-[10px] tracking-[0.2em] uppercase font-bold px-6 py-2.5 transition-opacity hover:opacity-90"
+              >
+                <Instagram className="w-3.5 h-3.5" /> Follow Us on Instagram
+              </a>
+            </motion.div>
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 md:gap-2">
+              {displayPosts.slice(0, 6).map((src, i) => (
+                <motion.div key={i} {...fadeUp(i * 0.06)} className="group relative aspect-square overflow-hidden">
+                  <img src={src} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-[#0F0F0F]/0 group-hover:bg-[#0F0F0F]/40 flex items-center justify-center transition-all duration-300">
+                    <Instagram className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1.5} />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── 12. BLOG ── */}
       {blogsData && blogsData.blogs.length > 0 && (

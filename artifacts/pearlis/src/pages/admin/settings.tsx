@@ -307,19 +307,23 @@ export default function AdminSettings() {
                         update("videos", vids);
                       }} className="rounded-none" placeholder="Behind the Scenes..." />
                     </Field>
-                    <Field label="YouTube Embed URL">
+                    <Field label="YouTube URL">
                       <Input value={video.url} onChange={e => {
                         const vids = [...(draft.videos || [])];
-                        vids[i] = { ...vids[i], url: e.target.value };
+                        const url = e.target.value;
+                        const ytIdMatch = url.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/);
+                        const ytId = ytIdMatch?.[1] || "";
+                        const autoThumb = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : vids[i].thumbnail;
+                        vids[i] = { ...vids[i], url, thumbnail: vids[i].thumbnail || autoThumb };
                         update("videos", vids);
-                      }} className="rounded-none" placeholder="https://www.youtube.com/embed/..." />
+                      }} className="rounded-none" placeholder="https://youtu.be/... or https://youtube.com/watch?v=..." />
                     </Field>
-                    <Field label="Thumbnail Image URL">
+                    <Field label="Thumbnail Image URL (auto-filled from YouTube)">
                       <Input value={video.thumbnail} onChange={e => {
                         const vids = [...(draft.videos || [])];
                         vids[i] = { ...vids[i], thumbnail: e.target.value };
                         update("videos", vids);
-                      }} className="rounded-none" placeholder="https://img.youtube.com/vi/.../maxresdefault.jpg" />
+                      }} className="rounded-none" placeholder="Auto-generated from YouTube URL" />
                     </Field>
                   </div>
                 ))}

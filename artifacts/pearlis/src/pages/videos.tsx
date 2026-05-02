@@ -240,10 +240,29 @@ export default function VideosPage() {
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("/api/videos")
-      .then(r => r.json())
-      .then(data => { setVideos(Array.isArray(data) ? data : []); setLoading(false); })
-      .catch(() => setLoading(false));
+    Promise.all([
+      fetch("/api/videos").then(r => r.json()).catch(() => []),
+      fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+    ]).then(([tableVideos, settings]) => {
+      const dbVideos: Video[] = Array.isArray(tableVideos) ? tableVideos : [];
+      const settingsVideos: Video[] = ((settings?.videos as any[]) || [])
+        .filter((v: any) => v.url)
+        .map((v: any, i: number) => {
+          const ytId = getYouTubeId(v.url);
+          return {
+            id: -(i + 1),
+            title: v.title || "Video",
+            videoUrl: v.url,
+            thumbnailUrl: (v.thumbnail && !v.thumbnail.includes("...")) ? v.thumbnail : (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : ""),
+            isPublished: true,
+            createdAt: new Date().toISOString(),
+          };
+        });
+      const existingUrls = new Set(dbVideos.map(v => v.videoUrl));
+      const merged = [...dbVideos, ...settingsVideos.filter(v => !existingUrls.has(v.videoUrl))];
+      setVideos(merged);
+      setLoading(false);
+    });
   }, []);
 
   const filtered = activeCategory === "All"
