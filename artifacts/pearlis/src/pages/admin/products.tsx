@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, Plus, Edit, Trash2, X, ImagePlus, Upload, Video, PlusCircle, MinusCircle } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, X, ImagePlus, Upload, Video, PlusCircle, MinusCircle, Check } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +18,21 @@ const fmt = (inr: number) => `₹${inr.toLocaleString("en-IN")}`;
 const fromINR = (inr: number) => inr / 83;
 
 type Spec = { key: string; value: string };
+
+const ALL_RING_SIZES = ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
+const ALL_NECKLACE_LENGTHS = ["14\"", "16\"", "18\"", "20\"", "22\"", "24\""];
+const ALL_MATERIAL_VARIANTS = [
+  "14K Yellow Gold",
+  "18K Yellow Gold",
+  "18K White Gold",
+  "18K Rose Gold",
+  "22K Yellow Gold",
+  "Platinum",
+  "Sterling Silver",
+  "Diamond",
+];
+
+const CATEGORIES = ["rings", "necklaces", "bracelets", "earrings", "pendants", "accessories"] as const;
 
 type ProductForm = {
   name: string; description: string; category: string; material: string;
@@ -29,6 +44,8 @@ type ProductForm = {
   craftStory: string;
   craftPoints: string[];
   shippingInfo: string;
+  sizes: string[];
+  materialVariants: string[];
 };
 
 const DEFAULT_CRAFT_POINTS = [
@@ -51,7 +68,7 @@ Easy 30-Day Returns
 Not in love with your purchase? Return it within 30 days in original, unworn condition. We'll arrange a free pickup and process your refund within 5–7 business days.`;
 
 const emptyForm: ProductForm = {
-  name: "", description: "", category: "rings", material: "18K Gold",
+  name: "", description: "", category: "rings", material: "18K Yellow Gold",
   price: "", discountPrice: "", stock: "0",
   images: [""], videoUrl: "",
   isNew: false, isTrending: false, isFeatured: false,
@@ -60,6 +77,8 @@ const emptyForm: ProductForm = {
   craftStory: "Each Pearlis piece is handcrafted by master artisans with decades of experience, combining traditional Indian jewellery techniques with contemporary design sensibilities.",
   craftPoints: [...DEFAULT_CRAFT_POINTS],
   shippingInfo: DEFAULT_SHIPPING_INFO,
+  sizes: [],
+  materialVariants: ["18K Yellow Gold"],
 };
 
 function toForm(p: any): ProductForm {
@@ -67,7 +86,7 @@ function toForm(p: any): ProductForm {
     name: p.name || "",
     description: p.description || "",
     category: p.category || "rings",
-    material: p.material || "18K Gold",
+    material: p.material || "18K Yellow Gold",
     price: p.price ? String(toINR(p.price)) : "",
     discountPrice: p.discountPrice ? String(toINR(p.discountPrice)) : "",
     stock: String(p.stock || 0),
@@ -81,11 +100,17 @@ function toForm(p: any): ProductForm {
     craftStory: p.craftStory || emptyForm.craftStory,
     craftPoints: p.craftPoints?.length ? p.craftPoints : [...DEFAULT_CRAFT_POINTS],
     shippingInfo: p.shippingInfo || DEFAULT_SHIPPING_INFO,
+    sizes: p.sizes || [],
+    materialVariants: p.materialVariants?.length ? p.materialVariants : ["18K Yellow Gold"],
   };
 }
 
-const TABS = ["Basic Info", "Description", "Specifications", "Shipping & Returns", "Media"] as const;
+const TABS = ["Basic Info", "Variants", "Description", "Specifications", "Shipping & Returns", "Media"] as const;
 type Tab = typeof TABS[number];
+
+function adminToken() {
+  return localStorage.getItem("token") || "";
+}
 
 export default function AdminProducts() {
   const { data, isLoading } = useListProducts({ limit: 200 });
@@ -100,31 +125,47 @@ export default function AdminProducts() {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("Basic Info");
   const [uploading, setUploading] = useState(false);
+  const [imgUploading, setImgUploading] = useState(false);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const imgInputRef = useRef<HTMLInputElement>(null);
 
   const openAdd = () => { setForm(emptyForm); setActiveTab("Basic Info"); setModal({ open: true, editId: null }); };
   const openEdit = (product: any) => { setForm(toForm(product)); setActiveTab("Basic Info"); setModal({ open: true, editId: product.id }); };
   const closeModal = () => setModal({ open: false, editId: null });
   const set = (field: keyof ProductForm, value: any) => setForm(f => ({ ...f, [field]: value }));
 
-  const handleVideoUpload = async (file: File) => {
-    setUploading(true);
+  const toggleSize = (s: string) => {
+    set("sizes", form.sizes.includes(s) ? form.sizes.filter(x => x !== s) : [...form.sizes, s]);
+  };
+
+  const toggleMaterialVariant = (m: string) => {
+    set("materialVariants", form.materialVariants.includes(m) ? form.materialVariants.filter(x => x !== m) : [...form.materialVariants, m]);
+  };
+
+  const handleFileUpload = async (file: File, kind: "video" | "image") => {
+    const setter = kind === "video" ? setUploading : setImgUploading;
+    setter(true);
     try {
       const fd = new FormData();
       fd.append("file", file);
       const res = await fetch("/api/upload", {
         method: "POST",
-        headers: { "x-admin-token": btoa("admin@pearlis.com:Pearl@Admin2024") },
+        headers: { Authorization: `Bearer ${adminToken()}` },
         body: fd,
       });
       if (!res.ok) throw new Error("Upload failed");
       const { url } = await res.json();
-      set("videoUrl", url);
-      toast({ title: "Video uploaded!" });
+      if (kind === "video") {
+        set("videoUrl", url);
+        toast({ title: "Video uploaded!" });
+      } else {
+        set("images", [...form.images.filter(Boolean), url]);
+        toast({ title: "Image uploaded!" });
+      }
     } catch {
       toast({ title: "Upload failed", variant: "destructive" });
     } finally {
-      setUploading(false);
+      setter(false);
     }
   };
 
@@ -154,6 +195,8 @@ export default function AdminProducts() {
       craftStory: form.craftStory || undefined,
       craftPoints: form.craftPoints.filter(Boolean),
       shippingInfo: form.shippingInfo || undefined,
+      sizes: form.sizes,
+      materialVariants: form.materialVariants,
     };
 
     const invalidate = () => queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
@@ -182,6 +225,9 @@ export default function AdminProducts() {
     pts[i] = val;
     set("craftPoints", pts);
   };
+
+  const isRing = form.category === "rings";
+  const isNecklace = form.category === "necklaces" || form.category === "bracelets";
 
   return (
     <AdminLayout>
@@ -248,7 +294,7 @@ export default function AdminProducts() {
         )}
       </div>
 
-      {/* Modal */}
+      {/* ── Modal ── */}
       <AnimatePresence>
         {modal.open && (
           <motion.div
@@ -277,7 +323,7 @@ export default function AdminProducts() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-3 text-xs uppercase tracking-widest whitespace-nowrap transition-colors ${
+                    className={`px-3 py-3 text-[10px] uppercase tracking-widest whitespace-nowrap transition-colors ${
                       activeTab === tab
                         ? "border-b-2 border-accent text-accent font-semibold"
                         : "text-muted-foreground hover:text-foreground"
@@ -301,8 +347,8 @@ export default function AdminProducts() {
                         <Select value={form.category} onValueChange={v => set("category", v)}>
                           <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            {["rings","necklaces","bracelets","earrings","pendants","accessories"].map(c => (
-                              <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>
+                            {CATEGORIES.map(c => (
+                              <SelectItem key={c} value={c} className="capitalize">{c.charAt(0).toUpperCase() + c.slice(1)}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -324,11 +370,11 @@ export default function AdminProducts() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <F label="Material">
+                      <F label="Base Material">
                         <Select value={form.material} onValueChange={v => set("material", v)}>
                           <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            {["14K Gold","18K Gold","22K Gold","24K Gold","White Gold","Rose Gold","Platinum","Silver","Diamond"].map(m => (
+                            {ALL_MATERIAL_VARIANTS.map(m => (
                               <SelectItem key={m} value={m}>{m}</SelectItem>
                             ))}
                           </SelectContent>
@@ -350,15 +396,103 @@ export default function AdminProducts() {
                   </>
                 )}
 
+                {/* ── Variants ── */}
+                {activeTab === "Variants" && (
+                  <>
+                    {/* Material Variants */}
+                    <F label="Material Options (shown as selectable buttons on product page)">
+                      <div className="grid grid-cols-2 gap-2 mt-1">
+                        {ALL_MATERIAL_VARIANTS.map(m => {
+                          const active = form.materialVariants.includes(m);
+                          return (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => toggleMaterialVariant(m)}
+                              className={`flex items-center justify-between px-3 py-2.5 border text-xs tracking-wide transition-all ${
+                                active ? "border-accent bg-accent/8 text-foreground font-semibold" : "border-border text-muted-foreground hover:border-accent/50"
+                              }`}
+                            >
+                              {m}
+                              {active && <Check className="w-3.5 h-3.5 text-accent flex-shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {form.materialVariants.length === 0 ? "No variants selected — product will show the base material only." : `${form.materialVariants.length} variant(s) selected`}
+                      </p>
+                    </F>
+
+                    {/* Ring Sizes */}
+                    {(isRing) && (
+                      <F label="Ring Sizes Available">
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {ALL_RING_SIZES.map(s => {
+                            const active = form.sizes.includes(s);
+                            return (
+                              <button
+                                key={s}
+                                type="button"
+                                onClick={() => toggleSize(s)}
+                                className={`w-11 h-11 border text-sm font-medium transition-all ${
+                                  active ? "border-accent bg-accent text-white" : "border-border text-muted-foreground hover:border-accent/60"
+                                }`}
+                              >
+                                {s}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {form.sizes.length === 0 ? "No sizes selected — size selector won't show on product page." : `Sizes: ${form.sizes.join(", ")}`}
+                        </p>
+                      </F>
+                    )}
+
+                    {/* Necklace / Bracelet Lengths */}
+                    {isNecklace && (
+                      <F label={`${form.category === "bracelets" ? "Bracelet" : "Necklace"} Lengths Available`}>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {ALL_NECKLACE_LENGTHS.map(s => {
+                            const active = form.sizes.includes(s);
+                            return (
+                              <button
+                                key={s}
+                                type="button"
+                                onClick={() => toggleSize(s)}
+                                className={`px-3 h-10 border text-xs font-medium tracking-wide transition-all ${
+                                  active ? "border-accent bg-accent text-white" : "border-border text-muted-foreground hover:border-accent/60"
+                                }`}
+                              >
+                                {s}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {form.sizes.length === 0 ? "No lengths selected — size selector won't show." : `Selected: ${form.sizes.join(", ")}`}
+                        </p>
+                      </F>
+                    )}
+
+                    {!isRing && !isNecklace && (
+                      <div className="p-4 border border-dashed border-border text-center">
+                        <p className="text-xs text-muted-foreground">Size variants are applicable for rings, necklaces, and bracelets. This category ({form.category}) uses material variants only.</p>
+                      </div>
+                    )}
+                  </>
+                )}
+
                 {/* ── Description ── */}
                 {activeTab === "Description" && (
                   <>
                     <F label="Short Description">
-                      <Textarea value={form.description} onChange={e => set("description", e.target.value)} className="rounded-none min-h-[90px]" placeholder="A hand-engraved lotus flower pendant in 22K gold with enamel detailing. Inspired by ancient Indian craftsmanship." />
+                      <Textarea value={form.description} onChange={e => set("description", e.target.value)} className="rounded-none min-h-[90px]" placeholder="A hand-engraved lotus flower pendant in 22K gold with enamel detailing." />
                     </F>
 
                     <F label="Craft Story (longer paragraph shown on product page)">
-                      <Textarea value={form.craftStory} onChange={e => set("craftStory", e.target.value)} className="rounded-none min-h-[100px]" placeholder="Each Pearlis piece is handcrafted by master artisans..." />
+                      <Textarea value={form.craftStory} onChange={e => set("craftStory", e.target.value)} className="rounded-none min-h-[100px]" />
                     </F>
 
                     <F label="Quality Highlights (bullet points)">
@@ -427,7 +561,7 @@ export default function AdminProducts() {
                 {/* ── Media ── */}
                 {activeTab === "Media" && (
                   <>
-                    <F label="Product Images (URLs)">
+                    <F label="Product Images">
                       <div className="space-y-2">
                         {form.images.map((img, i) => (
                           <div key={i} className="flex gap-2 items-start">
@@ -446,10 +580,29 @@ export default function AdminProducts() {
                             )}
                           </div>
                         ))}
-                        <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2"
-                          onClick={() => set("images", [...form.images, ""])}>
-                          <ImagePlus className="w-3.5 h-3.5" /> Add Image URL
-                        </Button>
+                        <div className="flex gap-2 flex-wrap">
+                          <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2"
+                            onClick={() => set("images", [...form.images, ""])}>
+                            <ImagePlus className="w-3.5 h-3.5" /> Add Image URL
+                          </Button>
+                          <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2"
+                            onClick={() => imgInputRef.current?.click()} disabled={imgUploading}>
+                            {imgUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                            Upload from Device
+                          </Button>
+                          <input
+                            ref={imgInputRef}
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            className="hidden"
+                            onChange={e => {
+                              const files = Array.from(e.target.files || []);
+                              files.forEach(f => handleFileUpload(f, "image"));
+                              e.target.value = "";
+                            }}
+                          />
+                        </div>
                       </div>
                     </F>
 
@@ -462,17 +615,17 @@ export default function AdminProducts() {
                         </div>
 
                         <div
-                          className="border-2 border-dashed border-border rounded-none p-6 text-center cursor-pointer hover:border-accent transition-colors"
+                          className="border-2 border-dashed border-border p-6 text-center cursor-pointer hover:border-accent transition-colors"
                           onClick={() => videoInputRef.current?.click()}
                           onDragOver={e => e.preventDefault()}
-                          onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleVideoUpload(f); }}
+                          onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFileUpload(f, "video"); }}
                         >
                           <input
                             ref={videoInputRef}
                             type="file"
                             accept="video/mp4,video/webm,video/ogg"
                             className="hidden"
-                            onChange={e => { const f = e.target.files?.[0]; if (f) handleVideoUpload(f); }}
+                            onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f, "video"); }}
                           />
                           {uploading ? (
                             <div className="flex items-center justify-center gap-2">
@@ -490,7 +643,7 @@ export default function AdminProducts() {
 
                         {form.videoUrl && form.videoUrl.startsWith("/api/uploads/") && (
                           <div className="border border-border p-2 bg-muted/30">
-                            <video src={form.videoUrl} controls className="w-full max-h-40 rounded-none" />
+                            <video src={form.videoUrl} controls className="w-full max-h-40" />
                           </div>
                         )}
                       </div>
@@ -502,7 +655,7 @@ export default function AdminProducts() {
 
               <div className="flex justify-between items-center p-6 border-t border-border">
                 <div className="flex gap-1">
-                  {TABS.map((tab, i) => (
+                  {TABS.map((tab) => (
                     <button key={tab} onClick={() => setActiveTab(tab)}
                       className={`w-2 h-2 rounded-full transition-colors ${activeTab === tab ? "bg-accent" : "bg-border"}`}
                       title={tab}

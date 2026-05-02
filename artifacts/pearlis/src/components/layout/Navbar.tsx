@@ -23,7 +23,6 @@ const EXPLORE_ITEMS = [
 ];
 
 const PLAIN_LINKS = [
-  { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -155,6 +154,14 @@ export function Navbar() {
               <span className={`absolute -bottom-0.5 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${location === "/" ? "w-full" : "w-0 group-hover:w-full"}`} />
             </Link>
 
+            {/* Shop */}
+            <Link href="/shop" className={`relative text-[10.5px] font-semibold tracking-[0.18em] uppercase transition-colors duration-250 group ${
+              isTransparent ? (location === "/shop" ? "text-[#D4AF37]" : "text-white hover:text-[#D4AF37]") : (location === "/shop" ? "text-[#D4AF37]" : "text-[#0F0F0F] hover:text-[#D4AF37]")
+            }`}>
+              Shop
+              <span className={`absolute -bottom-0.5 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${location === "/shop" ? "w-full" : "w-0 group-hover:w-full"}`} />
+            </Link>
+
             {/* Jewellery dropdown */}
             <NavDropdown
               label="Jewellery"
@@ -277,6 +284,12 @@ export function Navbar() {
                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center py-3.5 border-b border-[#0F0F0F]/6 text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${location === "/" ? "text-[#D4AF37]" : "text-[#0F0F0F]/75 hover:text-[#D4AF37]"}`}>
                   Home
+                </Link>
+
+                {/* Shop */}
+                <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}
+                  className={`flex items-center py-3.5 border-b border-[#0F0F0F]/6 text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${location === "/shop" ? "text-[#D4AF37]" : "text-[#0F0F0F]/75 hover:text-[#D4AF37]"}`}>
+                  Shop
                 </Link>
 
                 {/* Jewellery accordion */}

@@ -35,6 +35,8 @@ export const productsTable = pgTable("products", {
   craftStory: text("craft_story"),
   craftPoints: jsonb("craft_points").$type<string[]>().default([]),
   shippingInfo: text("shipping_info"),
+  sizes: jsonb("sizes").$type<string[]>().default([]).notNull(),
+  materialVariants: jsonb("material_variants").$type<string[]>().default([]).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

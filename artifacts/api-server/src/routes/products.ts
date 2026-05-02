@@ -30,6 +30,8 @@ function toProduct(p: any) {
     craftStory: p.craftStory || null,
     craftPoints: p.craftPoints || [],
     shippingInfo: p.shippingInfo || null,
+    sizes: p.sizes || [],
+    materialVariants: p.materialVariants || [],
     createdAt: p.createdAt?.toISOString(),
   };
 }
@@ -146,6 +148,8 @@ router.post("/products", requireAdmin, async (req, res) => {
       craftStory: body.craftStory || null,
       craftPoints: body.craftPoints || [],
       shippingInfo: body.shippingInfo || null,
+      sizes: body.sizes || [],
+      materialVariants: body.materialVariants || [],
     }).returning();
     res.status(201).json(toProduct(product));
   } catch (err) {
@@ -170,6 +174,8 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
       craftStory: body.craftStory || null,
       craftPoints: body.craftPoints || [],
       shippingInfo: body.shippingInfo || null,
+      sizes: body.sizes || [],
+      materialVariants: body.materialVariants || [],
     }).where(eq(productsTable.id, id)).returning();
     if (!product) { res.status(404).json({ error: "Not found" }); return; }
     res.json(toProduct(product));
