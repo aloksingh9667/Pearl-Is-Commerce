@@ -18,7 +18,10 @@ export default function Cart() {
   const removeItem = useRemoveFromCart();
 
   const handleUpdateQty = (productId: number, quantity: number) => {
-    if (quantity < 1) return;
+    if (quantity < 1) {
+      handleRemove(productId);
+      return;
+    }
     updateItem.mutate({ productId, data: { quantity } }, {
       onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCartQueryKey() }),
     });

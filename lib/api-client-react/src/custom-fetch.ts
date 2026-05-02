@@ -17,6 +17,15 @@ const DEFAULT_JSON_ACCEPT = "application/json, application/problem+json";
 
 let _baseUrl: string | null = null;
 let _authTokenGetter: AuthTokenGetter | null = null;
+let _sessionIdGetter: (() => string | null) | null = null;
+
+/**
+ * Register a getter that supplies a guest session ID.
+ * When set, the value is sent as the `x-session-id` request header.
+ */
+export function setSessionIdGetter(getter: (() => string | null) | null): void {
+  _sessionIdGetter = getter;
+}
 
 /**
  * Set a base URL that is prepended to every relative request URL
@@ -355,6 +364,14 @@ export async function customFetch<T = unknown>(
     const token = await _authTokenGetter();
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
+    }
+  }
+
+  // Attach guest session ID when no auth token is present.
+  if (_sessionIdGetter && !headers.has("x-session-id")) {
+    const sessionId = _sessionIdGetter();
+    if (sessionId) {
+      headers.set("x-session-id", sessionId);
     }
   }
 
