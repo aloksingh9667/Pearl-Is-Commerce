@@ -8,7 +8,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { Link } from "wouter";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import {
   ArrowRight,
@@ -21,6 +21,7 @@ import {
   Clock,
   Instagram,
   Play,
+  X,
 } from "lucide-react";
 
 /* ─────────────────── helpers ─────────────────── */
@@ -69,6 +70,8 @@ export default function Home() {
 
   const saleEnd = new Date(Date.now() + 23 * 3600000 + 47 * 60000 + 33000);
   const { h, m, s } = useCountdown(saleEnd);
+
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col overflow-x-hidden">
@@ -399,12 +402,29 @@ export default function Home() {
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/15" />
-              {/* Play button overlay — brand video hint */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full border-2 border-white/70 flex items-center justify-center hover:bg-white/20 transition cursor-pointer">
-                  <Play className="w-6 h-6 text-white ml-1" fill="white" />
-                </div>
-              </div>
+              {/* Play button overlay */}
+              <button
+                onClick={() => setIsVideoOpen(true)}
+                className="absolute inset-0 flex items-center justify-center group"
+                aria-label="Play brand video"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative flex items-center justify-center"
+                >
+                  {/* Pulsing ring */}
+                  <span className="absolute w-24 h-24 rounded-full border border-white/30 animate-ping opacity-40" />
+                  <span className="absolute w-20 h-20 rounded-full border border-white/50" />
+                  {/* Button */}
+                  <div className="relative w-16 h-16 rounded-full bg-white/15 backdrop-blur-sm border-2 border-white/80 flex items-center justify-center group-hover:bg-[#D4AF37]/80 group-hover:border-[#D4AF37] transition-all duration-300 shadow-xl">
+                    <Play className="w-6 h-6 text-white ml-1" fill="white" />
+                  </div>
+                </motion.div>
+                <span className="absolute bottom-8 text-white/70 text-[10px] tracking-[0.25em] uppercase font-semibold">
+                  Watch Our Story
+                </span>
+              </button>
             </motion.div>
 
             {/* Text */}
@@ -651,6 +671,59 @@ export default function Home() {
       </section>
 
       <Footer />
+
+      {/* ════════════════════════════════════════
+          VIDEO LIGHTBOX MODAL
+      ════════════════════════════════════════ */}
+      <AnimatePresence>
+        {isVideoOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[300] bg-black/92 flex items-center justify-center px-4"
+            onClick={() => setIsVideoOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.88, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.88, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-4xl"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setIsVideoOpen(false)}
+                className="absolute -top-12 right-0 text-white/60 hover:text-white flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase font-medium transition-colors"
+              >
+                <X className="w-4 h-4" /> Close
+              </button>
+
+              {/* Gold border frame */}
+              <div className="border border-[#D4AF37]/40 p-1 shadow-2xl shadow-black/60">
+                {/* 16:9 video wrapper */}
+                <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                  <iframe
+                    src={`https://www.youtube.com/embed/e2bPSJGEatU?autoplay=1&rel=0&showinfo=0&modestbranding=1&color=white`}
+                    title="Pearlis — The Art of Fine Jewellery"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full bg-black"
+                  />
+                </div>
+              </div>
+
+              {/* Caption */}
+              <div className="text-center mt-5">
+                <p className="text-[#D4AF37] text-[10px] tracking-[0.3em] uppercase font-semibold">The Pearlis Atelier</p>
+                <p className="text-white/40 text-xs mt-1">Where every piece begins with a vision</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
