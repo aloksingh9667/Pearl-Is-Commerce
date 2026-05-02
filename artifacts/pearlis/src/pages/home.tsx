@@ -247,7 +247,7 @@ export default function Home() {
                 View All <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-14">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 sm:gap-y-14">
               {arrivals.slice(0, 4).map((p, i) => (
                 <ProductCard key={p.id} product={p} index={i} />
               ))}
@@ -271,7 +271,7 @@ export default function Home() {
                 See More <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-14">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 sm:gap-y-14">
               {trending.slice(0, 4).map((p, i) => (
                 <ProductCard key={p.id} product={p} index={i} />
               ))}
@@ -627,7 +627,7 @@ export default function Home() {
                 View All <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-14">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 sm:gap-y-14">
               {featured.slice(0, 8).map((p, i) => (
                 <ProductCard key={p.id} product={p} index={i} />
               ))}

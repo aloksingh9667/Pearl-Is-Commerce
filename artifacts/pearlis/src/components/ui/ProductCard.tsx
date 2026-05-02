@@ -22,7 +22,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       className="group relative flex flex-col"
     >
       {/* Image */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-[#F5F0E8] mb-4">
+      <div className="relative aspect-square sm:aspect-[3/4] overflow-hidden bg-[#F5F0E8] mb-4">
         {/* Badges */}
         <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
           {product.isNew && (

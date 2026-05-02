@@ -169,30 +169,14 @@ export default function ProductDetail() {
         <div className="flex flex-col lg:flex-row gap-12 xl:gap-20">
 
           {/* ──────────── LEFT: Image Gallery ──────────── */}
-          <div className="lg:w-[52%] flex flex-col-reverse md:flex-row gap-4">
-
-            {/* Thumbnails */}
-            <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[620px] pb-2 md:pb-0 md:pr-1 flex-shrink-0">
-              {images.map((img: string, i: number) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImage(i)}
-                  className={`flex-shrink-0 w-16 h-20 md:w-20 md:h-24 overflow-hidden border-2 transition-all duration-200 ${
-                    selectedImage === i
-                      ? "border-[#D4AF37]"
-                      : "border-transparent hover:border-[#D4AF37]/40"
-                  }`}
-                >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
+          <div className="lg:w-[52%] flex flex-col gap-3">
 
             {/* Main image with zoom */}
-            <div className="flex-1 relative">
+            <div className="relative">
               <div
                 ref={imgRef}
-                className="relative overflow-hidden aspect-[4/5] bg-[#F0EDE6] cursor-zoom-in"
+                className="relative overflow-hidden bg-[#F0EDE6] cursor-zoom-in w-full"
+                style={{ aspectRatio: "4/5", maxHeight: "min(72vh, 600px)" }}
                 onMouseEnter={() => setIsZoomed(true)}
                 onMouseLeave={() => setIsZoomed(false)}
                 onMouseMove={handleMouseMove}
@@ -204,43 +188,73 @@ export default function ProductDetail() {
                   className={`w-full h-full object-cover transition-transform duration-200 ${
                     isZoomed ? "scale-150" : "scale-100"
                   }`}
-                  style={
-                    isZoomed
-                      ? { transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` }
-                      : {}
-                  }
+                  style={isZoomed ? { transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` } : {}}
                   draggable={false}
                 />
-                {/* Zoom hint */}
+
+                {/* Zoom hint — desktop only */}
                 {!isZoomed && (
-                  <div className="absolute bottom-4 right-4 flex items-center gap-1.5 bg-white/80 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-[#0F0F0F]/60 font-medium">
+                  <div className="hidden sm:flex absolute bottom-4 right-4 items-center gap-1.5 bg-white/80 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-[#0F0F0F]/60 font-medium">
                     <ZoomIn className="w-3 h-3" /> Hover to zoom
                   </div>
                 )}
+
                 {/* prev/next arrows */}
                 {images.length > 1 && (
                   <>
                     <button
                       onClick={(e) => { e.stopPropagation(); setSelectedImage((p) => (p - 1 + images.length) % images.length); }}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white flex items-center justify-center shadow transition-colors"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-white/85 hover:bg-white flex items-center justify-center shadow transition-colors"
                     >
                       <ChevronLeft className="w-4 h-4 text-[#0F0F0F]" />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); setSelectedImage((p) => (p + 1) % images.length); }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white flex items-center justify-center shadow transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-white/85 hover:bg-white flex items-center justify-center shadow transition-colors"
                     >
                       <ChevronRight className="w-4 h-4 text-[#0F0F0F]" />
                     </button>
                   </>
                 )}
+
+                {/* Dot indicators — mobile */}
+                {images.length > 1 && (
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
+                    {images.map((_: string, i: number) => (
+                      <button
+                        key={i}
+                        onClick={(e) => { e.stopPropagation(); setSelectedImage(i); }}
+                        className={`w-1.5 h-1.5 rounded-full transition-colors ${i === selectedImage ? "bg-[#D4AF37]" : "bg-white/50"}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {/* Image counter */}
-              <p className="text-center text-[9px] tracking-[0.2em] uppercase text-[#0F0F0F]/30 mt-3">
+              {/* Counter — desktop */}
+              <p className="hidden sm:block text-center text-[9px] tracking-[0.2em] uppercase text-[#0F0F0F]/30 mt-2">
                 {selectedImage + 1} / {images.length}
               </p>
             </div>
+
+            {/* Thumbnails — horizontal row below, visible on sm+ */}
+            {images.length > 1 && (
+              <div className="hidden sm:flex gap-2 overflow-x-auto pb-1">
+                {images.map((img: string, i: number) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImage(i)}
+                    className={`flex-shrink-0 w-16 h-20 lg:w-20 lg:h-24 overflow-hidden border-2 transition-all duration-200 ${
+                      selectedImage === i
+                        ? "border-[#D4AF37]"
+                        : "border-transparent hover:border-[#D4AF37]/40"
+                    }`}
+                  >
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ──────────── RIGHT: Product Info ──────────── */}

@@ -71,9 +71,9 @@ export default function Shop() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-              <div key={i} className="aspect-[3/4] bg-muted animate-pulse"></div>
+              <div key={i} className="aspect-square sm:aspect-[3/4] bg-muted animate-pulse"></div>
             ))}
           </div>
         ) : productsData?.products?.length === 0 ? (
@@ -81,7 +81,7 @@ export default function Shop() {
             <p className="text-xl font-serif">No pieces found in this collection.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 gap-y-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 gap-y-8 sm:gap-y-16">
             {productsData?.products?.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index % 4} />
             ))}
