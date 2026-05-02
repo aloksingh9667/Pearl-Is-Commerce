@@ -1,5 +1,9 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import { getAuth } from "@clerk/express";
+import { db } from "@workspace/db";
+import { usersTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 
 const JWT_SECRET = process.env.SESSION_SECRET || "pearlis-secret-key";
 
@@ -15,42 +19,64 @@ export function verifyToken(token: string): { id: number; email: string; role: s
   }
 }
 
-export function optionalAuth(req: Request, res: Response, next: NextFunction) {
+async function resolveClerkUser(req: Request): Promise<{ id: number; email: string; role: string } | null> {
+  try {
+    const clerkAuth = getAuth(req);
+    if (!clerkAuth.userId) return null;
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.clerkId, clerkAuth.userId));
+    if (!user) return null;
+    return { id: user.id, email: user.email, role: user.role };
+  } catch {
+    return null;
+  }
+}
+
+function resolveJwtUser(req: Request): { id: number; email: string; role: string } | null {
   const authHeader = req.headers["authorization"];
-  if (authHeader?.startsWith("Bearer ")) {
-    const token = authHeader.slice(7);
-    const payload = verifyToken(token);
-    if (payload) {
-      (req as any).user = payload;
-    }
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  const token = authHeader.slice(7);
+  return verifyToken(token);
+}
+
+export async function optionalAuth(req: Request, res: Response, next: NextFunction) {
+  const clerkUser = await resolveClerkUser(req);
+  if (clerkUser) {
+    (req as any).user = clerkUser;
+    return next();
+  }
+  const jwtUser = resolveJwtUser(req);
+  if (jwtUser) {
+    (req as any).user = jwtUser;
   }
   next();
 }
 
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader?.startsWith("Bearer ")) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
+export async function requireAuth(req: Request, res: Response, next: NextFunction) {
+  const clerkUser = await resolveClerkUser(req);
+  if (clerkUser) {
+    (req as any).user = clerkUser;
+    return next();
   }
-  const token = authHeader.slice(7);
-  const payload = verifyToken(token);
-  if (!payload) {
-    res.status(401).json({ error: "Invalid token" });
-    return;
+  const jwtUser = resolveJwtUser(req);
+  if (jwtUser) {
+    (req as any).user = jwtUser;
+    return next();
   }
-  (req as any).user = payload;
-  next();
+  res.status(401).json({ error: "Unauthorized" });
 }
 
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  requireAuth(req, res, () => {
-    if ((req as any).user?.role !== "admin") {
-      res.status(403).json({ error: "Forbidden" });
-      return;
-    }
-    next();
-  });
+  const jwtUser = resolveJwtUser(req);
+  if (!jwtUser) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  if (jwtUser.role !== "admin") {
+    res.status(403).json({ error: "Forbidden" });
+    return;
+  }
+  (req as any).user = jwtUser;
+  next();
 }
 
 export function getSessionId(req: Request): string {

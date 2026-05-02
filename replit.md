@@ -15,7 +15,7 @@ Full-stack luxury jewelry eCommerce website ("Pearlis") with a premium UI inspir
 - **Database**: PostgreSQL + Drizzle ORM
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
-- **Auth**: JWT with bcryptjs for password hashing
+- **Auth**: Clerk (regular users — Google + email/password) + JWT/bcryptjs (admin only)
 - **Build**: esbuild (CJS bundle)
 
 ## Design
@@ -34,7 +34,8 @@ Full-stack luxury jewelry eCommerce website ("Pearlis") with a premium UI inspir
 - `/checkout` — Full checkout with INR pricing, coupon validation, COD/Razorpay
 - `/orders` — Order history
 - `/wishlist` — Wishlist
-- `/login`, `/register` — Auth pages
+- `/sign-in`, `/sign-up` — Clerk auth pages (branded, with Google login)
+- `/login`, `/register` — redirect to `/sign-in` and `/sign-up`
 - `/blog`, `/blog/:id` — Blog / The Journal
 - `/about`, `/contact`, `/gallery` — Brand pages
 - `/contact` — "The Concierge" — saves messages to DB via `/api/contact-messages`
@@ -54,7 +55,7 @@ Nav groups:
 All routes under `/api`:
 - `GET/POST /products` + featured/trending/new-arrivals + related + `GET/PUT/DELETE /products/:id`
 - `GET/POST/PUT/DELETE /categories`
-- `POST /auth/register`, `/auth/login`, `/auth/logout`, `GET /auth/me`
+- `POST /auth/register`, `/auth/login`, `/auth/logout`, `GET /auth/me`, `POST /auth/clerk-sync`
 - `GET/POST /cart/items`, `PUT/DELETE /cart/items/:id`, `DELETE /cart/clear`, `POST /cart/coupon`
 - `GET/POST /orders`, `GET/PUT /orders/:id`
 - `GET/POST /products/:id/reviews`
@@ -74,7 +75,7 @@ All routes under `/api`:
 ## Database Schema
 
 Tables:
-- `categories`, `products` (+ `video_url`), `users`, `addresses`, `orders`, `cart_items`, `reviews`, `wishlist`, `blogs`, `coupons`, `newsletter`
+- `categories`, `products` (+ `video_url`), `users` (+ `clerk_id TEXT UNIQUE`), `addresses`, `orders`, `cart_items`, `reviews`, `wishlist`, `blogs`, `coupons`, `newsletter`
 - **`site_settings`** — key/value JSONB pairs (general, announcement, payment, contact, social, instagram, videos, flashSale)
 - **`page_content`** — per-page content JSONB (home, shop, rings, necklaces, bracelets, earrings, gallery, blog, about, contact)
 - **`contact_messages`** — contact form submissions with admin reply tracking
@@ -116,6 +117,8 @@ All prices stored in USD (numeric), displayed in INR using `price * 83` conversi
 ## Notes
 
 - Cart is session-based (`x-session-id` header for anonymous, `user-{id}` for logged-in)
-- Auth: Bearer token in Authorization header, stored in localStorage by frontend
+- **Auth flow**: Regular users authenticate via Clerk (Google OAuth + email/password). On sign-in, frontend calls `/api/auth/clerk-sync` to upsert the user in the local DB. Admin users use a separate JWT flow via `/admin-login`.
+- `AuthContext` checks for Clerk user first; falls back to JWT `/api/auth/me` for admin-only sessions.
+- `clerk.browser.js` (v6.8.0) is bundled into `public/` and loaded via `<script>` tag in `index.html` to bypass the Clerk FAPI subdomain (`clerk.<replit-domain>`) which isn't accessible in dev.
 - The orval zod config uses `mode: "single"` to avoid duplicate export conflicts
 - `req.params` TS typing quirk (`string | string[]`) is a pre-existing issue across all route files — runtime is fine

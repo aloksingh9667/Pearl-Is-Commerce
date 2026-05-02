@@ -4,6 +4,7 @@ import { db } from "@workspace/db";
 import { usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { signToken, requireAuth } from "../lib/auth";
+import { getAuth } from "@clerk/express";
 
 const router = Router();
 
@@ -67,6 +68,55 @@ router.post("/auth/login", async (req, res) => {
 
 router.post("/auth/logout", (req, res) => {
   res.json({ success: true, message: "Logged out" });
+});
+
+router.post("/auth/clerk-sync", async (req, res) => {
+  try {
+    const clerkAuth = getAuth(req);
+    if (!clerkAuth.userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const { email, name, avatar } = req.body;
+    if (!email) {
+      res.status(400).json({ error: "Email required" });
+      return;
+    }
+
+    const [byClerkId] = await db.select().from(usersTable)
+      .where(eq(usersTable.clerkId, clerkAuth.userId));
+    if (byClerkId) {
+      const [updated] = await db.update(usersTable)
+        .set({ name: name || byClerkId.name, avatar: avatar || byClerkId.avatar })
+        .where(eq(usersTable.id, byClerkId.id))
+        .returning();
+      res.json(toUser(updated));
+      return;
+    }
+
+    const [byEmail] = await db.select().from(usersTable)
+      .where(eq(usersTable.email, email));
+    if (byEmail) {
+      const [updated] = await db.update(usersTable)
+        .set({ clerkId: clerkAuth.userId, name: name || byEmail.name, avatar: avatar || byEmail.avatar })
+        .where(eq(usersTable.id, byEmail.id))
+        .returning();
+      res.json(toUser(updated));
+      return;
+    }
+
+    const [user] = await db.insert(usersTable).values({
+      clerkId: clerkAuth.userId,
+      email,
+      name: name || email.split("@")[0],
+      avatar: avatar || null,
+      role: "user",
+    }).returning();
+    res.status(201).json(toUser(user));
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ error: "Clerk sync failed" });
+  }
 });
 
 router.get("/auth/me", requireAuth, async (req, res) => {

@@ -34,7 +34,7 @@ const replitPlugins =
 
 export default defineConfig({
   base: basePath,
-  plugins: [react(), tailwindcss(), ...replitPlugins],
+  plugins: [react(), tailwindcss({ optimize: false }), ...replitPlugins],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
