@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { cartItemsTable, productsTable, couponsTable } from "@workspace/db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { optionalAuth, getSessionId } from "../lib/auth";
 
 const router = Router();
@@ -17,7 +17,7 @@ async function buildCart(sessionId: string) {
   const products = await db.select().from(productsTable).where(
     productIds.length === 1
       ? eq(productsTable.id, productIds[0])
-      : { id: { in: productIds } } as any
+      : inArray(productsTable.id, productIds)
   );
 
   const productMap = new Map(products.map((p) => [p.id, p]));

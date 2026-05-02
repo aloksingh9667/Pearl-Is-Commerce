@@ -1,20 +1,36 @@
 import { Link } from "wouter";
-import { Product } from "@workspace/api-client-react";
+import { Product, useAddToCart } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star, ShoppingBag, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
   index?: number;
+  showCartButton?: boolean;
 }
 
 const INR = (n: number) => `₹${Math.round(n * 83).toLocaleString("en-IN")}`;
 
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
+export function ProductCard({ product, index = 0, showCartButton = true }: ProductCardProps) {
   const hasDiscount = product.discountPrice && product.discountPrice < product.price;
   const discountPct = hasDiscount
     ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
     : 0;
+  const addToCart = useAddToCart();
+  const { toast } = useToast();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart.mutate(
+      { data: { productId: product.id, quantity: 1 } },
+      {
+        onSuccess: () => toast({ title: "Added to bag", description: product.name }),
+        onError: () => toast({ title: "Could not add to bag", variant: "destructive" }),
+      }
+    );
+  };
 
   return (
     <motion.div
@@ -71,11 +87,27 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             )}
           </div>
 
-          {/* Quick view overlay */}
+          {/* Hover overlay — Add to Cart + View Details */}
           <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
-            <div className="bg-[#0F0F0F]/95 backdrop-blur-sm text-white py-2.5 text-center text-[9px] font-bold tracking-[0.25em] uppercase hover:bg-[#D4AF37] transition-colors duration-200">
-              View Details
-            </div>
+            {showCartButton ? (
+              <div className="flex">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={addToCart.isPending || product.stock === 0}
+                  className="flex-1 bg-[#0F0F0F]/95 backdrop-blur-sm text-white py-2.5 text-center text-[9px] font-bold tracking-[0.22em] uppercase hover:bg-[#D4AF37] transition-colors duration-200 flex items-center justify-center gap-1.5 disabled:opacity-60"
+                >
+                  {addToCart.isPending
+                    ? <Loader2 className="w-3 h-3 animate-spin" />
+                    : <ShoppingBag className="w-3 h-3" />
+                  }
+                  {product.stock === 0 ? "Sold Out" : "Add to Bag"}
+                </button>
+              </div>
+            ) : (
+              <div className="bg-[#0F0F0F]/95 backdrop-blur-sm text-white py-2.5 text-center text-[9px] font-bold tracking-[0.25em] uppercase hover:bg-[#D4AF37] transition-colors duration-200">
+                View Details
+              </div>
+            )}
           </div>
         </div>
       </Link>

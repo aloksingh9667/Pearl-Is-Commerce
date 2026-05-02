@@ -1,38 +1,126 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Plus, Trash2 } from "lucide-react";
+import { Loader2, Save, Plus, Trash2, Upload, X, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useGetPageContent, useUpdatePageContent } from "@/lib/adminApi";
+import { useListCategories } from "@workspace/api-client-react";
 
-const PAGES = [
+/* ── Static pages always present ── */
+const STATIC_PAGES = [
   { id: "home", label: "🏠 Home" },
   { id: "shop", label: "🛍️ Shop" },
-  { id: "rings", label: "💍 Rings" },
-  { id: "necklaces", label: "📿 Necklaces" },
-  { id: "bracelets", label: "✨ Bracelets" },
-  { id: "earrings", label: "🪙 Earrings" },
   { id: "gallery", label: "🖼️ Gallery" },
   { id: "blog", label: "📝 Blog" },
   { id: "about", label: "ℹ️ About" },
   { id: "contact", label: "📧 Contact" },
-] as const;
+];
 
-type PageId = typeof PAGES[number]["id"];
+const CAT_EMOJIS: Record<string, string> = {
+  rings: "💍", necklaces: "📿", bracelets: "✨", earrings: "🪙",
+  pendants: "🔮", bangles: "⭕", anklets: "🦶",
+};
+
+function adminHeaders(extra: Record<string, string> = {}) {
+  const token = localStorage.getItem("token");
+  return { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...extra };
+}
+
+async function uploadImage(file: File): Promise<string> {
+  const fd = new FormData();
+  fd.append("file", file);
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers: adminHeaders(),
+    body: fd,
+  });
+  if (!res.ok) throw new Error("Upload failed");
+  const { url } = await res.json();
+  return url;
+}
+
+/* ── Image field: URL text input + upload button ── */
+function ImageUploadField({
+  label, value, onChange,
+}: { label: string; value: string; onChange: (v: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File) => {
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      onChange(url);
+      toast({ title: "Image uploaded!" });
+    } catch {
+      toast({ title: "Upload failed", variant: "destructive" });
+    } finally { setUploading(false); }
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label className="uppercase tracking-widest text-xs text-muted-foreground">{label}</Label>
+      <div className="flex gap-2">
+        <Input
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          className="rounded-none flex-1 text-sm"
+          placeholder="https://... or upload →"
+        />
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="flex-shrink-0 h-10 px-3 border border-border hover:border-accent bg-muted/40 hover:bg-accent/8 transition-colors flex items-center gap-1.5 text-xs text-muted-foreground hover:text-accent"
+          title="Upload image"
+        >
+          {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+          <span className="hidden sm:inline">Upload</span>
+        </button>
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="flex-shrink-0 h-10 w-10 border border-border hover:border-destructive text-muted-foreground hover:text-destructive flex items-center justify-center transition-colors"
+            title="Clear"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
+        <input ref={fileRef} type="file" accept="image/*" className="hidden"
+          onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }} />
+      </div>
+      {value && value.startsWith("/api/uploads/") && (
+        <img src={value} alt="preview" className="h-20 object-cover border border-border mt-1" />
+      )}
+    </div>
+  );
+}
 
 export default function AdminPageContent() {
-  const [activePage, setActivePage] = useState<PageId>("home");
+  const { data: categoriesData } = useListCategories({});
+  const { toast } = useToast();
+
+  /* Build dynamic PAGES list */
+  const catPages = (categoriesData?.categories ?? []).map((c: { slug: string; name: string }) => ({
+    id: c.slug,
+    label: `${CAT_EMOJIS[c.slug] ?? "🏷️"} ${c.name}`,
+  }));
+  const PAGES = [...STATIC_PAGES, ...catPages];
+
+  const [activePage, setActivePage] = useState("home");
   const { data, isLoading } = useGetPageContent(activePage);
   const update = useUpdatePageContent();
-  const { toast } = useToast();
   const [draft, setDraft] = useState<any>({});
 
   useEffect(() => {
     if (data?.content) setDraft(data.content);
-  }, [data]);
+    else setDraft({});
+  }, [data, activePage]);
 
   const handleSave = () => {
     update.mutate(
@@ -57,6 +145,10 @@ export default function AdminPageContent() {
     });
   }
 
+  /* Detect if the active page is a category page (not in static list) */
+  const isStaticPage = STATIC_PAGES.some(p => p.id === activePage);
+  const isCategoryPage = !isStaticPage && activePage !== "home";
+
   return (
     <AdminLayout>
       <div className="flex justify-between items-center mb-8">
@@ -69,7 +161,7 @@ export default function AdminPageContent() {
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Page Selector */}
-        <nav className="md:w-44 flex md:flex-col gap-1 overflow-x-auto flex-shrink-0">
+        <nav className="md:w-52 flex md:flex-col gap-1 overflow-x-auto flex-shrink-0">
           {PAGES.map(({ id, label }) => (
             <button
               key={id}
@@ -93,14 +185,15 @@ export default function AdminPageContent() {
             </div>
           ) : (
             <div className="space-y-8">
-              {/* HOME */}
+
+              {/* ── HOME ── */}
               {activePage === "home" && (
                 <>
                   <SubSection title="Hero Section">
                     <F label="Title"><Input value={draft.hero?.title || ""} onChange={e => setField(["hero","title"], e.target.value)} className="rounded-none" /></F>
                     <F label="Subtitle"><Textarea value={draft.hero?.subtitle || ""} onChange={e => setField(["hero","subtitle"], e.target.value)} className="rounded-none min-h-[80px]" /></F>
                     <F label="CTA Button Text"><Input value={draft.hero?.ctaText || ""} onChange={e => setField(["hero","ctaText"], e.target.value)} className="rounded-none" /></F>
-                    <F label="Background Image URL"><Input value={draft.hero?.backgroundImage || ""} onChange={e => setField(["hero","backgroundImage"], e.target.value)} className="rounded-none" placeholder="https://..." /></F>
+                    <ImageUploadField label="Background Image" value={draft.hero?.backgroundImage || ""} onChange={v => setField(["hero","backgroundImage"], v)} />
                     <F label="Hero Video URL (YouTube Embed)"><Input value={draft.hero?.videoUrl || ""} onChange={e => setField(["hero","videoUrl"], e.target.value)} className="rounded-none" placeholder="https://www.youtube.com/embed/..." /></F>
                   </SubSection>
 
@@ -114,7 +207,7 @@ export default function AdminPageContent() {
                     <F label="Section Subtitle"><Input value={draft.brandStory?.subtitle || ""} onChange={e => setField(["brandStory","subtitle"], e.target.value)} className="rounded-none" /></F>
                     <F label="Title"><Input value={draft.brandStory?.title || ""} onChange={e => setField(["brandStory","title"], e.target.value)} className="rounded-none" /></F>
                     <F label="Body Text"><Textarea value={draft.brandStory?.text || ""} onChange={e => setField(["brandStory","text"], e.target.value)} className="rounded-none min-h-[100px]" /></F>
-                    <F label="Image URL"><Input value={draft.brandStory?.image || ""} onChange={e => setField(["brandStory","image"], e.target.value)} className="rounded-none" /></F>
+                    <ImageUploadField label="Brand Story Image" value={draft.brandStory?.image || ""} onChange={v => setField(["brandStory","image"], v)} />
                   </SubSection>
 
                   <SubSection title="Collections Grid">
@@ -131,10 +224,10 @@ export default function AdminPageContent() {
                           const c = [...draft.collections]; c[i] = { ...c[i], title: e.target.value };
                           setField(["collections"], c);
                         }} className="rounded-none" /></F>
-                        <F label="Image URL"><Input value={col.image || ""} onChange={e => {
-                          const c = [...draft.collections]; c[i] = { ...c[i], image: e.target.value };
+                        <ImageUploadField label="Image" value={col.image || ""} onChange={v => {
+                          const c = [...draft.collections]; c[i] = { ...c[i], image: v };
                           setField(["collections"], c);
-                        }} className="rounded-none" /></F>
+                        }} />
                         <F label="Link"><Input value={col.link || ""} onChange={e => {
                           const c = [...draft.collections]; c[i] = { ...c[i], link: e.target.value };
                           setField(["collections"], c);
@@ -149,29 +242,35 @@ export default function AdminPageContent() {
                 </>
               )}
 
-              {/* SHOP */}
+              {/* ── SHOP ── */}
               {activePage === "shop" && (
                 <SubSection title="Hero Section">
                   <F label="Title"><Input value={draft.hero?.title || ""} onChange={e => setField(["hero","title"], e.target.value)} className="rounded-none" /></F>
                   <F label="Subtitle"><Textarea value={draft.hero?.subtitle || ""} onChange={e => setField(["hero","subtitle"], e.target.value)} className="rounded-none" /></F>
+                  <ImageUploadField label="Hero Background Image" value={draft.hero?.image || ""} onChange={v => setField(["hero","image"], v)} />
+                  <F label="CTA Button Text"><Input value={draft.hero?.ctaText || ""} onChange={e => setField(["hero","ctaText"], e.target.value)} className="rounded-none" placeholder="Explore Now" /></F>
                 </SubSection>
               )}
 
-              {/* RINGS / NECKLACES / BRACELETS / EARRINGS */}
-              {["rings","necklaces","bracelets","earrings"].includes(activePage) && (
-                <SubSection title="Hero Section">
+              {/* ── CATEGORY PAGES (DB-synced + hardcoded category slugs) ── */}
+              {isCategoryPage && (
+                <SubSection title={`Hero Section — ${activePage.charAt(0).toUpperCase() + activePage.slice(1)}`}>
                   <F label="Title"><Input value={draft.hero?.title || ""} onChange={e => setField(["hero","title"], e.target.value)} className="rounded-none" /></F>
-                  <F label="Subtitle"><Textarea value={draft.hero?.subtitle || ""} onChange={e => setField(["hero","subtitle"], e.target.value)} className="rounded-none" /></F>
-                  <F label="Hero Image URL"><Input value={draft.hero?.image || ""} onChange={e => setField(["hero","image"], e.target.value)} className="rounded-none" placeholder="https://..." /></F>
+                  <F label="Subtitle"><Textarea value={draft.hero?.subtitle || ""} onChange={e => setField(["hero","subtitle"], e.target.value)} className="rounded-none min-h-[80px]" /></F>
+                  <ImageUploadField label="Hero Image" value={draft.hero?.image || ""} onChange={v => setField(["hero","image"], v)} />
+                  <F label="Description (shown below hero)">
+                    <Textarea value={draft.description || ""} onChange={e => setDraft((d: any) => ({ ...d, description: e.target.value }))} className="rounded-none min-h-[80px]" />
+                  </F>
                 </SubSection>
               )}
 
-              {/* GALLERY */}
+              {/* ── GALLERY ── */}
               {activePage === "gallery" && (
                 <>
                   <SubSection title="Hero Section">
                     <F label="Title"><Input value={draft.hero?.title || ""} onChange={e => setField(["hero","title"], e.target.value)} className="rounded-none" /></F>
                     <F label="Subtitle"><Textarea value={draft.hero?.subtitle || ""} onChange={e => setField(["hero","subtitle"], e.target.value)} className="rounded-none" /></F>
+                    <ImageUploadField label="Hero Image" value={draft.hero?.image || ""} onChange={v => setField(["hero","image"], v)} />
                   </SubSection>
                   <SubSection title="Gallery Videos">
                     {(draft.videos || []).map((video: any, i: number) => (
@@ -191,10 +290,10 @@ export default function AdminPageContent() {
                           const v = [...draft.videos]; v[i] = { ...v[i], url: e.target.value };
                           setField(["videos"], v);
                         }} className="rounded-none" /></F>
-                        <F label="Thumbnail URL"><Input value={video.thumbnail || ""} onChange={e => {
-                          const v = [...draft.videos]; v[i] = { ...v[i], thumbnail: e.target.value };
+                        <ImageUploadField label="Thumbnail" value={video.thumbnail || ""} onChange={val => {
+                          const v = [...draft.videos]; v[i] = { ...v[i], thumbnail: val };
                           setField(["videos"], v);
-                        }} className="rounded-none" /></F>
+                        }} />
                       </div>
                     ))}
                     <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2"
@@ -205,21 +304,22 @@ export default function AdminPageContent() {
                 </>
               )}
 
-              {/* BLOG */}
+              {/* ── BLOG ── */}
               {activePage === "blog" && (
                 <SubSection title="Hero Section">
                   <F label="Title"><Input value={draft.hero?.title || ""} onChange={e => setField(["hero","title"], e.target.value)} className="rounded-none" /></F>
                   <F label="Subtitle"><Textarea value={draft.hero?.subtitle || ""} onChange={e => setField(["hero","subtitle"], e.target.value)} className="rounded-none" /></F>
+                  <ImageUploadField label="Hero Background Image" value={draft.hero?.image || ""} onChange={v => setField(["hero","image"], v)} />
                 </SubSection>
               )}
 
-              {/* ABOUT */}
+              {/* ── ABOUT ── */}
               {activePage === "about" && (
                 <>
                   <SubSection title="Hero Section">
                     <F label="Title"><Input value={draft.hero?.title || ""} onChange={e => setField(["hero","title"], e.target.value)} className="rounded-none" /></F>
                     <F label="Subtitle"><Textarea value={draft.hero?.subtitle || ""} onChange={e => setField(["hero","subtitle"], e.target.value)} className="rounded-none" /></F>
-                    <F label="Hero Image URL"><Input value={draft.hero?.image || ""} onChange={e => setField(["hero","image"], e.target.value)} className="rounded-none" /></F>
+                    <ImageUploadField label="Hero Image" value={draft.hero?.image || ""} onChange={v => setField(["hero","image"], v)} />
                   </SubSection>
 
                   <SubSection title="Mission">
@@ -239,7 +339,7 @@ export default function AdminPageContent() {
                         </div>
                         <F label="Name"><Input value={member.name || ""} onChange={e => { const t = [...draft.team]; t[i] = { ...t[i], name: e.target.value }; setField(["team"], t); }} className="rounded-none" /></F>
                         <F label="Role"><Input value={member.role || ""} onChange={e => { const t = [...draft.team]; t[i] = { ...t[i], role: e.target.value }; setField(["team"], t); }} className="rounded-none" /></F>
-                        <F label="Photo URL"><Input value={member.image || ""} onChange={e => { const t = [...draft.team]; t[i] = { ...t[i], image: e.target.value }; setField(["team"], t); }} className="rounded-none" /></F>
+                        <ImageUploadField label="Photo" value={member.image || ""} onChange={v => { const t = [...draft.team]; t[i] = { ...t[i], image: v }; setField(["team"], t); }} />
                       </div>
                     ))}
                     <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2"
@@ -270,7 +370,7 @@ export default function AdminPageContent() {
                 </>
               )}
 
-              {/* CONTACT */}
+              {/* ── CONTACT ── */}
               {activePage === "contact" && (
                 <SubSection title="Contact Details">
                   <F label="Address"><Textarea value={draft.address || ""} onChange={e => setDraft((d: any) => ({ ...d, address: e.target.value }))} className="rounded-none min-h-[80px]" /></F>
@@ -279,8 +379,10 @@ export default function AdminPageContent() {
                   <F label="WhatsApp"><Input value={draft.whatsapp || ""} onChange={e => setDraft((d: any) => ({ ...d, whatsapp: e.target.value }))} className="rounded-none" /></F>
                   <F label="Business Hours"><Textarea value={draft.hours || ""} onChange={e => setDraft((d: any) => ({ ...d, hours: e.target.value }))} className="rounded-none min-h-[80px]" /></F>
                   <F label="Google Maps Embed URL"><Input value={draft.mapEmbed || ""} onChange={e => setDraft((d: any) => ({ ...d, mapEmbed: e.target.value }))} className="rounded-none" /></F>
+                  <ImageUploadField label="Contact Page Background Image" value={draft.bgImage || ""} onChange={v => setDraft((d: any) => ({ ...d, bgImage: v }))} />
                 </SubSection>
               )}
+
             </div>
           )}
         </div>
