@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function BlogList() {
   const { data, isLoading } = useListBlogs();
@@ -13,6 +14,7 @@ export default function BlogList() {
       <Navbar />
       
       <div className="pt-32 pb-24 container mx-auto px-6">
+        <BackButton className="mb-8" />
         <div className="text-center mb-16">
           <h1 className="font-serif text-4xl mb-4">The Journal</h1>
           <div className="w-16 h-px bg-accent mx-auto mb-6"></div>

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, MapPin, Mail, Phone, Clock, MessageCircle } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 import { useSendContactMessage, useGetPageContent } from "@/lib/adminApi";
 import { motion } from "framer-motion";
 
@@ -73,6 +74,9 @@ export default function Contact() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       <div style={{ height: "100px" }} />
+      <div className="container mx-auto px-6 py-3">
+        <BackButton />
+      </div>
 
       {/* Header */}
       <div className="py-16 text-center border-b border-border">

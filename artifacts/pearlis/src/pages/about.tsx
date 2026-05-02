@@ -1,11 +1,16 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function About() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      
+      <div style={{ height: "100px" }} />
+      <div className="container mx-auto px-6 py-3">
+        <BackButton />
+      </div>
+
       {/* Hero */}
       <section className="relative h-[70vh] w-full overflow-hidden bg-black">
         <img 

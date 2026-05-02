@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 const CATEGORY_META: Record<string, { title: string; sub: string; img: string }> = {
   rings: {
@@ -55,6 +56,7 @@ export default function Category() {
         <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.25) 100%)" }} />
         <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <BackButton light className="mb-4" />
             <div className="flex items-center gap-3 mb-3">
               <Link href="/" className="text-white/50 text-[9px] tracking-[0.2em] uppercase hover:text-white transition-colors">Home</Link>
               <span className="text-white/30 text-[9px]">/</span>

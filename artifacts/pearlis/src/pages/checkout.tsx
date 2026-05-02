@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Tag, CheckCircle2, Truck, Shield, CreditCard, Banknote } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetSettings } from "@/lib/adminApi";
 
@@ -217,6 +218,9 @@ export default function Checkout() {
 
       <div className="flex-1 pb-24">
         <div className="container mx-auto px-4 max-w-7xl">
+          <div className="pt-6 pb-2">
+            <BackButton />
+          </div>
           {/* Header */}
           <div className="py-10 border-b border-border mb-10">
             <h1 className="font-serif text-3xl md:text-4xl">Checkout</h1>

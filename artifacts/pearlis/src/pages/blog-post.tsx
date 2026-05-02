@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function BlogPost() {
   const [, params] = useRoute("/blog/:id");
@@ -21,6 +22,7 @@ export default function BlogPost() {
       <Navbar />
       
       <div className="pt-32 pb-24 container mx-auto px-6 max-w-4xl">
+        <BackButton className="mb-8" />
         <div className="text-center mb-12">
           <div className="text-xs uppercase tracking-widest text-accent mb-4">
             {format(new Date(blog.createdAt), "MMMM d, yyyy")} • By {blog.author}

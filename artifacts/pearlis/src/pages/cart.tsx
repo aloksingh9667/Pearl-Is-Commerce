@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Link, useLocation } from "wouter";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Shield, Truck } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -39,7 +40,8 @@ export default function Cart() {
       <Navbar />
       <div style={{ height: "100px" }} />
 
-      <div className="flex-1 max-w-[1200px] mx-auto px-4 md:px-8 pt-8 pb-24 w-full">
+      <div className="flex-1 max-w-[1200px] mx-auto px-4 md:px-8 pt-4 pb-24 w-full">
+        <BackButton className="mb-4" />
         {/* Header */}
         <div className="mb-8 md:mb-12">
           <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-2">Your Selection</p>

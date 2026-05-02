@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { BackButton } from "@/components/ui/BackButton";
 
 const galleryImages = [
   "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800",
@@ -16,6 +17,7 @@ export default function Gallery() {
       <Navbar />
       
       <div className="pt-32 pb-24 container mx-auto px-6">
+        <BackButton className="mb-8" />
         <div className="text-center mb-16">
           <h1 className="font-serif text-4xl mb-4">Gallery</h1>
           <div className="w-16 h-px bg-accent mx-auto mb-6"></div>

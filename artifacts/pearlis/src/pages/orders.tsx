@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function Orders() {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ export default function Orders() {
       <Navbar />
       
       <div className="pt-32 pb-24 container mx-auto px-6 max-w-5xl flex-1">
+        <BackButton className="mb-8" />
         <div className="flex justify-between items-end mb-12">
           <div>
             <h1 className="font-serif text-4xl mb-4">My Account</h1>

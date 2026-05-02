@@ -18,6 +18,7 @@ import {
   Loader2, Heart, Share2, ShieldCheck, Truck, RefreshCcw,
   Star, ChevronLeft, ChevronRight, ZoomIn, Award, Minus, Plus, Tag,
 } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 const INR = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
 const DEFAULT_RING_SIZES = ["5", "6", "7", "8", "9", "10", "11", "12"];
@@ -142,6 +143,11 @@ export default function ProductDetail() {
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
       <div style={{ height: "100px" }} />
+
+      {/* Back */}
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-4">
+        <BackButton />
+      </div>
 
       {/* ── Breadcrumb ── */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-4">

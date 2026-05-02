@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, X, ChevronLeft, ChevronRight, Volume2, VolumeX, Instagram } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 type Video = {
   id: number; title: string; description?: string;
@@ -258,6 +259,9 @@ export default function VideosPage() {
     <div className="min-h-screen bg-[#0A0A0A] flex flex-col">
       <Navbar />
       <div style={{ height: "100px" }} />
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-3">
+        <BackButton light />
+      </div>
 
       {/* Hero */}
       <section className="relative py-20 md:py-32 overflow-hidden">

@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function OrderDetail() {
   const [, params] = useRoute("/order/:id");
@@ -22,6 +23,7 @@ export default function OrderDetail() {
       <Navbar />
       
       <div className="pt-32 pb-24 container mx-auto px-6 max-w-4xl flex-1">
+        <BackButton className="mb-6" />
         <div className="flex justify-between items-center mb-12">
           <div>
             <h1 className="font-serif text-3xl mb-2">Order #{order.id.toString().padStart(6, '0')}</h1>

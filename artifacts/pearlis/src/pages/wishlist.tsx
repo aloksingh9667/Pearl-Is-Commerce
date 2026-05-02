@@ -6,6 +6,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function Wishlist() {
   const { user } = useAuth();
@@ -36,6 +37,7 @@ export default function Wishlist() {
       <Navbar />
       
       <div className="pt-32 pb-24 container mx-auto px-6 max-w-6xl flex-1">
+        <BackButton className="mb-8" />
         <div className="flex justify-between items-end mb-12">
           <div>
             <h1 className="font-serif text-4xl mb-4">My Account</h1>
