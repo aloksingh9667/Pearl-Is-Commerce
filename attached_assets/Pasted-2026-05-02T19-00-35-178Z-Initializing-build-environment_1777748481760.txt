@@ -1,0 +1,28 @@
+2026-05-02T19:00:35.178Z	Initializing build environment...
+2026-05-02T19:00:38.099Z	Success: Finished initializing build environment
+2026-05-02T19:00:38.768Z	Cloning repository...
+2026-05-02T19:00:40.191Z	No build output detected to cache. Skipping.
+2026-05-02T19:00:40.191Z	No dependencies detected to cache. Skipping.
+2026-05-02T19:00:41.979Z	Detected the following tools from environment: nodejs@20.20.2, pnpm@10.26.1
+2026-05-02T19:00:41.982Z	Installing nodejs 20.20.2
+2026-05-02T19:00:52.958Z	Installing project dependencies: bun install
+2026-05-02T19:00:53.117Z	bun install v1.2.15 (df017990)
+2026-05-02T19:00:53.148Z	Resolving dependencies
+2026-05-02T19:00:53.840Z	Resolved, downloaded and extracted [8]
+2026-05-02T19:00:53.877Z	Saved lockfile
+2026-05-02T19:00:53.877Z	
+2026-05-02T19:00:53.881Z	$ sh -c 'rm -f package-lock.json yarn.lock; if [ "$CI" = "true" ]; then exit 0; fi; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-05-02T19:00:53.890Z	
+2026-05-02T19:00:53.890Z	+ prettier@3.8.3
+2026-05-02T19:00:53.891Z	+ typescript@5.9.3 (v6.0.3 available)
+2026-05-02T19:00:53.891Z	
+2026-05-02T19:00:53.891Z	2 packages installed [805.00ms]
+2026-05-02T19:00:54.111Z	Executing user build command: npm install -g pnpm && pnpm install && pnpm --filter @workspace/pearlis run build
+2026-05-02T19:00:54.847Z	npm error code EEXIST
+2026-05-02T19:00:54.848Z	npm error path /opt/buildhome/.asdf/installs/nodejs/20.20.2/bin/pnpm
+2026-05-02T19:00:54.848Z	npm error EEXIST: file already exists
+2026-05-02T19:00:54.848Z	npm error File exists: /opt/buildhome/.asdf/installs/nodejs/20.20.2/bin/pnpm
+2026-05-02T19:00:54.848Z	npm error Remove the existing file and try again, or run npm
+2026-05-02T19:00:54.848Z	npm error with --force to overwrite files recklessly.
+2026-05-02T19:00:54.849Z	npm error A complete log of this run can be found in: /opt/buildhome/.npm/_logs/2026-05-02T19_00_54_421Z-debug-0.log
+2026-05-02T19:00:54.869Z	Failed: error occurred while running build command
