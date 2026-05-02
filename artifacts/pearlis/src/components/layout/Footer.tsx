@@ -1,7 +1,19 @@
 import { Link } from "wouter";
 import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { useGetSettings } from "@/lib/adminApi";
 
 export function Footer() {
+  const { data: settings } = useGetSettings();
+  const social = settings?.social as any;
+  const contact = settings?.contact as any;
+
+  const socialLinks = [
+    { icon: Instagram, href: social?.instagram || "#", label: "Instagram" },
+    { icon: Facebook, href: social?.facebook || "#", label: "Facebook" },
+    { icon: Twitter, href: social?.twitter || "#", label: "Twitter" },
+    { icon: Youtube, href: social?.youtube || "#", label: "YouTube" },
+  ];
+
   return (
     <footer className="bg-[#0F0F0F] text-white">
       {/* Main footer */}
@@ -19,15 +31,12 @@ export function Footer() {
             </p>
             {/* Social links */}
             <div className="flex gap-4">
-              {[
-                { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Facebook, href: "#", label: "Facebook" },
-                { icon: Twitter, href: "#", label: "Twitter" },
-                { icon: Youtube, href: "#", label: "YouTube" },
-              ].map(({ icon: Icon, href, label }) => (
+              {socialLinks.map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
+                  target={href !== "#" ? "_blank" : undefined}
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className="w-9 h-9 border border-white/15 flex items-center justify-center text-white/50 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-300"
                 >
@@ -85,18 +94,18 @@ export function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm text-white/50">
                 <MapPin className="w-4 h-4 text-[#D4AF37] mt-0.5 flex-shrink-0" strokeWidth={1.5} />
-                <span>124 Luxury Lane, Bandra West<br />Mumbai, MH 400050</span>
+                <span>{contact?.address || "124 Luxury Lane, Bandra West\nMumbai, MH 400050"}</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-white/50">
                 <Mail className="w-4 h-4 text-[#D4AF37] flex-shrink-0" strokeWidth={1.5} />
-                <a href="mailto:concierge@pearlis.com" className="hover:text-[#D4AF37] transition-colors">
-                  concierge@pearlis.com
+                <a href={`mailto:${contact?.email || "concierge@pearlis.com"}`} className="hover:text-[#D4AF37] transition-colors">
+                  {contact?.email || "concierge@pearlis.com"}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm text-white/50">
                 <Phone className="w-4 h-4 text-[#D4AF37] flex-shrink-0" strokeWidth={1.5} />
-                <a href="tel:+911800555019" className="hover:text-[#D4AF37] transition-colors">
-                  +91 1800 555 019
+                <a href={`tel:${(contact?.phone || "+91 98765 43210").replace(/\s/g, "")}`} className="hover:text-[#D4AF37] transition-colors">
+                  {contact?.phone || "+91 98765 43210"}
                 </a>
               </li>
             </ul>

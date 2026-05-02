@@ -48,6 +48,17 @@ export type SiteSettings = {
     ctaText: string;
     ctaLink: string;
   };
+  homeSale: {
+    enabled: boolean;
+    badge: string;
+    offerLine: string;
+    subtitle: string;
+    promoText: string;
+    code: string;
+    ctaText: string;
+    ctaLink: string;
+    endsAt: string;
+  };
 };
 
 export function useGetSettings() {

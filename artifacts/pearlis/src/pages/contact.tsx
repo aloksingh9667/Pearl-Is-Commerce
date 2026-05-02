@@ -8,14 +8,14 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, MapPin, Mail, Phone, Clock, MessageCircle } from "lucide-react";
 import { BackButton } from "@/components/ui/BackButton";
-import { useSendContactMessage, useGetPageContent } from "@/lib/adminApi";
+import { useSendContactMessage, useGetSettings } from "@/lib/adminApi";
 import { motion } from "framer-motion";
 
 export default function Contact() {
   const { toast } = useToast();
   const sendMessage = useSendContactMessage();
-  const { data: pageData } = useGetPageContent("contact");
-  const info = (pageData?.content || {}) as any;
+  const { data: settings } = useGetSettings();
+  const info = (settings?.contact || {}) as any;
 
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", subject: "", message: "",

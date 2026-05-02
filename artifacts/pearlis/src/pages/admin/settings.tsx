@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Plus, Trash2, Settings, CreditCard, Phone, Share2, Instagram, Video, Zap, Megaphone, Palette, Upload } from "lucide-react";
+import { Loader2, Save, Plus, Trash2, Settings, CreditCard, Phone, Share2, Instagram, Video, Zap, Megaphone, Palette, Upload, Tag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useGetSettings, useUpdateSetting, type SiteSettings } from "@/lib/adminApi";
 
@@ -19,6 +19,7 @@ const TABS = [
   { id: "instagram", label: "Instagram", icon: Instagram },
   { id: "videos", label: "Videos", icon: Video },
   { id: "flashSale", label: "Flash Sale", icon: Zap },
+  { id: "homeSale", label: "Sale Section", icon: Tag },
 ] as const;
 
 type TabId = typeof TABS[number]["id"];
@@ -332,9 +333,25 @@ export default function AdminSettings() {
                 </details>
 
                 {(draft.instagram?.posts || []).length === 0 && (
-                  <div className="border-2 border-dashed border-border rounded-none py-10 text-center text-muted-foreground">
-                    <p className="text-sm">No media yet</p>
-                    <p className="text-xs mt-1">Upload images or videos using the buttons above.</p>
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">No custom media yet — default placeholder photos shown below (visible on homepage until you upload your own):</p>
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                      {[
+                        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=200&h=200",
+                        "https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=80&w=200&h=200",
+                        "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=200&h=200",
+                        "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&q=80&w=200&h=200",
+                        "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=200&h=200",
+                        "https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=80&w=200&h=200",
+                      ].map((src, i) => (
+                        <div key={i} className="relative aspect-square border border-border overflow-hidden bg-muted opacity-60">
+                          <img src={src} alt="" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <span className="text-white text-[9px] tracking-wide font-medium">Default</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -498,6 +515,76 @@ export default function AdminSettings() {
               )}
             </Section>
           )}
+          {/* HOME SALE SECTION */}
+          {activeTab === "homeSale" && (
+            <Section title="Homepage Sale Section" onSave={() => save("homeSale")} saving={saving}>
+              <p className="text-sm text-muted-foreground -mt-2 mb-4">
+                Controls the large "Limited Time Offer" countdown section on the homepage — separate from the top navbar banner.
+              </p>
+
+              {/* Enable toggle */}
+              <div className="flex items-center justify-between p-4 bg-muted/40 border border-border mb-6">
+                <div>
+                  <p className="font-medium text-sm">Show Sale Section on Homepage</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Displays the dark countdown section with offer text and timer. Auto-hides when the timer expires.</p>
+                </div>
+                <Switch
+                  checked={(draft as any).homeSale?.enabled ?? true}
+                  onCheckedChange={v => updateNested("homeSale" as any, "enabled", v)}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                <Field label="Label (small top text)">
+                  <Input value={(draft as any).homeSale?.badge || ""} onChange={e => updateNested("homeSale" as any, "badge", e.target.value)} className="rounded-none" placeholder="Limited Time Offer" />
+                </Field>
+                <Field label="Offer Headline (big text in gold)">
+                  <Input value={(draft as any).homeSale?.offerLine || ""} onChange={e => updateNested("homeSale" as any, "offerLine", e.target.value)} className="rounded-none" placeholder="Flat 20% OFF" />
+                </Field>
+                <Field label="Subtitle (below offer headline)">
+                  <Input value={(draft as any).homeSale?.subtitle || ""} onChange={e => updateNested("homeSale" as any, "subtitle", e.target.value)} className="rounded-none" placeholder="Today Only" />
+                </Field>
+                <Field label="Coupon Code (highlighted)">
+                  <Input value={(draft as any).homeSale?.code || ""} onChange={e => updateNested("homeSale" as any, "code", e.target.value)} className="rounded-none" placeholder="PEARLIS10" />
+                </Field>
+                <Field label="Promo Text (full description line)">
+                  <Input value={(draft as any).homeSale?.promoText || ""} onChange={e => updateNested("homeSale" as any, "promoText", e.target.value)} className="rounded-none" placeholder="Use code PEARLIS10 at checkout and save on our finest pieces." />
+                </Field>
+                <Field label="CTA Button Text">
+                  <Input value={(draft as any).homeSale?.ctaText || ""} onChange={e => updateNested("homeSale" as any, "ctaText", e.target.value)} className="rounded-none" placeholder="Shop the Sale" />
+                </Field>
+                <Field label="CTA Button Link">
+                  <Input value={(draft as any).homeSale?.ctaLink || ""} onChange={e => updateNested("homeSale" as any, "ctaLink", e.target.value)} className="rounded-none" placeholder="/shop" />
+                </Field>
+              </div>
+
+              <Field label="Sale Ends At (countdown timer)">
+                <Input
+                  type="datetime-local"
+                  value={(draft as any).homeSale?.endsAt ? (draft as any).homeSale.endsAt.slice(0, 16) : ""}
+                  onChange={e => updateNested("homeSale" as any, "endsAt", new Date(e.target.value).toISOString())}
+                  className="rounded-none max-w-xs"
+                />
+                <p className="text-xs text-muted-foreground mt-1">The section automatically disappears when the timer reaches zero.</p>
+              </Field>
+
+              {/* Live preview */}
+              {(draft as any).homeSale?.enabled && (
+                <div className="mt-4 p-5 bg-[#0A0A0A] text-white rounded-none border border-[#D4AF37]/20">
+                  <p className="text-[9px] tracking-[0.4em] uppercase text-[#D4AF37] font-bold mb-1">{(draft as any).homeSale?.badge || "Limited Time Offer"}</p>
+                  <p className="font-serif text-2xl text-[#D4AF37] mb-1">{(draft as any).homeSale?.offerLine || "Flat 20% OFF"}</p>
+                  <p className="font-serif text-lg text-white/50 mb-2">{(draft as any).homeSale?.subtitle || "Today Only"}</p>
+                  {(draft as any).homeSale?.code && (
+                    <p className="text-sm text-white/40">
+                      Code: <span className="text-[#D4AF37] font-bold bg-[#D4AF37]/10 px-2 py-0.5">{(draft as any).homeSale.code}</span>
+                    </p>
+                  )}
+                  <span className="ml-auto text-xs text-white/30 block mt-2">Live preview after Save</span>
+                </div>
+              )}
+            </Section>
+          )}
+
         </div>
       </div>
     </AdminLayout>

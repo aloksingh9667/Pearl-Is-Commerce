@@ -62,6 +62,17 @@ const DEFAULT_SETTINGS: Record<string, any> = {
     ctaText: "Shop the Sale",
     ctaLink: "/shop",
   },
+  homeSale: {
+    enabled: true,
+    badge: "Limited Time Offer",
+    offerLine: "Flat 20% OFF",
+    subtitle: "Today Only",
+    promoText: "Use code PEARLIS10 at checkout and save on our finest pieces.",
+    code: "PEARLIS10",
+    ctaText: "Shop the Sale",
+    ctaLink: "/shop",
+    endsAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
 };
 
 async function ensureSettings() {

@@ -172,13 +172,21 @@ const fadeUp = (delay = 0) => ({
 });
 
 /* ─── countdown ─── */
-function useCountdown(target: Date) {
-  const calc = () => {
-    const d = Math.max(0, target.getTime() - Date.now());
-    return { h: Math.floor(d / 3600000), m: Math.floor((d % 3600000) / 60000), s: Math.floor((d % 60000) / 1000) };
-  };
-  const [t, setT] = useState(calc);
-  useEffect(() => { const id = setInterval(() => setT(calc()), 1000); return () => clearInterval(id); }, []);
+function useCountdown(targetMs: number) {
+  const [t, setT] = useState(() => {
+    const raw = targetMs - Date.now();
+    const d = Math.max(0, raw);
+    return { h: Math.floor(d / 3600000), m: Math.floor((d % 3600000) / 60000), s: Math.floor((d % 60000) / 1000), expired: raw <= 0 };
+  });
+  useEffect(() => {
+    if (!targetMs) return;
+    const id = setInterval(() => {
+      const raw = targetMs - Date.now();
+      const d = Math.max(0, raw);
+      setT({ h: Math.floor(d / 3600000), m: Math.floor((d % 3600000) / 60000), s: Math.floor((d % 60000) / 1000), expired: raw <= 0 });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [targetMs]);
   return t;
 }
 
@@ -518,8 +526,10 @@ export default function Home() {
   const { data: arrivals } = useGetNewArrivals();
   const { data: blogsData } = useListBlogs();
   const { data: settings } = useGetSettings();
-  const saleEnd = new Date(Date.now() + 23 * 3600000 + 47 * 60000 + 33000);
-  const { h, m, s } = useCountdown(saleEnd);
+  const hs = settings?.homeSale as any;
+  const saleEndMs = hs?.endsAt ? new Date(hs.endsAt).getTime() : 0;
+  const { h, m, s, expired } = useCountdown(saleEndMs);
+  const showHomeSale = !!(hs?.enabled && saleEndMs > 0 && !expired);
 
   const igEnabled = settings?.instagram?.enabled !== false;
   const igUsername = settings?.instagram?.username || "pearlisjewels";
@@ -661,75 +671,89 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── 7. FLASH SALE ── */}
-      <section className="relative overflow-hidden bg-[#0A0A0A]">
-        {/* Background decoration */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 70% at 50% 50%, rgba(212,175,55,0.08) 0%, transparent 65%)" }} />
-          <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #D4AF37 0px, #D4AF37 1px, transparent 1px, transparent 36px)" }} />
-          <div className="absolute top-6 left-6 w-14 h-14 border-t border-l border-[#D4AF37]/20" />
-          <div className="absolute top-6 right-6 w-14 h-14 border-t border-r border-[#D4AF37]/20" />
-          <div className="absolute bottom-6 left-6 w-14 h-14 border-b border-l border-[#D4AF37]/20" />
-          <div className="absolute bottom-6 right-6 w-14 h-14 border-b border-r border-[#D4AF37]/20" />
-        </div>
-
-        <div className="relative z-10 max-w-[1440px] mx-auto px-4 md:px-8 py-16 md:py-24">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-            {/* Left: copy */}
-            <motion.div {...fadeUp()} className="flex-1 text-center lg:text-left">
-              <div className="inline-flex items-center gap-3 mb-5">
-                <div className="h-px w-8 bg-[#D4AF37]/60" />
-                <span className="text-[#D4AF37] text-[9px] tracking-[0.45em] uppercase font-bold">Limited Time Offer</span>
-                <div className="h-px w-8 bg-[#D4AF37]/60" />
-              </div>
-              <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white leading-[1.02] mb-5">
-                Flat <span className="text-[#D4AF37]">20% OFF</span>
-                <br />
-                <span className="text-white/50 text-3xl md:text-4xl">Today Only</span>
-              </h2>
-              <p className="text-white/40 text-sm leading-relaxed mb-8 max-w-sm mx-auto lg:mx-0">
-                Use code <span className="text-[#D4AF37] font-bold tracking-wider bg-[#D4AF37]/10 px-2 py-0.5">PEARLIS10</span> at checkout and save on our finest pieces.
-              </p>
-              <Link href="/shop">
-                <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                  className="group bg-[#D4AF37] hover:bg-[#c9a430] text-[#0A0A0A] px-10 md:px-14 py-4 text-[10px] tracking-[0.3em] uppercase font-extrabold transition-colors shadow-[0_8px_30px_rgba(212,175,55,0.25)] inline-flex items-center gap-2">
-                  Shop the Sale <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </motion.button>
-              </Link>
-            </motion.div>
-
-            {/* Right: countdown */}
-            <motion.div {...fadeUp(0.15)} className="flex-shrink-0 text-center">
-              <p className="text-[9px] tracking-[0.35em] uppercase text-white/25 mb-5 font-semibold">Offer Ends In</p>
-              <div className="flex items-start gap-2 md:gap-4">
-                {[{ val: h, label: "Hours" }, { val: m, label: "Min" }, { val: s, label: "Sec" }].map(({ val, label }, i) => (
-                  <div key={label} className="flex items-start gap-2 md:gap-4">
-                    {i > 0 && (
-                      <div className="flex flex-col gap-2 pt-4">
-                        <div className="w-1 h-1 rounded-full bg-[#D4AF37]/50" />
-                        <div className="w-1 h-1 rounded-full bg-[#D4AF37]/50" />
-                      </div>
-                    )}
-                    <div className="flex flex-col items-center">
-                      <div className="w-16 h-20 md:w-24 md:h-28 bg-white/[0.04] border border-[#D4AF37]/20 flex items-center justify-center relative overflow-hidden">
-                        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(212,175,55,0.1) 0%, transparent 70%)" }} />
-                        <AnimatePresence mode="popLayout">
-                          <motion.span key={val} initial={{ y: -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 16, opacity: 0 }} transition={{ duration: 0.3 }}
-                            className="font-serif text-3xl md:text-4xl text-white tabular-nums">
-                            {String(val).padStart(2, "0")}
-                          </motion.span>
-                        </AnimatePresence>
-                        <div className="absolute bottom-0 left-3 right-3 h-px bg-[#D4AF37]/25" />
-                      </div>
-                      <span className="text-[8px] tracking-[0.25em] uppercase text-white/30 mt-2">{label}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+      {/* ── 7. HOMEPAGE SALE SECTION ── */}
+      {showHomeSale && (
+        <section className="relative overflow-hidden bg-[#0A0A0A]">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 70% at 50% 50%, rgba(212,175,55,0.08) 0%, transparent 65%)" }} />
+            <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #D4AF37 0px, #D4AF37 1px, transparent 1px, transparent 36px)" }} />
+            <div className="absolute top-6 left-6 w-14 h-14 border-t border-l border-[#D4AF37]/20" />
+            <div className="absolute top-6 right-6 w-14 h-14 border-t border-r border-[#D4AF37]/20" />
+            <div className="absolute bottom-6 left-6 w-14 h-14 border-b border-l border-[#D4AF37]/20" />
+            <div className="absolute bottom-6 right-6 w-14 h-14 border-b border-r border-[#D4AF37]/20" />
           </div>
-        </div>
-      </section>
+
+          <div className="relative z-10 max-w-[1440px] mx-auto px-4 md:px-8 py-16 md:py-24">
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+              {/* Left: copy */}
+              <motion.div {...fadeUp()} className="flex-1 text-center lg:text-left">
+                <div className="inline-flex items-center gap-3 mb-5">
+                  <div className="h-px w-8 bg-[#D4AF37]/60" />
+                  <span className="text-[#D4AF37] text-[9px] tracking-[0.45em] uppercase font-bold">
+                    {hs?.badge || "Limited Time Offer"}
+                  </span>
+                  <div className="h-px w-8 bg-[#D4AF37]/60" />
+                </div>
+                <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl text-[#D4AF37] leading-[1.02] mb-2">
+                  {hs?.offerLine || "Flat 20% OFF"}
+                </h2>
+                <p className="font-serif text-3xl md:text-4xl text-white/50 mb-5">
+                  {hs?.subtitle || "Today Only"}
+                </p>
+                <p className="text-white/40 text-sm leading-relaxed mb-8 max-w-sm mx-auto lg:mx-0">
+                  {hs?.code ? (
+                    <>
+                      Use code{" "}
+                      <span className="text-[#D4AF37] font-bold tracking-wider bg-[#D4AF37]/10 px-2 py-0.5">
+                        {hs.code}
+                      </span>{" "}
+                      {hs.promoText?.replace(/use code\s+\S+\s*/i, "") || "at checkout and save on our finest pieces."}
+                    </>
+                  ) : (
+                    hs?.promoText || "Use code PEARLIS10 at checkout and save on our finest pieces."
+                  )}
+                </p>
+                <Link href={hs?.ctaLink || "/shop"}>
+                  <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                    className="group bg-[#D4AF37] hover:bg-[#c9a430] text-[#0A0A0A] px-10 md:px-14 py-4 text-[10px] tracking-[0.3em] uppercase font-extrabold transition-colors shadow-[0_8px_30px_rgba(212,175,55,0.25)] inline-flex items-center gap-2">
+                    {hs?.ctaText || "Shop the Sale"} <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </motion.button>
+                </Link>
+              </motion.div>
+
+              {/* Right: countdown */}
+              <motion.div {...fadeUp(0.15)} className="flex-shrink-0 text-center">
+                <p className="text-[9px] tracking-[0.35em] uppercase text-white/25 mb-5 font-semibold">Offer Ends In</p>
+                <div className="flex items-start gap-2 md:gap-4">
+                  {[{ val: h, label: "Hours" }, { val: m, label: "Min" }, { val: s, label: "Sec" }].map(({ val, label }, i) => (
+                    <div key={label} className="flex items-start gap-2 md:gap-4">
+                      {i > 0 && (
+                        <div className="flex flex-col gap-2 pt-4">
+                          <div className="w-1 h-1 rounded-full bg-[#D4AF37]/50" />
+                          <div className="w-1 h-1 rounded-full bg-[#D4AF37]/50" />
+                        </div>
+                      )}
+                      <div className="flex flex-col items-center">
+                        <div className="w-16 h-20 md:w-24 md:h-28 bg-white/[0.04] border border-[#D4AF37]/20 flex items-center justify-center relative overflow-hidden">
+                          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(212,175,55,0.1) 0%, transparent 70%)" }} />
+                          <AnimatePresence mode="popLayout">
+                            <motion.span key={val} initial={{ y: -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 16, opacity: 0 }} transition={{ duration: 0.3 }}
+                              className="font-serif text-3xl md:text-4xl text-white tabular-nums">
+                              {String(val).padStart(2, "0")}
+                            </motion.span>
+                          </AnimatePresence>
+                          <div className="absolute bottom-0 left-3 right-3 h-px bg-[#D4AF37]/25" />
+                        </div>
+                        <span className="text-[8px] tracking-[0.25em] uppercase text-white/30 mt-2">{label}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── 8. BRAND STORY ── */}
       <section className="bg-[#0F0F0F] relative overflow-hidden">
