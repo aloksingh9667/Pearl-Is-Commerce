@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useGetCart, useCreateOrder } from "@workspace/api-client-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -10,6 +10,23 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Tag, CheckCircle2, Truck, Shield, CreditCard, Banknote } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetSettings } from "@/lib/adminApi";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise(resolve => {
+    if (window.Razorpay) { resolve(true); return; }
+    const s = document.createElement("script");
+    s.src = "https://checkout.razorpay.com/v1/checkout.js";
+    s.onload = () => resolve(true);
+    s.onerror = () => resolve(false);
+    document.body.appendChild(s);
+  });
+}
 
 const INR = (usd: number) => Math.round(usd * 83);
 const fmt = (n: number) => `₹${n.toLocaleString("en-IN")}`;
@@ -70,20 +87,11 @@ export default function Checkout() {
   const discountINR = couponApplied?.discount || 0;
   const totalINR = Math.max(0, subtotalINR - discountINR);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name || !form.line1 || !form.city || !form.state || !form.postalCode || !form.phone) {
-      toast({ title: "Missing Fields", description: "Please fill all required fields.", variant: "destructive" });
-      return;
-    }
+  const [razorpayLoading, setRazorpayLoading] = useState(false);
+
+  const placeOrderDirectly = useCallback((extraData?: Record<string, any>) => {
     createOrder.mutate(
-      {
-        data: {
-          shippingAddress: form,
-          paymentMethod,
-          couponCode: couponApplied?.code,
-        },
-      },
+      { data: { shippingAddress: form, paymentMethod, couponCode: couponApplied?.code, ...extraData } },
       {
         onSuccess: (order: any) => {
           toast({ title: "Order Placed!", description: "Your order has been confirmed." });
@@ -94,6 +102,99 @@ export default function Checkout() {
         },
       }
     );
+  }, [form, paymentMethod, couponApplied, createOrder, toast, setLocation]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.line1 || !form.city || !form.state || !form.postalCode || !form.phone) {
+      toast({ title: "Missing Fields", description: "Please fill all required fields.", variant: "destructive" });
+      return;
+    }
+
+    if (paymentMethod === "razorpay") {
+      setRazorpayLoading(true);
+      try {
+        const loaded = await loadRazorpayScript();
+        if (!loaded) {
+          toast({ title: "Payment Error", description: "Could not load payment gateway. Check your connection.", variant: "destructive" });
+          setRazorpayLoading(false);
+          return;
+        }
+
+        // Get Razorpay config (key ID)
+        const cfgRes = await fetch("/api/razorpay/config");
+        const cfg = await cfgRes.json();
+        if (!cfg.enabled) {
+          toast({ title: "Razorpay not configured", description: "Please contact support.", variant: "destructive" });
+          setRazorpayLoading(false);
+          return;
+        }
+
+        // Create Razorpay order on backend
+        const orderRes = await fetch("/api/razorpay/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amountINR: totalINR, receipt: `cart_${Date.now()}` }),
+        });
+        const rzpOrder = await orderRes.json();
+        if (!rzpOrder.orderId) {
+          toast({ title: "Payment Error", description: "Could not initiate payment.", variant: "destructive" });
+          setRazorpayLoading(false);
+          return;
+        }
+
+        setRazorpayLoading(false);
+
+        // Open Razorpay modal
+        const options = {
+          key: cfg.keyId,
+          amount: rzpOrder.amount,
+          currency: rzpOrder.currency,
+          name: "Pearlis",
+          description: "Fine Jewellery",
+          image: "/logo.png",
+          order_id: rzpOrder.orderId,
+          prefill: { name: form.name, contact: form.phone },
+          theme: { color: "#D4AF37" },
+          handler: async (response: any) => {
+            // Verify payment
+            const verRes = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const ver = await verRes.json();
+            if (!ver.valid) {
+              toast({ title: "Payment Verification Failed", description: "Please contact support.", variant: "destructive" });
+              return;
+            }
+            // Create order in our system
+            placeOrderDirectly({
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+            });
+          },
+          modal: {
+            ondismiss: () => {
+              toast({ title: "Payment Cancelled", description: "You cancelled the payment.", variant: "destructive" });
+            },
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } catch {
+        toast({ title: "Payment Error", description: "Something went wrong.", variant: "destructive" });
+        setRazorpayLoading(false);
+      }
+      return;
+    }
+
+    placeOrderDirectly();
   };
 
   if (cartLoading) {

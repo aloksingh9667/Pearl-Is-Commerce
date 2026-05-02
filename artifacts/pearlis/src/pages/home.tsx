@@ -15,6 +15,138 @@ import {
   Clock, Instagram, Play, ChevronLeft, ChevronRight,
 } from "lucide-react";
 
+/* ══════════════════════════════════════════════════════════
+   CATEGORIES CAROUSEL
+══════════════════════════════════════════════════════════ */
+const CATS = [
+  { label: "Rings", slug: "rings", src: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Necklaces", slug: "necklaces", src: "https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Pendants", slug: "pendants", src: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Bracelets", slug: "bracelets", src: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Earrings", slug: "earrings", src: "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Accessories", slug: "accessories", src: "https://images.unsplash.com/photo-1576502200272-341a4b8d73a9?auto=format&fit=crop&q=85&w=500&h=700" },
+];
+
+function CategoriesCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(true);
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const updateArrows = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    setCanPrev(el.scrollLeft > 4);
+    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    // Calculate which card is most centered
+    const cards = Array.from(el.children) as HTMLElement[];
+    const center = el.scrollLeft + el.clientWidth / 2;
+    let closest = 0;
+    let minDist = Infinity;
+    cards.forEach((c, i) => {
+      const dist = Math.abs(c.offsetLeft + c.offsetWidth / 2 - center);
+      if (dist < minDist) { minDist = dist; closest = i; }
+    });
+    setActiveIdx(closest);
+  };
+
+  const scrollTo = (dir: "prev" | "next") => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.children[0] as HTMLElement;
+    const step = card ? card.offsetWidth + 12 : 260;
+    el.scrollBy({ left: dir === "next" ? step : -step, behavior: "smooth" });
+  };
+
+  const scrollToIdx = (i: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.children[i] as HTMLElement;
+    if (card) el.scrollTo({ left: card.offsetLeft - 16, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", updateArrows, { passive: true });
+    updateArrows();
+    return () => el.removeEventListener("scroll", updateArrows);
+  }, []);
+
+  return (
+    <section className="py-16 md:py-24 bg-[#FAF8F3] overflow-hidden">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8">
+        <motion.div {...fadeUp()} className="text-center mb-10 md:mb-14">
+          <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-3">Shop by Category</p>
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-[#0F0F0F]">Explore Our World</h2>
+          <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-4" />
+        </motion.div>
+
+        {/* Carousel wrapper */}
+        <div className="relative">
+          {/* Prev arrow */}
+          <button
+            onClick={() => scrollTo("prev")}
+            className={`hidden sm:flex absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 bg-white border border-[#D4AF37]/40 items-center justify-center shadow-md hover:bg-[#D4AF37] hover:text-white hover:border-[#D4AF37] transition-all duration-200 ${canPrev ? "opacity-100 cursor-pointer" : "opacity-30 cursor-default"}`}
+            disabled={!canPrev}
+          >
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+          </button>
+
+          {/* Track */}
+          <div
+            ref={trackRef}
+            className="flex gap-2 md:gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {CATS.map(({ label, slug, src }, i) => (
+              <Link key={slug} href={`/category/${slug}`}
+                className="flex-shrink-0 snap-start w-[42vw] sm:w-[28vw] md:w-[22vw] lg:w-[calc(16.66%-10px)] xl:w-48 cursor-pointer group"
+              >
+                <div className="relative aspect-[2/3] overflow-hidden">
+                  <img
+                    src={src} alt={label} loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/12 transition-all duration-500" />
+                  <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#D4AF37]/60 transition-all duration-300" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-center">
+                    <p className="text-white font-serif text-sm md:text-base leading-tight">{label}</p>
+                    <p className="text-[#D4AF37] text-[8px] tracking-[0.22em] uppercase mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-bold">
+                      Shop →
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Next arrow */}
+          <button
+            onClick={() => scrollTo("next")}
+            className={`hidden sm:flex absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 bg-white border border-[#D4AF37]/40 items-center justify-center shadow-md hover:bg-[#D4AF37] hover:text-white hover:border-[#D4AF37] transition-all duration-200 ${canNext ? "opacity-100 cursor-pointer" : "opacity-30 cursor-default"}`}
+            disabled={!canNext}
+          >
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+          </button>
+        </div>
+
+        {/* Dot indicators */}
+        <div className="flex justify-center gap-1.5 mt-6">
+          {CATS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollToIdx(i)}
+              className={`transition-all duration-300 rounded-full ${i === activeIdx ? "w-6 h-1.5 bg-[#D4AF37]" : "w-1.5 h-1.5 bg-[#D4AF37]/30"}`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─── animation helpers ─── */
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 40 },
@@ -244,48 +376,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 3. CATEGORIES ── */}
-      <section className="py-16 md:py-24 bg-[#FAF8F3]">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-8">
-          <motion.div {...fadeUp()} className="text-center mb-10 md:mb-14">
-            <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-3">Shop by Category</p>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-[#0F0F0F]">Explore Our World</h2>
-            <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-4" />
-          </motion.div>
-
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
-            {[
-              { label: "Rings", slug: "rings", src: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=85&w=500&h=700" },
-              { label: "Necklaces", slug: "necklaces", src: "https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=85&w=500&h=700" },
-              { label: "Pendants", slug: "pendants", src: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&q=85&w=500&h=700" },
-              { label: "Bracelets", slug: "bracelets", src: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=85&w=500&h=700" },
-              { label: "Earrings", slug: "earrings", src: "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=85&w=500&h=700" },
-              { label: "Accessories", slug: "accessories", src: "https://images.unsplash.com/photo-1576502200272-341a4b8d73a9?auto=format&fit=crop&q=85&w=500&h=700" },
-            ].map(({ label, slug, src }, i) => (
-              <motion.div key={slug} {...fadeUp(i * 0.06)}>
-                <Link href={`/category/${slug}`}>
-                  <div className="group relative aspect-[2/3] overflow-hidden cursor-pointer">
-                    <img
-                      src={src} alt={label} loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                    <div className="absolute inset-0 bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/15 transition-all duration-500" />
-                    {/* Gold border on hover */}
-                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#D4AF37]/60 transition-all duration-400" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-center">
-                      <p className="text-white font-serif text-sm md:text-base leading-tight">{label}</p>
-                      <p className="text-[#D4AF37] text-[8px] tracking-[0.2em] uppercase mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        Shop →
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── 3. CATEGORIES CAROUSEL ── */}
+      <CategoriesCarousel />
 
       {/* ── 4. NEW ARRIVALS ── */}
       {arrivals && arrivals.length > 0 && (

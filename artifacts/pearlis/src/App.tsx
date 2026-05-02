@@ -22,6 +22,7 @@ import Contact from "@/pages/contact";
 import Gallery from "@/pages/gallery";
 import BlogList from "@/pages/blog";
 import BlogPost from "@/pages/blog-post";
+import Videos from "@/pages/videos";
 import NotFound from "@/pages/not-found";
 
 // Admin Pages
@@ -34,6 +35,7 @@ import AdminCoupons from "@/pages/admin/coupons";
 import AdminSettings from "@/pages/admin/settings";
 import AdminMessages from "@/pages/admin/messages";
 import AdminPageContent from "@/pages/admin/page-content";
+import AdminVideos from "@/pages/admin/videos";
 
 // Admin guard
 function AdminRoute({ component: Component }: { component: any }) {
@@ -75,6 +77,7 @@ function Router() {
       <Route path="/gallery" component={Gallery} />
       <Route path="/blog" component={BlogList} />
       <Route path="/blog/:id" component={BlogPost} />
+      <Route path="/videos" component={Videos} />
 
       {/* Admin Routes */}
       <Route path="/admin">{() => <AdminRoute component={AdminDashboard} />}</Route>
@@ -86,6 +89,7 @@ function Router() {
       <Route path="/admin/settings">{() => <AdminRoute component={AdminSettings} />}</Route>
       <Route path="/admin/messages">{() => <AdminRoute component={AdminMessages} />}</Route>
       <Route path="/admin/page-content">{() => <AdminRoute component={AdminPageContent} />}</Route>
+      <Route path="/admin/videos">{() => <AdminRoute component={AdminVideos} />}</Route>
 
       <Route component={NotFound} />
     </Switch>

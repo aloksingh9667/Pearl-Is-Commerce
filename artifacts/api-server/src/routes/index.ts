@@ -16,6 +16,8 @@ import settingsRouter from "./settings";
 import contactMessagesRouter from "./contact-messages";
 import pageContentRouter from "./page-content";
 import uploadRouter from "./upload";
+import videosRouter from "./videos";
+import razorpayRouter from "./razorpay";
 
 const router: IRouter = Router();
 
@@ -36,5 +38,7 @@ router.use(settingsRouter);
 router.use(contactMessagesRouter);
 router.use(pageContentRouter);
 router.use(uploadRouter);
+router.use(videosRouter);
+router.use(razorpayRouter);
 
 export default router;

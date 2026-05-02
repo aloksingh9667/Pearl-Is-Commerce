@@ -83,9 +83,22 @@ export const contactMessagesTable = pgTable("contact_messages", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const videosTable = pgTable("videos", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  videoUrl: text("video_url").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  category: text("category").default("lookbook"),
+  isFeatured: boolean("is_featured").default(false).notNull(),
+  isPublished: boolean("is_published").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type Review = typeof reviewsTable.$inferSelect;
 export type Blog = typeof blogsTable.$inferSelect;
 export type Coupon = typeof couponsTable.$inferSelect;
 export type SiteSetting = typeof siteSettingsTable.$inferSelect;
 export type PageContent = typeof pageContentTable.$inferSelect;
 export type ContactMessage = typeof contactMessagesTable.$inferSelect;
+export type Video = typeof videosTable.$inferSelect;

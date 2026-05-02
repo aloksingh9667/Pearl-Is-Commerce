@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   LayoutDashboard, ShoppingBag, Package, Users, FileText, Tag, LogOut,
-  Settings, FileEdit, MessageSquare, Menu, X, ChevronDown
+  Settings, FileEdit, MessageSquare, Menu, X, ChevronDown, Video
 } from "lucide-react";
 
 const NAV_GROUPS = [
@@ -20,6 +20,7 @@ const NAV_GROUPS = [
     label: "Content",
     items: [
       { name: "Journal", href: "/admin/blogs", icon: FileText },
+      { name: "Videos", href: "/admin/videos", icon: Video },
       { name: "Page Content", href: "/admin/page-content", icon: FileEdit },
       { name: "Messages", href: "/admin/messages", icon: MessageSquare },
     ],

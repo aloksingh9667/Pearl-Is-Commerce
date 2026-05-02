@@ -13,6 +13,7 @@ const navLinks = [
   { label: "Bracelets", href: "/category/bracelets" },
   { label: "Earrings", href: "/category/earrings" },
   { label: "Gallery", href: "/gallery" },
+  { label: "Videos", href: "/videos" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
