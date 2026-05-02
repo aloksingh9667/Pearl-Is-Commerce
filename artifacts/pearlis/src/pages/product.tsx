@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { BackButton } from "@/components/ui/BackButton";
 import { useRecentlyViewed, recordView } from "@/hooks/useRecentlyViewed";
+import { SizeGuideModal } from "@/components/ui/SizeGuideModal";
 
 const INR = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
 
@@ -131,6 +132,7 @@ export default function ProductDetail() {
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   const recentlyViewed = useRecentlyViewed(productId);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
 
   /* ── base product ── */
   const { data: product, isLoading } = useGetProduct(productId, { query: { enabled: !!productId } });
@@ -437,7 +439,7 @@ export default function ProductDetail() {
                     {product.category?.toLowerCase().includes("ring") ? "Ring Size" : "Size"}:&nbsp;
                     <span className="text-[#0F0F0F]">{selectedSize ?? "Select"}</span>
                   </p>
-                  <button className="text-[9px] tracking-[0.15em] uppercase text-[#D4AF37] underline underline-offset-2 font-semibold whitespace-nowrap">Size Guide</button>
+                  <button onClick={() => setShowSizeGuide(true)} className="text-[9px] tracking-[0.15em] uppercase text-[#D4AF37] underline underline-offset-2 font-semibold whitespace-nowrap">Size Guide</button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {sizes.map(s => (
@@ -863,6 +865,17 @@ export default function ProductDetail() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SizeGuideModal
+        open={showSizeGuide}
+        onClose={() => setShowSizeGuide(false)}
+        defaultTab={
+          product?.category?.toLowerCase().includes("ring") ? "ring"
+          : product?.category?.toLowerCase().includes("bracelet") || product?.category?.toLowerCase().includes("bangle") ? "bracelet"
+          : product?.category?.toLowerCase().includes("necklace") ? "necklace"
+          : "ring"
+        }
+      />
 
       <Footer />
     </div>
