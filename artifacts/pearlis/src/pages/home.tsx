@@ -154,6 +154,15 @@ function CategoriesCarousel() {
   );
 }
 
+/* ─── atelier video helpers ─── */
+function isYouTubeUrl(url: string) {
+  return url.includes("youtube.com") || url.includes("youtu.be");
+}
+function getYTId(url: string) {
+  const m = url.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/);
+  return m?.[1] || "";
+}
+
 /* ─── animation helpers ─── */
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 40 },
@@ -565,7 +574,7 @@ export default function Home() {
       <section className="bg-[#0F0F0F] relative overflow-hidden">
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[560px]">
-            {/* Image */}
+            {/* Image / Video */}
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -573,12 +582,30 @@ export default function Home() {
               transition={{ duration: 1 }}
               className="relative overflow-hidden min-h-[360px] lg:min-h-0"
             >
-              <img
-                src="https://images.unsplash.com/photo-1583937443943-b50a01b3e301?auto=format&fit=crop&q=85&w=900"
-                alt="Artisan" loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: "center 40%" }}
-              />
+              {settings?.atelierVideo ? (
+                isYouTubeUrl(settings.atelierVideo) ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${getYTId(settings.atelierVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYTId(settings.atelierVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+                    className="absolute inset-0 w-full h-full"
+                    allow="autoplay; fullscreen"
+                    style={{ border: 0, objectFit: "cover", pointerEvents: "none" }}
+                    title="Atelier"
+                  />
+                ) : (
+                  <video
+                    src={settings.atelierVideo}
+                    autoPlay muted loop playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                )
+              ) : (
+                <img
+                  src="https://images.unsplash.com/photo-1583937443943-b50a01b3e301?auto=format&fit=crop&q=85&w=900"
+                  alt="Artisan" loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: "center 40%" }}
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
               <div className="absolute top-7 left-7 w-12 h-12">

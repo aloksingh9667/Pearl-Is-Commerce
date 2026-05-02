@@ -37,6 +37,7 @@ export type SiteSettings = {
   social: { instagram: string; facebook: string; twitter: string; pinterest: string; youtube: string };
   instagram: { enabled: boolean; username: string; posts: string[] };
   videos: Array<{ title: string; url: string; thumbnail: string }>;
+  atelierVideo: string;
   flashSale: { enabled: boolean; title: string; subtitle: string; endsAt: string };
 };
 

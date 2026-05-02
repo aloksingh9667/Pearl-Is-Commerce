@@ -288,51 +288,102 @@ export default function AdminSettings() {
 
           {/* VIDEOS */}
           {activeTab === "videos" && (
-            <Section title="YouTube Videos" onSave={() => save("videos")} saving={saving}>
-              <p className="text-sm text-muted-foreground mb-6">These videos appear in the Gallery and Homepage sections.</p>
-              <div className="space-y-4">
-                {(draft.videos || []).map((video, i) => (
-                  <div key={i} className="p-4 border border-border space-y-3">
-                    <div className="flex justify-between items-center">
-                      <p className="text-sm font-medium">Video {i + 1}</p>
-                      <Button variant="ghost" size="sm" className="rounded-none h-8 text-destructive hover:bg-destructive/10 gap-1"
-                        onClick={() => update("videos", (draft.videos || []).filter((_, j) => j !== i))}>
-                        <Trash2 className="w-3.5 h-3.5" /> Remove
-                      </Button>
-                    </div>
-                    <Field label="Title">
-                      <Input value={video.title} onChange={e => {
-                        const vids = [...(draft.videos || [])];
-                        vids[i] = { ...vids[i], title: e.target.value };
-                        update("videos", vids);
-                      }} className="rounded-none" placeholder="Behind the Scenes..." />
-                    </Field>
-                    <Field label="YouTube URL">
-                      <Input value={video.url} onChange={e => {
-                        const vids = [...(draft.videos || [])];
-                        const url = e.target.value;
-                        const ytIdMatch = url.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/);
-                        const ytId = ytIdMatch?.[1] || "";
-                        const autoThumb = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : vids[i].thumbnail;
-                        vids[i] = { ...vids[i], url, thumbnail: vids[i].thumbnail || autoThumb };
-                        update("videos", vids);
-                      }} className="rounded-none" placeholder="https://youtu.be/... or https://youtube.com/watch?v=..." />
-                    </Field>
-                    <Field label="Thumbnail Image URL (auto-filled from YouTube)">
-                      <Input value={video.thumbnail} onChange={e => {
-                        const vids = [...(draft.videos || [])];
-                        vids[i] = { ...vids[i], thumbnail: e.target.value };
-                        update("videos", vids);
-                      }} className="rounded-none" placeholder="Auto-generated from YouTube URL" />
-                    </Field>
+            <>
+              {/* Atelier Section Video */}
+              <Section title="Atelier Section Video" onSave={() => save("atelierVideo")} saving={saving}>
+                <p className="text-sm text-muted-foreground mb-6">
+                  This video plays in the "The Pearlis Atelier" brand story section on the homepage (left panel). Paste a YouTube link or upload a video file.
+                </p>
+                <Field label="Video URL (YouTube link or uploaded file URL)">
+                  <div className="flex gap-2">
+                    <Input
+                      value={draft.atelierVideo || ""}
+                      onChange={e => update("atelierVideo", e.target.value)}
+                      className="rounded-none flex-1"
+                      placeholder="https://youtu.be/... or https://youtube.com/watch?v=..."
+                    />
+                    <VideoUploadButton
+                      onUrl={url => update("atelierVideo", url)}
+                      label="Upload"
+                    />
                   </div>
-                ))}
-                <Button variant="outline" className="rounded-none text-xs uppercase tracking-widest gap-2"
-                  onClick={() => update("videos", [...(draft.videos || []), { title: "", url: "", thumbnail: "" }])}>
-                  <Plus className="w-4 h-4" /> Add Video
-                </Button>
-              </div>
-            </Section>
+                </Field>
+                {draft.atelierVideo && (
+                  <div className="mt-3 p-3 bg-muted border border-border text-xs text-muted-foreground flex items-center gap-2">
+                    <Video className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">{draft.atelierVideo}</span>
+                    <button onClick={() => update("atelierVideo", "")} className="shrink-0 text-destructive hover:underline ml-auto">Remove</button>
+                  </div>
+                )}
+              </Section>
+
+              {/* Gallery / Homepage Videos */}
+              <Section title="YouTube Videos (Gallery & Homepage)" onSave={() => save("videos")} saving={saving}>
+                <p className="text-sm text-muted-foreground mb-6">These videos appear in the Videos Gallery page and the Homepage video section.</p>
+                <div className="space-y-4">
+                  {(draft.videos || []).map((video, i) => (
+                    <div key={i} className="p-4 border border-border space-y-3">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-medium">Video {i + 1}</p>
+                        <Button variant="ghost" size="sm" className="rounded-none h-8 text-destructive hover:bg-destructive/10 gap-1"
+                          onClick={() => update("videos", (draft.videos || []).filter((_, j) => j !== i))}>
+                          <Trash2 className="w-3.5 h-3.5" /> Remove
+                        </Button>
+                      </div>
+                      <Field label="Title">
+                        <Input value={video.title} onChange={e => {
+                          const vids = [...(draft.videos || [])];
+                          vids[i] = { ...vids[i], title: e.target.value };
+                          update("videos", vids);
+                        }} className="rounded-none" placeholder="Behind the Scenes..." />
+                      </Field>
+                      <Field label="Video URL (YouTube link or uploaded file)">
+                        <div className="flex gap-2">
+                          <Input value={video.url} onChange={e => {
+                            const vids = [...(draft.videos || [])];
+                            const url = e.target.value;
+                            const ytIdMatch = url.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/);
+                            const ytId = ytIdMatch?.[1] || "";
+                            const autoThumb = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : vids[i].thumbnail;
+                            vids[i] = { ...vids[i], url, thumbnail: vids[i].thumbnail || autoThumb };
+                            update("videos", vids);
+                          }} className="rounded-none flex-1" placeholder="https://youtu.be/... or upload below" />
+                          <VideoUploadButton
+                            onUrl={url => {
+                              const vids = [...(draft.videos || [])];
+                              vids[i] = { ...vids[i], url };
+                              update("videos", vids);
+                            }}
+                            label="Upload"
+                          />
+                        </div>
+                      </Field>
+                      <Field label="Thumbnail (auto-filled from YouTube, or paste image URL)">
+                        <div className="flex gap-2 items-start">
+                          <Input value={video.thumbnail} onChange={e => {
+                            const vids = [...(draft.videos || [])];
+                            vids[i] = { ...vids[i], thumbnail: e.target.value };
+                            update("videos", vids);
+                          }} className="rounded-none flex-1" placeholder="Auto-generated from YouTube URL" />
+                          <LogoUploadButton
+                            onUrl={url => {
+                              const vids = [...(draft.videos || [])];
+                              vids[i] = { ...vids[i], thumbnail: url };
+                              update("videos", vids);
+                            }}
+                            label="Upload Thumbnail"
+                          />
+                        </div>
+                      </Field>
+                    </div>
+                  ))}
+                  <Button variant="outline" className="rounded-none text-xs uppercase tracking-widest gap-2"
+                    onClick={() => update("videos", [...(draft.videos || []), { title: "", url: "", thumbnail: "" }])}>
+                    <Plus className="w-4 h-4" /> Add Video
+                  </Button>
+                </div>
+              </Section>
+            </>
           )}
 
           {/* FLASH SALE */}
@@ -386,6 +437,37 @@ function LogoUploadButton({ onUrl, label }: { onUrl: (url: string) => void; labe
     <>
       <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
       <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2 w-fit" onClick={() => inputRef.current?.click()} disabled={uploading}>
+        {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+        {uploading ? "Uploading..." : label}
+      </Button>
+    </>
+  );
+}
+
+function VideoUploadButton({ onUrl, label }: { onUrl: (url: string) => void; label: string }) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFile(file: File) {
+    setUploading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      onUrl(data.url);
+    } catch {
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <>
+      <input ref={inputRef} type="file" accept="video/*" className="hidden" onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
+      <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2 shrink-0" onClick={() => inputRef.current?.click()} disabled={uploading}>
         {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
         {uploading ? "Uploading..." : label}
       </Button>

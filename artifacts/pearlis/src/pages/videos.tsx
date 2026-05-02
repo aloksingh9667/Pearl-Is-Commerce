@@ -275,22 +275,22 @@ export default function VideosPage() {
   const nextVideo = () => setLightboxIdx(i => (i !== null && i < filtered.length - 1 ? i + 1 : i));
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex flex-col">
+    <div className="min-h-screen bg-[#FAF7F2] flex flex-col">
       <Navbar />
       <div style={{ height: "100px" }} />
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-3">
-        <BackButton light />
+        <BackButton />
       </div>
 
       {/* Hero */}
-      <section className="relative py-20 md:py-32 overflow-hidden">
-        <div className="absolute inset-0">
+      <section className="relative py-20 md:py-28 overflow-hidden bg-[#FAF7F2]">
+        <div className="absolute inset-0 pointer-events-none">
           <img
             src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=2400"
             alt=""
-            className="w-full h-full object-cover opacity-20"
+            className="w-full h-full object-cover opacity-[0.07]"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A]/60 via-transparent to-[#0A0A0A]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FAF7F2]/80 via-transparent to-[#FAF7F2]" />
         </div>
         <div className="relative max-w-[1440px] mx-auto px-4 md:px-8 text-center">
           <motion.div
@@ -299,9 +299,9 @@ export default function VideosPage() {
             transition={{ duration: 0.8 }}
           >
             <p className="text-[10px] tracking-[0.4em] uppercase text-[#D4AF37] font-bold mb-4">Pearlis Films</p>
-            <h1 className="font-serif text-5xl md:text-7xl text-white mb-5">Our Story in Motion</h1>
+            <h1 className="font-serif text-5xl md:text-7xl text-[#0F0F0F] mb-5">Our Story in Motion</h1>
             <div className="w-16 h-[1px] bg-[#D4AF37] mx-auto mb-6" />
-            <p className="text-white/50 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+            <p className="text-[#0F0F0F]/50 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
               Behind the craft, inside the atelier, and on the runway — watch the world of Pearlis come alive.
             </p>
           </motion.div>
@@ -309,7 +309,7 @@ export default function VideosPage() {
       </section>
 
       {/* Category Filter */}
-      <div className="sticky top-[100px] z-30 bg-[#0A0A0A]/90 backdrop-blur-sm border-b border-white/8">
+      <div className="sticky top-[100px] z-30 bg-[#FAF7F2]/95 backdrop-blur-sm border-b border-[#0F0F0F]/10">
         <div className="max-w-[1440px] mx-auto px-4 md:px-8">
           <div className="flex gap-0 overflow-x-auto hide-scrollbar">
             {CATEGORIES.map(cat => (
@@ -319,7 +319,7 @@ export default function VideosPage() {
                 className={`flex-shrink-0 px-5 py-4 text-[10px] tracking-[0.2em] uppercase font-bold border-b-2 transition-all duration-200 ${
                   activeCategory === cat
                     ? "border-[#D4AF37] text-[#D4AF37]"
-                    : "border-transparent text-white/40 hover:text-white/70"
+                    : "border-transparent text-[#0F0F0F]/35 hover:text-[#0F0F0F]/65"
                 }`}
               >
                 {cat}
@@ -330,7 +330,7 @@ export default function VideosPage() {
       </div>
 
       {/* Grid */}
-      <section className="flex-1 py-12 md:py-16">
+      <section className="flex-1 py-12 md:py-16 bg-[#FAF7F2]">
         <div className="max-w-[1440px] mx-auto px-4 md:px-8">
           {loading ? (
             <div className="flex justify-center py-24">
@@ -338,9 +338,9 @@ export default function VideosPage() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-24">
-              <Play className="w-12 h-12 text-white/10 mx-auto mb-4" />
-              <p className="font-serif text-white/30 text-2xl">No videos yet</p>
-              <p className="text-white/20 text-sm mt-2">Check back soon for exclusive content</p>
+              <Play className="w-12 h-12 text-[#0F0F0F]/10 mx-auto mb-4" />
+              <p className="font-serif text-[#0F0F0F]/30 text-2xl">No videos yet</p>
+              <p className="text-[#0F0F0F]/20 text-sm mt-2">Check back soon for exclusive content</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">

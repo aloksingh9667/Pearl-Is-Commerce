@@ -51,6 +51,7 @@ const DEFAULT_SETTINGS: Record<string, any> = {
     posts: [] as string[],
   },
   videos: [] as Array<{ title: string; url: string; thumbnail: string }>,
+  atelierVideo: "",
   flashSale: {
     enabled: true,
     title: "Flash Sale",
