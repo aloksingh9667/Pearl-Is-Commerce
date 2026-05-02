@@ -23,6 +23,7 @@ export const productsTable = pgTable("products", {
   category: text("category").notNull(),
   material: text("material"),
   images: jsonb("images").$type<string[]>().default([]).notNull(),
+  videoUrl: text("video_url"),
   stock: integer("stock").default(0).notNull(),
   isNew: boolean("is_new").default(false).notNull(),
   isTrending: boolean("is_trending").default(false).notNull(),

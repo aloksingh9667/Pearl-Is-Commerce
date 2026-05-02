@@ -18,6 +18,7 @@ function toProduct(p: any) {
     categoryId: p.categoryId,
     material: p.material,
     images: p.images || [],
+    videoUrl: p.videoUrl || null,
     stock: p.stock,
     isNew: p.isNew,
     isTrending: p.isTrending,
@@ -131,9 +132,10 @@ router.post("/products", requireAdmin, async (req, res) => {
     const slug = body.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
     const [product] = await db.insert(productsTable).values({
       name: body.name, slug, description: body.description,
-      price: body.price.toString(), discountPrice: body.discountPrice?.toString(),
+      price: body.price.toString(), discountPrice: body.discountPrice?.toString() || null,
       category: body.category, categoryId: body.categoryId, material: body.material,
-      images: body.images || [], stock: body.stock || 0,
+      images: body.images || [], videoUrl: body.videoUrl || null,
+      stock: body.stock || 0,
       isNew: body.isNew ?? false, isTrending: body.isTrending ?? false,
       isFeatured: body.isFeatured ?? false, tags: body.tags || [],
     }).returning();
@@ -150,9 +152,10 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
     const body = req.body;
     const [product] = await db.update(productsTable).set({
       name: body.name, description: body.description,
-      price: body.price?.toString(), discountPrice: body.discountPrice?.toString(),
+      price: body.price?.toString(), discountPrice: body.discountPrice?.toString() || null,
       category: body.category, categoryId: body.categoryId, material: body.material,
-      images: body.images, stock: body.stock,
+      images: body.images, videoUrl: body.videoUrl || null,
+      stock: body.stock,
       isNew: body.isNew, isTrending: body.isTrending, isFeatured: body.isFeatured,
       tags: body.tags,
     }).where(eq(productsTable.id, id)).returning();

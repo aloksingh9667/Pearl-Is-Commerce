@@ -52,6 +52,40 @@ export const newsletterTable = pgTable("newsletter", {
   subscribedAt: timestamp("subscribed_at").defaultNow().notNull(),
 });
 
+// Site-wide settings stored as key-value pairs with JSONB values
+export const siteSettingsTable = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  value: jsonb("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Per-page content management
+export const pageContentTable = pgTable("page_content", {
+  id: serial("id").primaryKey(),
+  page: text("page").notNull().unique(),
+  content: jsonb("content").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Contact form messages
+export const contactMessagesTable = pgTable("contact_messages", {
+  id: serial("id").primaryKey(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  isRead: boolean("is_read").default(false).notNull(),
+  replied: boolean("replied").default(false).notNull(),
+  repliedAt: timestamp("replied_at"),
+  adminReply: text("admin_reply"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type Review = typeof reviewsTable.$inferSelect;
 export type Blog = typeof blogsTable.$inferSelect;
 export type Coupon = typeof couponsTable.$inferSelect;
+export type SiteSetting = typeof siteSettingsTable.$inferSelect;
+export type PageContent = typeof pageContentTable.$inferSelect;
+export type ContactMessage = typeof contactMessagesTable.$inferSelect;

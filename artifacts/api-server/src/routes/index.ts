@@ -12,6 +12,9 @@ import blogsRouter from "./blogs";
 import couponsRouter from "./coupons";
 import dashboardRouter from "./dashboard";
 import searchRouter from "./search";
+import settingsRouter from "./settings";
+import contactMessagesRouter from "./contact-messages";
+import pageContentRouter from "./page-content";
 
 const router: IRouter = Router();
 
@@ -28,5 +31,8 @@ router.use(blogsRouter);
 router.use(couponsRouter);
 router.use(dashboardRouter);
 router.use(searchRouter);
+router.use(settingsRouter);
+router.use(contactMessagesRouter);
+router.use(pageContentRouter);
 
 export default router;

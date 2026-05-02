@@ -24,25 +24,35 @@ Full-stack luxury jewelry eCommerce website ("Pearlis") with a premium UI inspir
 - **Typography**: Playfair Display (headings) + Poppins (body)
 - **Animations**: Framer Motion throughout
 
-## Key Pages
+## Key Pages (Customer)
 
 - `/` — Homepage (hero, featured, trending, new arrivals, categories, newsletter)
 - `/shop` — Shop with filters (category, price, material, sort)
 - `/category/:slug` — Category pages
 - `/product/:id` — Product detail with gallery, reviews, related
 - `/cart` — Shopping cart with coupon support
-- `/checkout` — Checkout with address form
+- `/checkout` — Full checkout with INR pricing, coupon validation, COD/Razorpay
 - `/orders` — Order history
 - `/wishlist` — Wishlist
 - `/login`, `/register` — Auth pages
-- `/blog`, `/blog/:id` — Blog
+- `/blog`, `/blog/:id` — Blog / The Journal
 - `/about`, `/contact`, `/gallery` — Brand pages
-- `/admin` — Admin dashboard (stats, orders, products, users, blogs, coupons)
+- `/contact` — "The Concierge" — saves messages to DB via `/api/contact-messages`
+
+## Admin Panel (`/admin`)
+
+Credentials: `admin@pearlis.com` / `Pearl@Admin2024`
+
+Nav groups:
+- **Store**: Dashboard, Products (add/edit modal, videoUrl support), Orders, Coupons (create modal)
+- **Content**: Journal/Blogs (add/edit modal), Page Content (per-page content editor), Messages (inbox + reply)
+- **People**: Users
+- **Configuration**: Site Settings (grouped tabs)
 
 ## API Routes
 
 All routes under `/api`:
-- `GET/POST /products` + featured/trending/new-arrivals + related
+- `GET/POST /products` + featured/trending/new-arrivals + related + `GET/PUT/DELETE /products/:id`
 - `GET/POST/PUT/DELETE /categories`
 - `POST /auth/register`, `/auth/login`, `/auth/logout`, `GET /auth/me`
 - `GET/POST /cart/items`, `PUT/DELETE /cart/items/:id`, `DELETE /cart/clear`, `POST /cart/coupon`
@@ -50,19 +60,44 @@ All routes under `/api`:
 - `GET/POST /products/:id/reviews`
 - `GET/POST/DELETE /wishlist/:productId`
 - `GET/POST/PUT/DELETE /blogs`
-- `GET/POST/DELETE /coupons`
+- `GET/POST/DELETE /coupons`, **`POST /coupons/validate`** (public, for checkout)
 - `POST /newsletter/subscribe`
 - `GET /dashboard/stats`, `/dashboard/recent-orders`, `/dashboard/top-products`, `/dashboard/sales-by-category`
 - `GET /search`
+- **`GET /settings`**, **`GET/PUT /settings/:key`** — site-wide settings (key/value JSONB store)
+- **`GET/PUT /page-content/:page`** — per-page content editing
+- **`POST /contact-messages`** (public), **`GET/GET/:id/PUT/:id /contact-messages`** (admin), **`POST /contact-messages/:id/reply`**, **`POST /contact-messages/bulk-reply`**
 
 ## Database Schema
 
-Tables: `categories`, `products`, `users`, `addresses`, `orders`, `cart_items`, `reviews`, `wishlist`, `blogs`, `coupons`, `newsletter`
+Tables:
+- `categories`, `products` (+ `video_url`), `users`, `addresses`, `orders`, `cart_items`, `reviews`, `wishlist`, `blogs`, `coupons`, `newsletter`
+- **`site_settings`** — key/value JSONB pairs (general, announcement, payment, contact, social, instagram, videos, flashSale)
+- **`page_content`** — per-page content JSONB (home, shop, rings, necklaces, bracelets, earrings, gallery, blog, about, contact)
+- **`contact_messages`** — contact form submissions with admin reply tracking
+
+## Custom Frontend Hooks
+
+`artifacts/pearlis/src/lib/adminApi.ts` — custom TanStack Query hooks (NOT via Orval) for:
+- `useGetSettings`, `useUpdateSetting`
+- `useGetPageContent`, `useUpdatePageContent`
+- `useGetContactMessages`, `useSendContactMessage`, `useMarkMessageRead`, `useReplyToMessage`, `useBulkReply`
+
+## INR Pricing
+
+All prices stored in USD (numeric), displayed in INR using `price * 83` conversion. INR symbol `₹` used throughout.
+
+## Resend Email Integration
+
+`artifacts/api-server/src/routes/contact-messages.ts` sends HTML emails via Resend API when replying.
+- Requires `RESEND_API_KEY` environment variable to be set for emails to send.
+- Replies are always saved to DB regardless of whether email sends.
+- From address: `concierge@pearlis.com`
 
 ## Key Commands
 
 - `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
+- `pnpm run typecheck:libs` — rebuild composite lib declaration files
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 
@@ -70,13 +105,13 @@ Tables: `categories`, `products`, `users`, `addresses`, `orders`, `cart_items`, 
 
 - 6 categories (rings, necklaces, pendants, bracelets, earrings, accessories)
 - 12 products across all categories
-- 7 reviews
-- 3 blog posts
-- 2 coupons: `PEARLIS10` (10% off, min ₹5000), `WELCOME2000` (₹2000 off, min ₹15000)
-- Admin user: `admin@pearlis.com`
+- 7 reviews, 3 blog posts
+- 2 coupons: `PEARLIS10` (10% off, min ₹5,000), `WELCOME2000` (₹2,000 off, min ₹15,000)
+- Admin user: `admin@pearlis.com` / `Pearl@Admin2024`
 
 ## Notes
 
-- Cart is session-based (uses `x-session-id` header for anonymous users, or `user-{id}` for logged-in users)
+- Cart is session-based (`x-session-id` header for anonymous, `user-{id}` for logged-in)
 - Auth: Bearer token in Authorization header, stored in localStorage by frontend
-- The orval zod config uses `mode: "single"` to avoid duplicate export conflicts — do not revert to split mode without fixing `lib/api-zod/src/index.ts`
+- The orval zod config uses `mode: "single"` to avoid duplicate export conflicts
+- `req.params` TS typing quirk (`string | string[]`) is a pre-existing issue across all route files — runtime is fine
