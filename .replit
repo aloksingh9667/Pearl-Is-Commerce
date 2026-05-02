@@ -49,7 +49,8 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "PORT=19638 BASE_PATH=/ pnpm --filter @workspace/pearlis run dev"
+args = "PORT=8081 BASE_PATH=/ pnpm --filter @workspace/pearlis run dev"
+waitForPort = 8081
 
 [[workflows.workflow]]
 name = "Pearlis API"
