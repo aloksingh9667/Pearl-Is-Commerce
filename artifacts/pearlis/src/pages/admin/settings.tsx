@@ -238,12 +238,15 @@ export default function AdminSettings() {
           {/* INSTAGRAM */}
           {activeTab === "instagram" && (
             <Section title="Instagram Feed" onSave={() => save("instagram")} saving={saving}>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center justify-between p-4 bg-muted/40 border border-border mb-2">
+                <div>
+                  <p className="font-medium text-sm">Show Instagram Feed Section</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Displays your photo/video grid on the homepage.</p>
+                </div>
                 <Switch
                   checked={draft.instagram?.enabled ?? true}
                   onCheckedChange={v => updateNested("instagram", "enabled", v)}
                 />
-                <Label>Show Instagram Feed Section</Label>
               </div>
               <Field label="Instagram Username">
                 <Input
@@ -253,35 +256,87 @@ export default function AdminSettings() {
                   placeholder="pearlisjewels"
                 />
               </Field>
-              <div className="mt-6">
-                <Label className="uppercase tracking-widest text-xs text-muted-foreground mb-3 block">Instagram Post Image URLs</Label>
-                <div className="space-y-2">
-                  {(draft.instagram?.posts || []).map((url, i) => (
-                    <div key={i} className="flex gap-2">
-                      <Input
-                        value={url}
-                        onChange={e => {
-                          const posts = [...(draft.instagram?.posts || [])];
-                          posts[i] = e.target.value;
-                          updateNested("instagram", "posts", posts);
-                        }}
-                        className="rounded-none text-sm"
-                        placeholder="https://images.unsplash.com/..."
-                      />
-                      <Button variant="ghost" size="icon" className="rounded-none h-10 w-10 text-destructive flex-shrink-0"
-                        onClick={() => {
-                          const posts = (draft.instagram?.posts || []).filter((_, j) => j !== i);
-                          updateNested("instagram", "posts", posts);
-                        }}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest mt-2 gap-2"
-                    onClick={() => updateNested("instagram", "posts", [...(draft.instagram?.posts || []), ""])}>
-                    <Plus className="w-3.5 h-3.5" /> Add Photo URL
-                  </Button>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="uppercase tracking-widest text-xs text-muted-foreground">
+                    Media Grid ({(draft.instagram?.posts || []).length} items — images &amp; videos)
+                  </Label>
+                  <div className="flex gap-2">
+                    <IgUploadButton
+                      accept="image/*"
+                      label="Upload Images"
+                      icon="image"
+                      onUrls={urls => updateNested("instagram", "posts", [...(draft.instagram?.posts || []), ...urls])}
+                    />
+                    <IgUploadButton
+                      accept="video/*"
+                      label="Upload Video"
+                      icon="video"
+                      onUrls={urls => updateNested("instagram", "posts", [...(draft.instagram?.posts || []), ...urls])}
+                    />
+                  </div>
                 </div>
+
+                {/* Preview grid */}
+                {(draft.instagram?.posts || []).length > 0 && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                    {(draft.instagram?.posts || []).map((url, i) => {
+                      const isVideo = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i.test(url);
+                      return (
+                        <div key={i} className="group relative aspect-square bg-muted overflow-hidden border border-border">
+                          {isVideo ? (
+                            <>
+                              <video src={url} className="w-full h-full object-cover" muted playsInline />
+                              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                                <div className="w-6 h-6 rounded-full bg-white/80 flex items-center justify-center">
+                                  <div className="w-0 h-0 border-t-[5px] border-b-[5px] border-l-[8px] border-t-transparent border-b-transparent border-l-[#0F0F0F] ml-0.5" />
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            <img src={url} alt="" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.opacity = "0.2"; }} />
+                          )}
+                          <button
+                            onClick={() => {
+                              const posts = (draft.instagram?.posts || []).filter((_, j) => j !== i);
+                              updateNested("instagram", "posts", posts);
+                            }}
+                            className="absolute top-1 right-1 w-5 h-5 bg-red-600 text-white rounded-full text-xs items-center justify-center hidden group-hover:flex"
+                          >✕</button>
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[8px] py-0.5 px-1 truncate hidden group-hover:block">
+                            {isVideo ? "VIDEO" : "IMAGE"}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Also allow pasting a URL manually */}
+                <details className="text-xs">
+                  <summary className="cursor-pointer text-muted-foreground hover:text-foreground select-none">+ Paste a URL manually</summary>
+                  <div className="mt-2 flex gap-2">
+                    <Input
+                      placeholder="https://... (image or video URL)"
+                      className="rounded-none text-sm"
+                      onKeyDown={e => {
+                        if (e.key === "Enter") {
+                          const val = (e.target as HTMLInputElement).value.trim();
+                          if (val) { updateNested("instagram", "posts", [...(draft.instagram?.posts || []), val]); (e.target as HTMLInputElement).value = ""; }
+                        }
+                      }}
+                    />
+                    <span className="text-muted-foreground/60 text-[10px] flex items-center shrink-0">Press Enter to add</span>
+                  </div>
+                </details>
+
+                {(draft.instagram?.posts || []).length === 0 && (
+                  <div className="border-2 border-dashed border-border rounded-none py-10 text-center text-muted-foreground">
+                    <p className="text-sm">No media yet</p>
+                    <p className="text-xs mt-1">Upload images or videos using the buttons above.</p>
+                  </div>
+                )}
               </div>
             </Section>
           )}
@@ -505,6 +560,55 @@ function VideoUploadButton({ onUrl, label }: { onUrl: (url: string) => void; lab
       <input ref={inputRef} type="file" accept="video/*" className="hidden" onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
       <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-2 shrink-0" onClick={() => inputRef.current?.click()} disabled={uploading}>
         {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+        {uploading ? "Uploading..." : label}
+      </Button>
+    </>
+  );
+}
+
+/* ── Multi-file uploader for Instagram grid ── */
+function IgUploadButton({ accept, label, icon, onUrls }: {
+  accept: string; label: string; icon: "image" | "video"; onUrls: (urls: string[]) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFiles(files: FileList) {
+    setUploading(true);
+    const token = localStorage.getItem("token");
+    const results: string[] = [];
+    for (const file of Array.from(files)) {
+      try {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch("/api/upload", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
+        if (!res.ok) continue;
+        const data = await res.json();
+        results.push(data.url);
+      } catch {}
+    }
+    if (results.length) onUrls(results);
+    setUploading(false);
+  }
+
+  return (
+    <>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple={icon === "image"}
+        className="hidden"
+        onChange={e => { if (e.target.files?.length) handleFiles(e.target.files); }}
+      />
+      <Button
+        variant="outline"
+        size="sm"
+        className="rounded-none text-xs uppercase tracking-widest gap-1.5 shrink-0"
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+      >
+        {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
         {uploading ? "Uploading..." : label}
       </Button>
     </>

@@ -344,6 +344,167 @@ function HeroSlider() {
 }
 
 /* ══════════════════════════════════════════════════════════
+   INSTAGRAM SECTION — images + videos + lightbox
+══════════════════════════════════════════════════════════ */
+const isVideoUrl = (url: string) => /\.(mp4|webm|ogg|mov|avi)(\?|$)/i.test(url);
+
+function IgSection({ igUsername, displayPosts }: { igUsername: string; displayPosts: string[] }) {
+  const [lightbox, setLightbox] = useState<{ src: string; index: number } | null>(null);
+  const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
+
+  // close lightbox on Esc
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setLightbox(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const nav = (dir: 1 | -1) => {
+    if (!lightbox) return;
+    const next = (lightbox.index + dir + displayPosts.length) % displayPosts.length;
+    setLightbox({ src: displayPosts[next], index: next });
+  };
+
+  return (
+    <section className="py-14 md:py-20 bg-white">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8">
+        {/* Header */}
+        <motion.div {...fadeUp()} className="text-center mb-8 md:mb-12">
+          <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-3">Follow Us</p>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Instagram className="w-5 h-5 text-[#D4AF37]" strokeWidth={1.5} />
+            <h2 className="font-serif text-2xl md:text-3xl text-[#0F0F0F]">@{igUsername}</h2>
+          </div>
+          <p className="text-[#0F0F0F]/45 text-xs mb-5">Tag us in your photos for a chance to be featured</p>
+          <a
+            href={`https://instagram.com/${igUsername}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#405DE6] via-[#C13584] to-[#FD1D1D] text-white text-[10px] tracking-[0.2em] uppercase font-bold px-6 py-2.5 transition-opacity hover:opacity-90"
+          >
+            <Instagram className="w-3.5 h-3.5" /> Follow Us on Instagram
+          </a>
+        </motion.div>
+
+        {/* Responsive grid — 2 cols mobile / 3 cols sm / 4 cols md / 6 cols lg */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1 md:gap-1.5">
+          {displayPosts.map((src, i) => {
+            const isVid = isVideoUrl(src);
+            return (
+              <motion.div
+                key={i}
+                {...fadeUp(i * 0.05)}
+                className="group relative aspect-square overflow-hidden cursor-pointer bg-[#E8E2D9]"
+                onClick={() => setLightbox({ src, index: i })}
+              >
+                {isVid ? (
+                  <>
+                    <video
+                      ref={el => { videoRefs.current[i] = el; }}
+                      src={src}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      muted
+                      loop
+                      playsInline
+                      onMouseEnter={e => (e.currentTarget as HTMLVideoElement).play()}
+                      onMouseLeave={e => { (e.currentTarget as HTMLVideoElement).pause(); (e.currentTarget as HTMLVideoElement).currentTime = 0; }}
+                    />
+                    {/* Play icon overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <img
+                    src={src}
+                    alt=""
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                )}
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-[#0F0F0F]/0 group-hover:bg-[#0F0F0F]/30 transition-all duration-300 flex items-center justify-center">
+                  <Instagram className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1.5} />
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Lightbox ── */}
+      <AnimatePresence>
+        {lightbox && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4"
+            onClick={() => setLightbox(null)}
+          >
+            {/* Prev */}
+            <button
+              onClick={e => { e.stopPropagation(); nav(-1); }}
+              className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors rounded-full"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {/* Media */}
+            <motion.div
+              key={lightbox.index}
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="max-w-2xl max-h-[85vh] w-full flex items-center justify-center"
+              onClick={e => e.stopPropagation()}
+            >
+              {isVideoUrl(lightbox.src) ? (
+                <video
+                  src={lightbox.src}
+                  controls
+                  autoPlay
+                  loop
+                  className="max-w-full max-h-[85vh] w-full object-contain"
+                />
+              ) : (
+                <img
+                  src={lightbox.src}
+                  alt=""
+                  className="max-w-full max-h-[85vh] w-full object-contain"
+                />
+              )}
+            </motion.div>
+
+            {/* Next */}
+            <button
+              onClick={e => { e.stopPropagation(); nav(1); }}
+              className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors rounded-full"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            {/* Close */}
+            <button
+              onClick={() => setLightbox(null)}
+              className="absolute top-4 right-4 w-9 h-9 bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors rounded-full text-lg font-light"
+            >✕</button>
+
+            {/* Counter */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/50 text-xs tracking-widest">
+              {lightbox.index + 1} / {displayPosts.length}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════ */
 function getYouTubeId(url: string) {
@@ -710,36 +871,10 @@ export default function Home() {
 
       {/* ── 12. INSTAGRAM STRIP ── */}
       {igEnabled && (
-        <section className="py-14 md:py-20 bg-white">
-          <div className="max-w-[1440px] mx-auto px-4 md:px-8">
-            <motion.div {...fadeUp()} className="text-center mb-8 md:mb-12">
-              <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-3">Follow Us</p>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Instagram className="w-5 h-5 text-[#D4AF37]" strokeWidth={1.5} />
-                <h2 className="font-serif text-2xl md:text-3xl text-[#0F0F0F]">@{igUsername}</h2>
-              </div>
-              <p className="text-[#0F0F0F]/45 text-xs mb-5">Tag us in your photos for a chance to be featured</p>
-              <a
-                href={`https://instagram.com/${igUsername}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#405DE6] via-[#C13584] to-[#FD1D1D] text-white text-[10px] tracking-[0.2em] uppercase font-bold px-6 py-2.5 transition-opacity hover:opacity-90"
-              >
-                <Instagram className="w-3.5 h-3.5" /> Follow Us on Instagram
-              </a>
-            </motion.div>
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 md:gap-2">
-              {displayPosts.slice(0, 6).map((src, i) => (
-                <motion.div key={i} {...fadeUp(i * 0.06)} className="group relative aspect-square overflow-hidden">
-                  <img src={src} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-[#0F0F0F]/0 group-hover:bg-[#0F0F0F]/40 flex items-center justify-center transition-all duration-300">
-                    <Instagram className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1.5} />
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <IgSection
+          igUsername={igUsername}
+          displayPosts={displayPosts}
+        />
       )}
 
       {/* ── 12. BLOG ── */}
