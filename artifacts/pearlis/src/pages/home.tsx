@@ -19,12 +19,18 @@ import {
    CATEGORIES CAROUSEL
 ══════════════════════════════════════════════════════════ */
 const CATS = [
-  { label: "Rings", slug: "rings", src: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=85&w=500&h=700" },
-  { label: "Necklaces", slug: "necklaces", src: "https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Ring", slug: "ring", src: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Earring", slug: "earring", src: "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=85&w=500&h=700" },
   { label: "Pendants", slug: "pendants", src: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&q=85&w=500&h=700" },
-  { label: "Bracelets", slug: "bracelets", src: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=85&w=500&h=700" },
-  { label: "Earrings", slug: "earrings", src: "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=85&w=500&h=700" },
-  { label: "Accessories", slug: "accessories", src: "https://images.unsplash.com/photo-1576502200272-341a4b8d73a9?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Stickons", slug: "stickons", src: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Bracelet", slug: "bracelet", src: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Anklets", slug: "anklets", src: "https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Crunchies", slug: "crunchies", src: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Hair Accessories", slug: "hair-accessories", src: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Hair Band", slug: "hair-band", src: "https://images.unsplash.com/photo-1512361436605-a484bdb34b5f?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Waist Chain", slug: "waist-chain", src: "https://images.unsplash.com/photo-1619119069152-a2b331eb392a?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Keys Chain", slug: "keys-chain", src: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=85&w=500&h=700" },
+  { label: "Crochet Flowers", slug: "crochet-flowers", src: "https://images.unsplash.com/photo-1592861956120-e524fc739696?auto=format&fit=crop&q=85&w=500&h=700" },
 ];
 
 function CategoriesCarousel() {
@@ -179,24 +185,24 @@ const SLIDES = [
     sub: "Discover handcrafted fine jewellery made for women who carry grace in every step.",
     cta: "Explore Now",
     ctaLink: "/shop",
-    accent: "Bridal & Festive",
-    accentLink: "/category/necklaces",
+    accent: "New Arrivals",
+    accentLink: "/shop?sort=latest",
   },
   {
-    img: "https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=90&w=2400",
-    badge: "Exclusive — Bridal Edition",
-    headline: "For Your Most\nPrecious Moments",
-    sub: "Handpicked bridal sets, engagement rings and anniversary gifts — all in 18K & 22K gold.",
-    cta: "Shop Bridal",
-    ctaLink: "/category/rings",
-    accent: "New Arrivals",
+    img: "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=90&w=2400",
+    badge: "Handcrafted With Love",
+    headline: "Jewellery For\nEvery Moment",
+    sub: "Rings, earrings, pendants, anklets and more — for everyday elegance and special occasions.",
+    cta: "Shop Now",
+    ctaLink: "/shop",
+    accent: "View Categories",
     accentLink: "/shop",
   },
   {
     img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=90&w=2400",
     badge: "Artisan Crafted — Since 2018",
     headline: "Where Craft\nMeets Passion",
-    sub: "Every piece tells a story. Wear yours with pride — BIS hallmarked, ethically sourced.",
+    sub: "Every piece tells a story. Wear yours with pride — carefully crafted, ethically sourced.",
     cta: "Our Story",
     ctaLink: "/about",
     accent: "View Gallery",
@@ -416,41 +422,20 @@ export default function Home() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Top row: 1 wide + 1 tall */}
-            <motion.div {...fadeUp(0)} className="group relative overflow-hidden cursor-pointer md:row-span-2">
-              <Link href="/category/rings" className="block">
-                <div className="relative aspect-[4/5] md:aspect-auto md:h-[600px] overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1573408301185-9519f94815b5?auto=format&fit=crop&q=88&w=900"
-                    alt="Bridal Collection" loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                  <div className="absolute inset-0 bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/8 transition-colors duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-7 md:p-10">
-                    <p className="text-[#D4AF37] text-[9px] tracking-[0.3em] uppercase font-bold mb-2">Forever Yours</p>
-                    <h3 className="font-serif text-3xl md:text-4xl text-white mb-4">Bridal Collection</h3>
-                    <span className="inline-flex items-center gap-2 text-white group-hover:text-[#D4AF37] text-[10px] tracking-[0.22em] uppercase font-bold transition-colors border-b border-white/30 group-hover:border-[#D4AF37] pb-0.5">
-                      Explore <ArrowRight className="w-3 h-3" />
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-
             {[
-              { title: "Everyday Elegance", sub: "Refined pieces for daily wear", href: "/shop", src: "https://images.unsplash.com/photo-1624913503273-5f9c4e980dba?auto=format&fit=crop&q=85&w=800" },
-              { title: "Royal Gold Series", sub: "Heritage-inspired masterpieces", href: "/category/necklaces", src: "https://images.unsplash.com/photo-1600721391776-b5cd0e0048f9?auto=format&fit=crop&q=85&w=800" },
-            ].map(({ title, sub, href, src }, i) => (
-              <motion.div key={title} {...fadeUp((i + 1) * 0.1)} className="group relative overflow-hidden cursor-pointer">
+              { title: "Everyday Elegance", sub: "Rings, earrings & pendants for daily wear", href: "/shop", src: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=88&w=900", tall: true },
+              { title: "Hair & Accessories", sub: "Crunchies, clips, bands & more", href: "/category/hair-accessories", src: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=85&w=800", tall: false },
+              { title: "Statement Pieces", sub: "Waist chains, anklets & body jewellery", href: "/category/waist-chain", src: "https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?auto=format&fit=crop&q=85&w=800", tall: false },
+            ].map(({ title, sub, href, src, tall }, i) => (
+              <motion.div key={title} {...fadeUp(i * 0.1)} className={`group relative overflow-hidden cursor-pointer ${tall ? "md:row-span-2" : ""}`}>
                 <Link href={href} className="block">
-                  <div className="relative aspect-[16/9] md:aspect-auto md:h-[292px] overflow-hidden">
+                  <div className={`relative overflow-hidden ${tall ? "aspect-[4/5] md:aspect-auto md:h-[600px]" : "aspect-[16/9] md:aspect-auto md:h-[292px]"}`}>
                     <img src={src} alt={title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                     <div className="absolute inset-0 bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/8 transition-colors duration-500" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                      <p className="text-[#D4AF37] text-[9px] tracking-[0.3em] uppercase font-bold mb-1">{sub}</p>
-                      <h3 className="font-serif text-xl md:text-2xl text-white mb-3">{title}</h3>
+                    <div className={`absolute bottom-0 left-0 right-0 ${tall ? "p-7 md:p-10" : "p-6 md:p-8"}`}>
+                      <p className="text-[#D4AF37] text-[9px] tracking-[0.3em] uppercase font-bold mb-2">{sub}</p>
+                      <h3 className={`font-serif text-white mb-4 ${tall ? "text-3xl md:text-4xl" : "text-xl md:text-2xl"}`}>{title}</h3>
                       <span className="inline-flex items-center gap-2 text-white group-hover:text-[#D4AF37] text-[10px] tracking-[0.22em] uppercase font-bold transition-colors border-b border-white/30 group-hover:border-[#D4AF37] pb-0.5">
                         Explore <ArrowRight className="w-3 h-3" />
                       </span>

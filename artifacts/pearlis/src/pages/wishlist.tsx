@@ -5,74 +5,71 @@ import { ProductCard } from "@/components/ui/ProductCard";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, Heart } from "lucide-react";
 import { BackButton } from "@/components/ui/BackButton";
 
 export default function Wishlist() {
   const { user } = useAuth();
-  const { data: wishlist, isLoading } = useGetWishlist({
-    query: { enabled: !!user }
-  });
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center pt-32 pb-24">
-          <div className="text-center max-w-md px-6">
-            <h1 className="font-serif text-3xl mb-6">Sign in required</h1>
-            <p className="text-muted-foreground mb-8">Please sign in to view your wishlist.</p>
-            <Link href="/login?redirect=/wishlist">
-              <Button className="rounded-none tracking-widest uppercase w-full">Sign In</Button>
-            </Link>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  const { data: wishlist, isLoading } = useGetWishlist();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
-      
-      <div className="pt-32 pb-24 container mx-auto px-6 max-w-6xl flex-1">
+
+      <div className="pt-32 pb-24 max-w-[1440px] mx-auto px-4 md:px-8 w-full flex-1">
         <BackButton className="mb-8" />
-        <div className="flex justify-between items-end mb-12">
+
+        <div className="flex items-end justify-between mb-10">
           <div>
-            <h1 className="font-serif text-4xl mb-4">My Account</h1>
-            <p className="text-muted-foreground">Welcome back, {user?.name}</p>
+            <p className="text-[10px] tracking-[0.35em] uppercase text-[#D4AF37] font-bold mb-2">My Account</p>
+            <h1 className="font-serif text-4xl text-[#0F0F0F]">
+              {user ? `Welcome, ${user.name?.split(" ")[0]}` : "My Wishlist"}
+            </h1>
           </div>
+          {wishlist && wishlist.length > 0 && (
+            <span className="text-sm text-[#0F0F0F]/45 tracking-wide">{wishlist.length} saved {wishlist.length === 1 ? "piece" : "pieces"}</span>
+          )}
         </div>
 
-        <div className="flex gap-8 mb-12 border-b border-border">
-          <Link href="/orders" className="pb-4 border-b-2 border-transparent text-muted-foreground hover:text-foreground transition-colors font-medium tracking-widest uppercase text-sm">
-            Order History
-          </Link>
-          <div className="pb-4 border-b-2 border-accent font-medium tracking-widest uppercase text-sm">
-            Wishlist
+        {user && (
+          <div className="flex gap-8 mb-12 border-b border-[#D4AF37]/20">
+            <Link href="/orders" className="pb-4 border-b-2 border-transparent text-[#0F0F0F]/45 hover:text-[#0F0F0F] transition-colors font-medium tracking-[0.18em] uppercase text-[11px]">
+              Order History
+            </Link>
+            <div className="pb-4 border-b-2 border-[#D4AF37] text-[#0F0F0F] font-medium tracking-[0.18em] uppercase text-[11px]">
+              Wishlist
+            </div>
           </div>
-        </div>
+        )}
 
         {isLoading ? (
-          <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-accent" /></div>
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
+          </div>
         ) : !wishlist || wishlist.length === 0 ? (
-          <div className="text-center py-16 bg-muted/30 border border-border">
-            <p className="text-muted-foreground mb-6">Your wishlist is empty.</p>
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-6">
+              <Heart className="w-7 h-7 text-[#D4AF37]" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-serif text-2xl text-[#0F0F0F] mb-3">Your wishlist is empty</h2>
+            <p className="text-[#0F0F0F]/45 text-sm mb-8 max-w-xs">
+              Browse our collection and tap the heart icon on any product to save it here.
+            </p>
             <Link href="/shop">
-              <Button className="rounded-none uppercase tracking-widest">Discover Jewelry</Button>
+              <Button className="rounded-none uppercase tracking-[0.2em] text-[11px] px-10 py-3 h-auto bg-[#D4AF37] hover:bg-[#c9a430]">
+                Discover Jewellery
+              </Button>
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {wishlist.map((item, index) => (
-              // @ts-ignore - The API returns a Product but we might need to adapt it
-              <ProductCard key={item.id || index} product={item.product || item} index={index} />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 md:gap-x-6 gap-y-8 md:gap-y-14">
+            {wishlist.map((item: any, index: number) => (
+              <ProductCard key={item.id} product={item} index={index % 4} />
             ))}
           </div>
         )}
       </div>
-      
+
       <Footer />
     </div>
   );
