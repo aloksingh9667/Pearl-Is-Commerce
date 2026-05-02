@@ -229,25 +229,20 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
-      <div style={{ height: "100px" }} />
-
-      {/* Back */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-4">
+      {/* Back + Breadcrumb — single slim row */}
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-[108px] pb-3 flex items-center gap-3 sm:gap-5">
         <BackButton />
-      </div>
-
-      {/* ── Breadcrumb ── */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-4">
-        <nav className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-[#0F0F0F]/40 flex-wrap">
-          <Link href="/" className="hover:text-[#D4AF37] transition-colors">Home</Link>
-          <span>/</span>
-          <Link href="/shop" className="hover:text-[#D4AF37] transition-colors">Shop</Link>
+        <span className="text-[#0F0F0F]/15 hidden sm:block">|</span>
+        <nav className="flex items-center gap-1.5 text-[9px] tracking-[0.18em] uppercase text-[#0F0F0F]/35 overflow-hidden">
+          <Link href="/" className="hover:text-[#D4AF37] transition-colors shrink-0">Home</Link>
+          <span className="shrink-0">/</span>
+          <Link href="/shop" className="hover:text-[#D4AF37] transition-colors shrink-0">Shop</Link>
           {product.category && <>
-            <span>/</span>
-            <Link href={`/category/${product.category}`} className="hover:text-[#D4AF37] transition-colors capitalize">{product.category}</Link>
+            <span className="shrink-0">/</span>
+            <Link href={`/category/${product.category}`} className="hover:text-[#D4AF37] transition-colors capitalize shrink-0">{product.category}</Link>
           </>}
-          <span>/</span>
-          <span className="text-[#0F0F0F]/70 truncate max-w-[160px] sm:max-w-none">{product.name}</span>
+          <span className="shrink-0">/</span>
+          <span className="text-[#0F0F0F]/60 truncate min-w-0">{product.name}</span>
         </nav>
       </div>
 

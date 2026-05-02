@@ -17,7 +17,7 @@ export default function Wishlist() {
       <Navbar />
 
       <div className="pt-32 pb-24 max-w-[1440px] mx-auto px-4 md:px-8 w-full flex-1">
-        <BackButton className="mb-8" />
+        <BackButton className="mb-3" />
 
         <div className="flex items-end justify-between mb-10">
           <div>

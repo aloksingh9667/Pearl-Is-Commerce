@@ -271,9 +271,7 @@ export default function Checkout() {
 
       <div className="flex-1 pb-24">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="pt-6 pb-2">
-            <BackButton />
-          </div>
+          <BackButton className="pt-6 mb-2 block" />
           {/* Header */}
           <div className="py-10 border-b border-border mb-10">
             <h1 className="font-serif text-3xl md:text-4xl">Checkout</h1>
