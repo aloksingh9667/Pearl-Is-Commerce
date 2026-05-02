@@ -1,0 +1,50 @@
+2026-05-02T20:10:51.458831813Z ⚡ Done in 800ms
+2026-05-02T20:10:55.093415866Z ==> Uploading build...
+2026-05-02T20:11:15.291810711Z ==> Uploaded in 10.7s. Compression took 9.5s
+2026-05-02T20:11:15.386513912Z ==> Build successful 🎉
+2026-05-02T20:11:18.87035276Z ==> Deploying...
+2026-05-02T20:11:19.087576318Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-05-02T20:12:13.359618305Z ==> Running 'node artifacts/api-server/dist/index.mjs'
+2026-05-02T20:12:15.880801876Z file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:19944
+2026-05-02T20:12:15.880823157Z               throw new PathError(`Missing parameter name at index ${index}`, str);
+2026-05-02T20:12:15.880826557Z                     ^
+2026-05-02T20:12:15.880828946Z 
+2026-05-02T20:12:15.880844377Z PathError [TypeError]: Missing parameter name at index 1: *; visit https://git.new/pathToRegexpError for info
+2026-05-02T20:12:15.880849467Z     at consumeUntil (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:19944:21)
+2026-05-02T20:12:15.880852037Z     at parse3 (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:19969:28)
+2026-05-02T20:12:15.880854517Z     at process2 (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20080:58)
+2026-05-02T20:12:15.880857037Z     at pathToRegexp (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20091:7)
+2026-05-02T20:12:15.880859367Z     at Object.match (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20045:32)
+2026-05-02T20:12:15.880861747Z     at matcher (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20274:27)
+2026-05-02T20:12:15.880864158Z     at new Layer (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20281:68)
+2026-05-02T20:12:15.880866547Z     at router23.route (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20706:21)
+2026-05-02T20:12:15.880868827Z     at app2.route (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:21015:26)
+2026-05-02T20:12:15.880871518Z     at app2.<computed> [as options] (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:21078:26) {
+2026-05-02T20:12:15.880873778Z   originalPath: '*'
+2026-05-02T20:12:15.880876158Z }
+2026-05-02T20:12:15.880878368Z 
+2026-05-02T20:12:15.880880658Z Node.js v24.14.1
+2026-05-02T20:12:22.403778923Z ==> Exited with status 1
+2026-05-02T20:12:22.406548999Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2026-05-02T20:12:22.777950353Z ==> No open ports detected, continuing to scan...
+2026-05-02T20:12:23.171988517Z ==> Running 'node artifacts/api-server/dist/index.mjs'
+2026-05-02T20:12:23.236461499Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+2026-05-02T20:12:25.287301499Z file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:19944
+2026-05-02T20:12:25.28732505Z               throw new PathError(`Missing parameter name at index ${index}`, str);
+2026-05-02T20:12:25.28733012Z                     ^
+2026-05-02T20:12:25.28733388Z 
+2026-05-02T20:12:25.28733812Z PathError [TypeError]: Missing parameter name at index 1: *; visit https://git.new/pathToRegexpError for info
+2026-05-02T20:12:25.2873438Z     at consumeUntil (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:19944:21)
+2026-05-02T20:12:25.287347691Z     at parse3 (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:19969:28)
+2026-05-02T20:12:25.287351591Z     at process2 (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20080:58)
+2026-05-02T20:12:25.287355641Z     at pathToRegexp (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20091:7)
+2026-05-02T20:12:25.287359461Z     at Object.match (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20045:32)
+2026-05-02T20:12:25.287363141Z     at matcher (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20274:27)
+2026-05-02T20:12:25.287366751Z     at new Layer (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20281:68)
+2026-05-02T20:12:25.287370501Z     at router23.route (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20706:21)
+2026-05-02T20:12:25.287374191Z     at app2.route (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:21015:26)
+2026-05-02T20:12:25.287378651Z     at app2.<computed> [as options] (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:21078:26) {
+2026-05-02T20:12:25.287382601Z   originalPath: '*'
+2026-05-02T20:12:25.287389712Z }
+2026-05-02T20:12:25.287393301Z 
+2026-05-02T20:12:25.287397242Z Node.js v24.14.1
