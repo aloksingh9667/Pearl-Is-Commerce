@@ -1,0 +1,176 @@
+Create a premium, luxury-level homepage for a jewelry eCommerce website (like Myntra but high-end luxury brand focused on gold, diamonds, pendants, necklaces, rings, and bracelets).
+
+The homepage must be fully dynamic and controlled by an admin panel. Use modern UI/UX principles, smooth animations, and a luxury aesthetic.
+
+---
+
+### 🎨 DESIGN STYLE
+- Ultra luxury feel (Cartier / Tiffany inspired)
+- Color theme: Black, Gold, White, Soft Cream
+- Smooth animations using Framer Motion
+- High-quality product imagery everywhere
+- Minimal but elegant layout
+- Fully responsive (mobile-first design)
+- Premium typography (Playfair Display + Poppins)
+
+---
+
+## 🏠 HOMEPAGE SECTIONS (IN ORDER)
+
+### 1. 🎬 HERO SECTION (VERY PREMIUM)
+- Fullscreen animated hero banner (video or parallax image)
+- Luxury tagline (example: “Crafted Elegance for Every Moment”)
+- Primary CTA: Shop Now
+- Secondary CTA: Explore Collections
+- Subtle scroll animation and glow effects
+- Admin-controlled banner slides
+
+---
+
+### 2. 💎 FEATURED CATEGORIES
+- Visual category cards:
+  - Rings
+  - Necklaces
+  - Pendants
+  - Bracelets
+  - Earrings
+- Hover animation (zoom + gold glow effect)
+- Click redirects to category page
+
+---
+
+### 3. ✨ NEW ARRIVALS (DYNAMIC)
+- Auto-updating from backend/admin panel
+- Horizontal carousel or grid layout
+- “Just Arrived” badge on products
+
+---
+
+### 4. 🔥 TRENDING PRODUCTS
+- Based on sales/views (dynamic logic)
+- “Most Loved” or “Trending Now” labels
+- Quick add to cart button
+
+---
+
+### 5. 👑 CURATED LUXURY COLLECTIONS
+- Large aesthetic banner sections:
+  - Bridal Collection
+  - Everyday Elegance
+  - Royal Gold Series
+- Story-based presentation (not just products)
+
+---
+
+### 6. 🎥 BRAND STORY VIDEO SECTION
+- Cinematic autoplay muted video
+- Shows craftsmanship, jewelry making, lifestyle feel
+- Adds emotional luxury branding
+
+---
+
+### 7. 📸 INSTAGRAM INTEGRATION
+- Live Instagram feed (posts + reels)
+- Grid layout with hover reel preview
+- “Follow us” CTA button
+
+---
+
+### 8. ⭐ WHY CHOOSE US (TRUST SECTION)
+- Icon-based highlights:
+  - Certified Jewelry
+  - Secure Payments (Razorpay)
+  - Easy Returns
+  - Lifetime Shine Guarantee
+  - Fast Delivery
+
+---
+
+### 9. 🛍️ BEST SELLERS
+- Top-selling products grid
+- “Hot Selling” badges
+- Quick view option
+
+---
+
+### 10. 🎁 OFFERS / PROMO BANNER
+- Discount banner (admin controlled)
+- Countdown timer for urgency
+- Example: “Flat 20% OFF Today Only”
+
+---
+
+### 11. 💖 PERSONALIZED RECOMMENDATIONS
+- “Recommended for You” section
+- Based on user browsing history
+
+---
+
+### 12. 🧵 CRAFTSMANSHIP STORY SECTION
+- Show jewelry making process
+- Images + short storytelling text
+- Premium brand trust building
+
+---
+
+### 13. 📰 BLOG PREVIEW
+- Latest 3 blogs
+- Example topics:
+  - Jewelry fashion trends
+  - Styling guides
+- “Read More” CTA
+
+---
+
+### 14. 🖼️ GALLERY PREVIEW
+- Luxury aesthetic image grid
+- Hover zoom effect
+- Full gallery page link
+
+---
+
+### 15. 📧 NEWSLETTER SUBSCRIPTION
+- Email capture form
+- Offer: “Get 10% Off First Order”
+- Email validation using Resend
+
+---
+
+### 16. 🔐 TRUST & SECURITY STRIP
+- Secure checkout badge
+- Razorpay payment icons
+- SSL secured messaging
+
+---
+
+### 17. 📦 RECENTLY VIEWED PRODUCTS
+- Stored dynamically per user/session
+
+---
+
+### 18. 🧾 FOOTER (PREMIUM)
+- Categories links
+- About / Contact / Policies
+- Social media links
+- Instagram embed
+- Copyright section
+
+---
+
+## ⚙️ FUNCTIONAL REQUIREMENTS
+- Fully dynamic data (all content managed from admin panel)
+- SEO optimized homepage
+- Fast loading with lazy loading images
+- Smooth transitions between sections
+- Modular components
+- API-driven architecture
+
+---
+
+## 🎯 GOAL
+Build a homepage that feels like a luxury global jewelry brand:
+- Emotional storytelling
+- High conversion design
+- Premium animations
+- Strong brand identity
+- Fully controlled by admin

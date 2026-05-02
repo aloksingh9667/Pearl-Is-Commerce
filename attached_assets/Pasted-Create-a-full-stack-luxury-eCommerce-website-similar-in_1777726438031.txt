@@ -1,0 +1,219 @@
+Create a full-stack luxury eCommerce website similar in experience to Myntra, focused on selling jewelry such as pendants, necklaces, rings, bracelets, and accessories.
+
+### 🧱 TECH STACK
+- Frontend: Next.js (React), Tailwind CSS, Framer Motion (for animations)
+- Backend: Node.js with Express
+- Database: PostgreSQL
+- Authentication: Google Login (OAuth) + Email/Password
+- Email Service: Resend (for email verification and notifications)
+- Payment Gateway: Razorpay (with receipt generation and digital signature verification)
+- Storage: Cloudinary or AWS S3 for product images
+- State Management: Redux Toolkit or Zustand
+- API Architecture: RESTful APIs
+- Deployment Ready
+
+---
+
+### 🎨 DESIGN REQUIREMENTS (VERY IMPORTANT)
+- Premium luxury UI (inspired by high-end brands)
+- Color palette:
+  - Primary: Black (#0F0F0F)
+  - Secondary: Gold (#D4AF37)
+  - Accent: White / Cream
+- Smooth animations using Framer Motion
+- Micro-interactions (hover effects, transitions)
+- Fully responsive (mobile-first)
+- Elegant typography (Playfair Display + Poppins)
+
+---
+
+### 🛍️ CORE FEATURES
+
+#### 🏠 USER SIDE
+
+1. **Homepage**
+   - Hero banner with animation
+   - Featured collections
+   - New arrivals
+   - Trending products
+   - Instagram feed integration (posts + reels)
+   - Newsletter subscribe section
+
+2. **Shop Page**
+   - Product listing grid
+   - Filters (price, category, material, popularity)
+   - Sorting (low-high, latest, trending)
+   - Pagination or infinite scroll
+
+3. **Category Pages**
+   - Jewelry categories (rings, pendants, necklaces, etc.)
+   - Dynamic category routing
+
+4. **Search Functionality**
+   - Smart search bar with suggestions
+   - Search by name, category, price
+
+5. **Product Detail Page**
+   - Multiple images with zoom
+   - Product description
+   - Price, discount, stock status
+   - Add to cart / Buy now
+   - Reviews & ratings
+   - Related products
+
+6. **Cart & Checkout**
+   - Add/remove/update items
+   - Coupon system
+   - Razorpay payment integration
+   - Order receipt with signature verification
+
+7. **Authentication**
+   - Google Login
+   - Email/password login
+   - Email verification using Resend
+
+8. **User Profile**
+   - Orders history
+   - Address management
+   - Wishlist
+
+9. **Blog Page**
+   - Jewelry tips, trends, guides
+   - Dynamic blog system (admin controlled)
+
+10. **Gallery Page**
+   - High-quality jewelry showcase images
+
+11. **Contact Us Page**
+   - Contact form (email via Resend)
+   - Map integration
+
+12. **About Us Page**
+   - Brand story
+
+13. **Newsletter Subscription**
+   - Email collection via Resend
+
+---
+
+### 📸 INSTAGRAM INTEGRATION
+- Fetch and display Instagram posts
+- Show reels in homepage/gallery
+- Auto-update feed
+
+---
+
+### 🛠️ ADMIN PANEL (VERY POWERFUL)
+
+Create a separate admin dashboard with full control:
+
+#### Admin Features:
+- Secure login (JWT based)
+- Dashboard analytics (sales, users, orders)
+
+#### Product Management:
+- Add/Edit/Delete products
+- Upload multiple images
+- Manage categories
+- Inventory control
+
+#### Order Management:
+- View all orders
+- Update order status
+- Payment tracking
+
+#### User Management:
+- View users
+- Manage roles
+
+#### Blog Management:
+- Create/edit/delete blog posts
+
+#### Gallery Management:
+- Upload/delete images
+
+#### Coupon System:
+- Create discount codes
+
+#### Content Management:
+- Edit homepage banners
+- Manage featured products
+
+---
+
+### ⚙️ BACKEND STRUCTURE
+
+- Separate folder `/backend`
+- MVC architecture
+- Routes:
+  - auth
+  - products
+  - orders
+  - users
+  - blogs
+  - categories
+  - payments
+- Middleware:
+  - Auth protection
+  - Error handling
+- PostgreSQL schemas
+
+---
+
+### 💻 FRONTEND STRUCTURE
+
+- Separate folder `/frontend`
+- Pages:
+  - Home
+  - Shop
+  - Product
+  - Cart
+  - Checkout
+  - Blog
+  - Gallery
+  - Contact
+  - About
+- Reusable components:
+  - Navbar
+  - Footer
+  - Product card
+  - Loader
+  - Modal
+
+---
+
+### 🔐 SECURITY
+- JWT authentication
+- Password hashing (bcrypt)
+- Input validation
+- Secure payment verification (Razorpay signature)
+
+---
+
+### 📦 EXTRA FEATURES (IMPORTANT)
+- Wishlist
+- Recently viewed products
+- SEO optimization
+- Fast loading (lazy loading images)
+- Error pages (404, etc.)
+- Admin can control everything dynamically
+- All data must be dynamic (no hardcoding)
+
+---
+
+### 📁 FINAL OUTPUT STRUCTURE
+
+/project-root
+  /frontend
+  /backend
+  /docs (API documentation)
+
+---
+
+### 🚀 GOAL
+
+Build a fully functional, scalable, production-ready luxury jewelry eCommerce website where:
+- Everything is dynamic
+- Admin controls everything
+- UI feels premium like Myntra + luxury brands
+- Smooth animations everywhere

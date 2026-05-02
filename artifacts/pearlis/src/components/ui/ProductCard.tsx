@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Product } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Heart, ShoppingBag } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
@@ -9,77 +9,84 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
-  const isNew = product.isNew;
-  
+  const hasDiscount = product.discountPrice && product.discountPrice < product.price;
+  const discountPct = hasDiscount
+    ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
+    : 0;
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
+    <motion.div
+      initial={{ opacity: 0, y: 28 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.55, delay: index * 0.08 }}
       className="group relative flex flex-col"
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-muted mb-4">
-        {/* Wishlist Button */}
-        <button className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-foreground hover:text-accent">
-          <Heart className="w-4 h-4" />
-        </button>
-
+      {/* Image */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#F5F0E8] mb-4">
         {/* Badges */}
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-          {isNew && (
-            <span className="bg-background text-foreground text-[10px] font-medium px-2 py-1 tracking-wider uppercase">
+        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
+          {product.isNew && (
+            <span className="bg-[#0F0F0F] text-white text-[9px] font-semibold px-2.5 py-1 tracking-[0.15em] uppercase">
               New
             </span>
           )}
-          {product.discountPrice && (
-            <span className="bg-accent text-accent-foreground text-[10px] font-medium px-2 py-1 tracking-wider uppercase">
-              Sale
+          {hasDiscount && (
+            <span className="bg-[#D4AF37] text-white text-[9px] font-semibold px-2.5 py-1 tracking-[0.15em] uppercase">
+              -{discountPct}%
             </span>
           )}
         </div>
 
+        {/* Wishlist */}
+        <button className="absolute top-3 right-3 z-10 w-8 h-8 bg-white shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#D4AF37] hover:text-white text-[#0F0F0F]">
+          <Heart className="w-3.5 h-3.5" strokeWidth={1.5} />
+        </button>
+
+        {/* Product image(s) */}
         <Link href={`/product/${product.id}`}>
-          <div className="w-full h-full cursor-pointer">
-            <img 
-              src={product.images[0] || "https://placehold.co/400x600/e2e8f0/1e293b?text=Jewelry"} 
+          <div className="w-full h-full cursor-pointer relative">
+            <img
+              src={product.images?.[0] || `https://images.unsplash.com/photo-1599643478524-fb66f70d00f7?auto=format&fit=crop&q=80&w=600`}
               alt={product.name}
-              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-107"
             />
-            {product.images[1] && (
-              <img 
-                src={product.images[1]} 
-                alt={`${product.name} alternate view`}
-                className="absolute inset-0 w-full h-full object-cover object-center opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+            {product.images?.[1] && (
+              <img
+                src={product.images[1]}
+                alt={`${product.name} — alternate view`}
+                className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
               />
             )}
           </div>
         </Link>
-        
-        {/* Quick Add */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-          <button className="w-full bg-primary text-primary-foreground py-3 text-sm font-medium tracking-wider uppercase hover:bg-primary/90 transition-colors">
+
+        {/* Quick add */}
+        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-350">
+          <button className="w-full bg-[#0F0F0F] hover:bg-[#D4AF37] text-white py-3 text-[10px] font-semibold tracking-[0.2em] uppercase flex items-center justify-center gap-2 transition-colors duration-300">
+            <ShoppingBag className="w-3.5 h-3.5" />
             Quick Add
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col text-center">
+      {/* Info */}
+      <div className="flex flex-col text-center px-1">
+        <p className="text-[9px] tracking-[0.2em] uppercase text-[#D4AF37] font-medium mb-1.5">
+          {product.material || (product as any).categoryName || "Fine Jewellery"}
+        </p>
         <Link href={`/product/${product.id}`}>
-          <h3 className="font-serif text-lg mb-1 text-foreground hover:text-accent transition-colors cursor-pointer">
+          <h3 className="font-serif text-base text-[#0F0F0F] hover:text-[#D4AF37] transition-colors cursor-pointer leading-snug mb-2">
             {product.name}
           </h3>
         </Link>
-        <p className="text-muted-foreground text-xs uppercase tracking-wider mb-2">
-          {product.material || product.category}
-        </p>
-        <div className="flex justify-center items-center gap-3">
-          {product.discountPrice ? (
+        <div className="flex justify-center items-center gap-2">
+          {hasDiscount ? (
             <>
-              <span className="text-muted-foreground line-through text-sm">${product.price.toFixed(2)}</span>
-              <span className="text-foreground font-medium">${product.discountPrice.toFixed(2)}</span>
+              <span className="text-[#0F0F0F]/40 line-through text-sm">₹{product.price.toLocaleString("en-IN")}</span>
+              <span className="text-[#0F0F0F] font-semibold">₹{product.discountPrice!.toLocaleString("en-IN")}</span>
             </>
           ) : (
-            <span className="text-foreground font-medium">${product.price.toFixed(2)}</span>
+            <span className="text-[#0F0F0F] font-semibold">₹{product.price.toLocaleString("en-IN")}</span>
           )}
         </div>
       </div>

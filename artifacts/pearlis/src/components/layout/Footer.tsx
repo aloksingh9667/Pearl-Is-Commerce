@@ -1,58 +1,127 @@
 import { Link } from "wouter";
+import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground py-16 md:py-24">
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          <div className="md:col-span-1">
-            <h2 className="font-serif text-2xl tracking-widest mb-6">PEARLIS</h2>
-            <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-xs">
-              Exceptional jewelry crafted with intention. A sanctuary for those who appreciate the quiet power of luxury.
+    <footer className="bg-[#0F0F0F] text-white">
+      {/* Main footer */}
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+
+          {/* Brand */}
+          <div className="lg:col-span-2">
+            <div className="mb-6">
+              <p className="font-serif text-2xl tracking-[0.35em] font-bold text-white">PEARLIS</p>
+              <p className="text-[9px] tracking-[0.4em] uppercase text-[#D4AF37] mt-1">Fine Jewellery</p>
+            </div>
+            <p className="text-white/50 text-sm leading-relaxed max-w-xs mb-8">
+              Exceptional jewellery crafted with intention. A sanctuary for those who appreciate the quiet power of luxury, designed to be passed down through generations.
             </p>
+            {/* Social links */}
+            <div className="flex gap-4">
+              {[
+                { icon: Instagram, href: "#", label: "Instagram" },
+                { icon: Facebook, href: "#", label: "Facebook" },
+                { icon: Twitter, href: "#", label: "Twitter" },
+                { icon: Youtube, href: "#", label: "YouTube" },
+              ].map(({ icon: Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="w-9 h-9 border border-white/15 flex items-center justify-center text-white/50 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-300"
+                >
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
           </div>
-          
+
+          {/* Explore */}
           <div>
-            <h3 className="font-serif text-lg mb-6">Explore</h3>
-            <ul className="space-y-4 text-sm text-primary-foreground/70">
-              <li><Link href="/shop" className="hover:text-accent transition-colors">All Jewelry</Link></li>
-              <li><Link href="/category/necklaces" className="hover:text-accent transition-colors">Necklaces & Pendants</Link></li>
-              <li><Link href="/category/rings" className="hover:text-accent transition-colors">Rings</Link></li>
-              <li><Link href="/category/bracelets" className="hover:text-accent transition-colors">Bracelets</Link></li>
-              <li><Link href="/gallery" className="hover:text-accent transition-colors">Gallery</Link></li>
+            <h3 className="text-[10px] tracking-[0.25em] uppercase font-semibold text-white mb-6">Explore</h3>
+            <ul className="space-y-3.5">
+              {[
+                { label: "All Jewellery", href: "/shop" },
+                { label: "Rings", href: "/category/rings" },
+                { label: "Necklaces", href: "/category/necklaces" },
+                { label: "Bracelets", href: "/category/bracelets" },
+                { label: "Earrings", href: "/category/earrings" },
+                { label: "Gallery", href: "/gallery" },
+              ].map(({ label, href }) => (
+                <li key={href}>
+                  <Link href={href} className="text-sm text-white/50 hover:text-[#D4AF37] transition-colors">
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
-          
+
+          {/* Assistance */}
           <div>
-            <h3 className="font-serif text-lg mb-6">Assistance</h3>
-            <ul className="space-y-4 text-sm text-primary-foreground/70">
-              <li><Link href="/contact" className="hover:text-accent transition-colors">Contact Us</Link></li>
-              <li><Link href="/about" className="hover:text-accent transition-colors">Our Story</Link></li>
-              <li><Link href="/orders" className="hover:text-accent transition-colors">Order Status</Link></li>
-              <li><Link href="#" className="hover:text-accent transition-colors">Care Guide</Link></li>
-              <li><Link href="#" className="hover:text-accent transition-colors">Returns & Exchanges</Link></li>
+            <h3 className="text-[10px] tracking-[0.25em] uppercase font-semibold text-white mb-6">Assistance</h3>
+            <ul className="space-y-3.5">
+              {[
+                { label: "Contact Us", href: "/contact" },
+                { label: "Our Story", href: "/about" },
+                { label: "Order Status", href: "/orders" },
+                { label: "Blog & Guides", href: "/blog" },
+                { label: "Care Instructions", href: "#" },
+                { label: "Returns & Exchanges", href: "#" },
+              ].map(({ label, href }) => (
+                <li key={label}>
+                  <Link href={href} className="text-sm text-white/50 hover:text-[#D4AF37] transition-colors">
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
-          
+
+          {/* Contact */}
           <div>
-            <h3 className="font-serif text-lg mb-6">Atelier</h3>
-            <p className="text-sm text-primary-foreground/70 mb-4">
-              124 Luxury Lane<br />
-              New York, NY 10012<br />
-              United States
-            </p>
-            <p className="text-sm text-primary-foreground/70">
-              concierge@pearlis.com<br />
-              +1 (800) 555-0199
-            </p>
+            <h3 className="text-[10px] tracking-[0.25em] uppercase font-semibold text-white mb-6">Contact</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3 text-sm text-white/50">
+                <MapPin className="w-4 h-4 text-[#D4AF37] mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                <span>124 Luxury Lane, Bandra West<br />Mumbai, MH 400050</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm text-white/50">
+                <Mail className="w-4 h-4 text-[#D4AF37] flex-shrink-0" strokeWidth={1.5} />
+                <a href="mailto:concierge@pearlis.com" className="hover:text-[#D4AF37] transition-colors">
+                  concierge@pearlis.com
+                </a>
+              </li>
+              <li className="flex items-center gap-3 text-sm text-white/50">
+                <Phone className="w-4 h-4 text-[#D4AF37] flex-shrink-0" strokeWidth={1.5} />
+                <a href="tel:+911800555019" className="hover:text-[#D4AF37] transition-colors">
+                  +91 1800 555 019
+                </a>
+              </li>
+            </ul>
+
+            {/* Accepted payments */}
+            <div className="mt-8">
+              <p className="text-[9px] tracking-[0.2em] uppercase text-white/30 mb-3">Secure Payments</p>
+              <div className="flex gap-2 flex-wrap">
+                {["VISA", "MC", "UPI", "RZP"].map(m => (
+                  <span key={m} className="border border-white/10 text-white/40 text-[9px] px-2.5 py-1 tracking-wider font-mono">
+                    {m}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-primary-foreground/50">
-          <p>&copy; {new Date().getFullYear()} Pearlis. All rights reserved.</p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+
+        {/* Bottom bar */}
+        <div className="border-t border-white/8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-white/30">
+          <p>&copy; {new Date().getFullYear()} Pearlis Fine Jewellery. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link href="#" className="hover:text-white/60 transition-colors">Privacy Policy</Link>
+            <Link href="#" className="hover:text-white/60 transition-colors">Terms of Service</Link>
+            <Link href="#" className="hover:text-white/60 transition-colors">Sitemap</Link>
           </div>
         </div>
       </div>
