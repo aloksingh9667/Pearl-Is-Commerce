@@ -1,0 +1,85 @@
+2026-05-02T19:09:29.989Z	Initializing build environment...
+2026-05-02T19:09:31.536Z	Success: Finished initializing build environment
+2026-05-02T19:09:32.075Z	Cloning repository...
+2026-05-02T19:09:33.242Z	No build output detected to cache. Skipping.
+2026-05-02T19:09:33.243Z	No dependencies detected to cache. Skipping.
+2026-05-02T19:09:34.548Z	Detected the following tools from environment: nodejs@20.20.2, pnpm@10.26.1
+2026-05-02T19:09:34.549Z	Installing nodejs 20.20.2
+2026-05-02T19:09:43.229Z	Installing project dependencies: bun install
+2026-05-02T19:09:43.373Z	bun install v1.2.15 (df017990)
+2026-05-02T19:09:43.400Z	Resolving dependencies
+2026-05-02T19:09:43.947Z	Resolved, downloaded and extracted [8]
+2026-05-02T19:09:43.975Z	Saved lockfile
+2026-05-02T19:09:43.975Z	
+2026-05-02T19:09:43.978Z	$ sh -c 'rm -f package-lock.json yarn.lock; if [ "$CI" = "true" ]; then exit 0; fi; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-05-02T19:09:43.984Z	
+2026-05-02T19:09:43.984Z	+ prettier@3.8.3
+2026-05-02T19:09:43.984Z	+ typescript@5.9.3 (v6.0.3 available)
+2026-05-02T19:09:43.989Z	
+2026-05-02T19:09:43.989Z	2 packages installed [640.00ms]
+2026-05-02T19:09:44.152Z	Executing user build command: pnpm install && pnpm --filter @workspace/pearlis run build
+2026-05-02T19:09:44.846Z	Scope: all 9 workspace projects
+2026-05-02T19:09:44.925Z	 WARN  Moving typescript that was installed by a different package manager to "node_modules/.ignored"
+2026-05-02T19:09:44.926Z	 WARN  Moving prettier that was installed by a different package manager to "node_modules/.ignored"
+2026-05-02T19:09:45.277Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-05-02T19:09:46.353Z	Progress: resolved 42, reused 0, downloaded 19, added 0
+2026-05-02T19:09:47.390Z	Progress: resolved 57, reused 0, downloaded 40, added 0
+2026-05-02T19:09:47.456Z	artifacts/api-server                     |  WARN  deprecated @types/bcryptjs@3.0.0
+2026-05-02T19:09:48.403Z	Progress: resolved 86, reused 0, downloaded 40, added 0
+2026-05-02T19:09:49.638Z	Progress: resolved 93, reused 0, downloaded 41, added 0
+2026-05-02T19:09:50.695Z	Progress: resolved 94, reused 0, downloaded 41, added 0
+2026-05-02T19:09:52.760Z	Progress: resolved 94, reused 0, downloaded 42, added 0
+2026-05-02T19:09:55.518Z	Progress: resolved 95, reused 0, downloaded 44, added 0
+2026-05-02T19:09:56.515Z	Progress: resolved 110, reused 0, downloaded 89, added 0
+2026-05-02T19:09:57.531Z	Progress: resolved 172, reused 0, downloaded 116, added 0
+2026-05-02T19:09:58.532Z	Progress: resolved 177, reused 0, downloaded 134, added 0
+2026-05-02T19:09:59.533Z	Progress: resolved 248, reused 0, downloaded 171, added 0
+2026-05-02T19:10:00.533Z	Progress: resolved 321, reused 0, downloaded 283, added 0
+2026-05-02T19:10:01.536Z	Progress: resolved 438, reused 0, downloaded 385, added 0
+2026-05-02T19:10:02.537Z	Progress: resolved 502, reused 0, downloaded 470, added 0
+2026-05-02T19:10:03.149Z	Packages: +530
+2026-05-02T19:10:03.149Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-05-02T19:10:03.549Z	Progress: resolved 532, reused 0, downloaded 510, added 0
+2026-05-02T19:10:04.552Z	Progress: resolved 532, reused 0, downloaded 524, added 4
+2026-05-02T19:10:05.552Z	Progress: resolved 532, reused 0, downloaded 530, added 436
+2026-05-02T19:10:05.689Z	Progress: resolved 532, reused 0, downloaded 530, added 530, done
+2026-05-02T19:10:05.827Z	.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+2026-05-02T19:10:05.890Z	.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+2026-05-02T19:10:07.224Z	. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; if [ "$CI" = "true" ]; then exit 0; fi; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-05-02T19:10:07.238Z	. preinstall: Done
+2026-05-02T19:10:07.341Z	
+2026-05-02T19:10:07.341Z	devDependencies:
+2026-05-02T19:10:07.342Z	+ prettier 3.8.3
+2026-05-02T19:10:07.342Z	+ typescript 5.9.3 (6.0.3 is available)
+2026-05-02T19:10:07.342Z	
+2026-05-02T19:10:07.357Z	Done in 23s using pnpm v10.26.1
+2026-05-02T19:10:07.880Z	
+2026-05-02T19:10:07.880Z	> @workspace/pearlis@0.0.0 build /opt/buildhome/repo/artifacts/pearlis
+2026-05-02T19:10:07.880Z	> vite build --config vite.config.ts
+2026-05-02T19:10:07.880Z	
+2026-05-02T19:10:08.224Z	vite v7.3.2 building client environment for production...
+2026-05-02T19:10:08.303Z	transforming...
+2026-05-02T19:10:10.424Z	src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-05-02T19:10:11.109Z	src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-05-02T19:10:11.132Z	src/components/ui/select.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-05-02T19:10:14.188Z	✓ 2566 modules transformed.
+2026-05-02T19:10:14.782Z	rendering chunks...
+2026-05-02T19:10:14.797Z	computing gzip size...
+2026-05-02T19:10:14.823Z	dist/public/index.html                   0.82 kB │ gzip:   0.46 kB
+2026-05-02T19:10:14.823Z	dist/public/assets/index-D82LEx6h.css  180.99 kB │ gzip:  27.27 kB
+2026-05-02T19:10:14.824Z	dist/public/assets/index-DJSMrjE2.js   890.26 kB │ gzip: 251.22 kB
+2026-05-02T19:10:14.824Z	✓ built in 6.56s
+2026-05-02T19:10:14.824Z	
+2026-05-02T19:10:14.824Z	(!) Some chunks are larger than 500 kB after minification. Consider:
+2026-05-02T19:10:14.825Z	- Using dynamic import() to code-split the application
+2026-05-02T19:10:14.825Z	- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-05-02T19:10:14.825Z	- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2026-05-02T19:10:14.911Z	Success: Build command completed
+2026-05-02T19:10:15.101Z	Executing user deploy command: echo "Deployed via Cloudflare Pages CI"
+2026-05-02T19:10:15.105Z	Deployed via Cloudflare Pages CI
+2026-05-02T19:10:15.106Z	Success: Deploy command completed
+2026-05-02T19:10:15.114Z	Skipping build output cache as it's not supported for your project
+2026-05-02T19:10:15.118Z	Uploading to dependency cache
+2026-05-02T19:10:15.122Z	No package-lock.json, pnpm-lock.yaml, yarn.lock, bun.lock, or bun.lockb! Build caching not supported
+2026-05-02T19:10:15.126Z	Failed to upload dependencies to build cache. Skipping.
+2026-05-02T19:10:15.266Z	✨ Success! Build completed.
