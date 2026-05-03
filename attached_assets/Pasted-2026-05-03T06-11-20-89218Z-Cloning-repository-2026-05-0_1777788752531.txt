@@ -1,0 +1,39 @@
+2026-05-03T06:11:20.89218Z	Cloning repository...
+2026-05-03T06:11:21.711309Z	From https://github.com/aloksingh9667/pearlis-frontend
+2026-05-03T06:11:21.711671Z	 * branch            5f7d7235e2f98b77d68a3e228c77641e22fdbd4b -> FETCH_HEAD
+2026-05-03T06:11:21.711745Z	
+2026-05-03T06:11:21.751033Z	HEAD is now at 5f7d723 Fix frontend workspace for Cloudflare build
+2026-05-03T06:11:21.751354Z	
+2026-05-03T06:11:21.791731Z	
+2026-05-03T06:11:21.792076Z	Using v2 root directory strategy
+2026-05-03T06:11:21.803719Z	Success: Finished cloning repository files
+2026-05-03T06:11:23.731035Z	Checking for configuration in a Wrangler configuration file (BETA)
+2026-05-03T06:11:23.73144Z	
+2026-05-03T06:11:23.73152Z	Found wrangler.toml file. Reading build configuration...
+2026-05-03T06:11:23.736569Z	pages_build_output_dir: dist/public
+2026-05-03T06:11:23.736696Z	Build environment variables: (none found)
+2026-05-03T06:11:24.818795Z	Successfully read the Wrangler configuration file.
+2026-05-03T06:11:24.996154Z	Detected the following tools from environment: nodejs@20.20.0, npm@10.9.2
+2026-05-03T06:11:24.996516Z	Installing nodejs 20.20.0
+2026-05-03T06:11:25.694369Z	Trying to update node-build... ok
+2026-05-03T06:11:25.747222Z	To follow progress, use 'tail -f /tmp/node-build.20260503061125.803.log' or pass --verbose
+2026-05-03T06:11:25.787897Z	Downloading node-v20.20.0-linux-x64.tar.gz...
+2026-05-03T06:11:25.939319Z	-> https://nodejs.org/dist/v20.20.0/node-v20.20.0-linux-x64.tar.gz
+2026-05-03T06:11:28.101647Z	
+2026-05-03T06:11:28.101866Z	WARNING: node-v20.20.0-linux-x64 is in LTS Maintenance mode and nearing its end of life.
+2026-05-03T06:11:28.10193Z	It only receives *critical* security updates, *critical* bug fixes and documentation updates.
+2026-05-03T06:11:28.101972Z	
+2026-05-03T06:11:28.102005Z	Installing node-v20.20.0-linux-x64...
+2026-05-03T06:11:28.554563Z	Installed node-v20.20.0-linux-x64 to /opt/buildhome/.asdf/installs/nodejs/20.20.0
+2026-05-03T06:11:28.554871Z	
+2026-05-03T06:11:29.137661Z	Installing project dependencies: npm install --progress=false
+2026-05-03T06:11:31.575302Z	npm error code EUNSUPPORTEDPROTOCOL
+2026-05-03T06:11:31.575539Z	npm error Unsupported URL Type "catalog:": catalog:
+2026-05-03T06:11:31.576558Z	npm error A complete log of this run can be found in: /opt/buildhome/.npm/_logs/2026-05-03T06_11_29_338Z-debug-0.log
+2026-05-03T06:11:31.595412Z	Error: Exit with error code: 1
+2026-05-03T06:11:31.595656Z	    at ChildProcess.<anonymous> (/snapshot/dist/run-build.js)
+2026-05-03T06:11:31.595745Z	    at Object.onceWrapper (node:events:652:26)
+2026-05-03T06:11:31.595837Z	    at ChildProcess.emit (node:events:537:28)
+2026-05-03T06:11:31.595939Z	    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+2026-05-03T06:11:31.603233Z	Failed: build command exited with code: 1
+2026-05-03T06:11:32.109411Z	Failed: error occurred while running build command
