@@ -1,13 +1,10 @@
 import { Switch, Route, Router as WouterRouter, useLocation, Redirect } from "wouter";
-import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { BrandingApplicator } from "@/components/layout/BrandingApplicator";
 import { Loader2 } from "lucide-react";
-import { ClerkProvider } from "@clerk/react";
-import { useEffect, useRef } from "react";
-import { useClerk } from "@clerk/react";
 
 // Pages
 import Home from "@/pages/home";
@@ -19,8 +16,6 @@ import Checkout from "@/pages/checkout";
 import Orders from "@/pages/orders";
 import OrderDetail from "@/pages/order";
 import Wishlist from "@/pages/wishlist";
-import Login from "@/pages/login";
-import Register from "@/pages/register";
 import SignInPage from "@/pages/sign-in";
 import SignUpPage from "@/pages/sign-up";
 import ForgotPassword from "@/pages/forgot-password";
@@ -52,15 +47,6 @@ import AdminLoginPage from "@/pages/admin-login";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-const clerkPubKey =
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
-  import.meta.env.CLERK_PUBLISHABLE_KEY ||
-  "";
-
-function stripBase(path: string): string {
-  return basePath && path.startsWith(basePath) ? path.slice(basePath.length) || "/" : path;
-}
-
 // Admin guard
 function AdminRoute({ component: Component }: { component: any }) {
   const { user, isLoading } = useAuth();
@@ -76,24 +62,6 @@ function AdminRoute({ component: Component }: { component: any }) {
     return null;
   }
   return <Component />;
-}
-
-// Invalidate React Query cache on Clerk user change
-function ClerkQueryClientCacheInvalidator() {
-  const { addListener } = useClerk();
-  const queryClient = useQueryClient();
-  const prevUserIdRef = useRef<string | null | undefined>(undefined);
-  useEffect(() => {
-    const unsubscribe = addListener(({ user }) => {
-      const userId = user?.id ?? null;
-      if (prevUserIdRef.current !== undefined && prevUserIdRef.current !== userId) {
-        queryClient.clear();
-      }
-      prevUserIdRef.current = userId;
-    });
-    return unsubscribe;
-  }, [addListener, queryClient]);
-  return null;
 }
 
 const queryClient = new QueryClient({
@@ -113,11 +81,9 @@ function Router() {
       <Route path="/order/:id" component={OrderDetail} />
       <Route path="/wishlist" component={Wishlist} />
 
-      {/* Clerk auth routes — required for OAuth callbacks */}
-      <Route path="/sign-in/*?" component={SignInPage} />
-      <Route path="/sign-up/*?" component={SignUpPage} />
-
-      {/* Legacy routes redirect to Clerk pages */}
+      {/* Auth routes */}
+      <Route path="/sign-in" component={SignInPage} />
+      <Route path="/sign-up" component={SignUpPage} />
       <Route path="/login">{() => <Redirect to="/sign-in" />}</Route>
       <Route path="/register">{() => <Redirect to="/sign-up" />}</Route>
 
@@ -152,34 +118,24 @@ function Router() {
   );
 }
 
-function AppWithClerk() {
-  const [, setLocation] = useLocation();
+function AppWithProviders() {
   return (
-    <ClerkProvider
-      publishableKey={clerkPubKey}
-      signInUrl={`${basePath}/sign-in`}
-      signUpUrl={`${basePath}/sign-up`}
-      routerPush={(to) => setLocation(stripBase(to))}
-      routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
-    >
-      <QueryClientProvider client={queryClient}>
-        <ClerkQueryClientCacheInvalidator />
-        <AuthProvider>
-          <TooltipProvider>
-            <BrandingApplicator />
-            <Router />
-            <Toaster />
-          </TooltipProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </ClerkProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <BrandingApplicator />
+          <Router />
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
 function App() {
   return (
     <WouterRouter base={basePath}>
-      <AppWithClerk />
+      <AppWithProviders />
     </WouterRouter>
   );
 }

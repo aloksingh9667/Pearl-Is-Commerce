@@ -15,7 +15,7 @@ Full-stack luxury jewelry eCommerce website ("Pearlis") with a premium UI inspir
 - **Database**: PostgreSQL + Drizzle ORM
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
-- **Auth**: Clerk (regular users — Google + email/password) + JWT/bcryptjs (admin only)
+- **Auth**: JWT/bcryptjs + email OTP (via Mailgun) for regular users; JWT/bcryptjs for admin
 - **Build**: esbuild (CJS bundle)
 
 ## Design
@@ -34,7 +34,8 @@ Full-stack luxury jewelry eCommerce website ("Pearlis") with a premium UI inspir
 - `/checkout` — Full checkout with INR pricing, coupon validation, COD/Razorpay
 - `/orders` — Order history
 - `/wishlist` — Wishlist
-- `/sign-in`, `/sign-up` — Clerk auth pages (branded, with Google login)
+- `/sign-in` — Premium login page (email + password, branded split-panel)
+- `/sign-up` — Premium OTP registration (name + email + password → email OTP → account created)
 - `/login`, `/register` — redirect to `/sign-in` and `/sign-up`
 - `/blog`, `/blog/:id` — Blog / The Journal
 - `/about`, `/contact`, `/gallery` — Brand pages

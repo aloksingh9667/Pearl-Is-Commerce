@@ -1,9 +1,6 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import { Request, Response, NextFunction } from "express";
-import { getAuth } from "@clerk/express";
-import { db } from "@workspace/db";
-import { usersTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
 
 const JWT_SECRET = process.env.SESSION_SECRET || "pearlis-secret-key";
 
@@ -19,16 +16,12 @@ export function verifyToken(token: string): { id: number; email: string; role: s
   }
 }
 
-async function resolveClerkUser(req: Request): Promise<{ id: number; email: string; role: string } | null> {
-  try {
-    const clerkAuth = getAuth(req);
-    if (!clerkAuth.userId) return null;
-    const [user] = await db.select().from(usersTable).where(eq(usersTable.clerkId, clerkAuth.userId));
-    if (!user) return null;
-    return { id: user.id, email: user.email, role: user.role };
-  } catch {
-    return null;
-  }
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 10);
+}
+
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
 }
 
 function resolveJwtUser(req: Request): { id: number; email: string; role: string } | null {
@@ -38,12 +31,7 @@ function resolveJwtUser(req: Request): { id: number; email: string; role: string
   return verifyToken(token);
 }
 
-export async function optionalAuth(req: Request, res: Response, next: NextFunction) {
-  const clerkUser = await resolveClerkUser(req);
-  if (clerkUser) {
-    (req as any).user = clerkUser;
-    return next();
-  }
+export function optionalAuth(req: Request, res: Response, next: NextFunction) {
   const jwtUser = resolveJwtUser(req);
   if (jwtUser) {
     (req as any).user = jwtUser;
@@ -52,11 +40,6 @@ export async function optionalAuth(req: Request, res: Response, next: NextFuncti
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const clerkUser = await resolveClerkUser(req);
-  if (clerkUser) {
-    (req as any).user = clerkUser;
-    return next();
-  }
   const jwtUser = resolveJwtUser(req);
   if (jwtUser) {
     (req as any).user = jwtUser;

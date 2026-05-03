@@ -3,8 +3,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@workspace/db";
 import { usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
-import { signToken, requireAuth } from "../lib/auth";
-import { getAuth } from "@clerk/express";
+import { signToken, requireAuth, hashPassword, comparePassword } from "../lib/auth";
 
 const router = Router();
 
@@ -70,55 +69,6 @@ router.post("/auth/logout", (req, res) => {
   res.json({ success: true, message: "Logged out" });
 });
 
-router.post("/auth/clerk-sync", async (req, res) => {
-  try {
-    const clerkAuth = getAuth(req);
-    if (!clerkAuth.userId) {
-      res.status(401).json({ error: "Unauthorized" });
-      return;
-    }
-    const { email, name, avatar } = req.body;
-    if (!email) {
-      res.status(400).json({ error: "Email required" });
-      return;
-    }
-
-    const [byClerkId] = await db.select().from(usersTable)
-      .where(eq(usersTable.clerkId, clerkAuth.userId));
-    if (byClerkId) {
-      const [updated] = await db.update(usersTable)
-        .set({ name: name || byClerkId.name, avatar: avatar || byClerkId.avatar })
-        .where(eq(usersTable.id, byClerkId.id))
-        .returning();
-      res.json(toUser(updated));
-      return;
-    }
-
-    const [byEmail] = await db.select().from(usersTable)
-      .where(eq(usersTable.email, email));
-    if (byEmail) {
-      const [updated] = await db.update(usersTable)
-        .set({ clerkId: clerkAuth.userId, name: name || byEmail.name, avatar: avatar || byEmail.avatar })
-        .where(eq(usersTable.id, byEmail.id))
-        .returning();
-      res.json(toUser(updated));
-      return;
-    }
-
-    const [user] = await db.insert(usersTable).values({
-      clerkId: clerkAuth.userId,
-      email,
-      name: name || email.split("@")[0],
-      avatar: avatar || null,
-      role: "user",
-    }).returning();
-    res.status(201).json(toUser(user));
-  } catch (err) {
-    req.log.error(err);
-    res.status(500).json({ error: "Clerk sync failed" });
-  }
-});
-
 router.get("/auth/me", requireAuth, async (req, res) => {
   try {
     const userId = (req as any).user.id;
@@ -175,16 +125,15 @@ router.post("/auth/change-password", requireAuth, async (req, res) => {
       return res.status(400).json({ error: "New password must be at least 8 characters." });
     }
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
-    if (!user || !user.password) {
+    if (!user || !user.passwordHash) {
       return res.status(400).json({ error: "Cannot change password for this account." });
     }
-    const { comparePassword, hashPassword } = await import("../lib/auth");
-    const valid = await comparePassword(currentPassword, user.password);
+    const valid = await comparePassword(currentPassword, user.passwordHash);
     if (!valid) {
       return res.status(401).json({ error: "Current password is incorrect." });
     }
     const hashed = await hashPassword(newPassword);
-    await db.update(usersTable).set({ password: hashed }).where(eq(usersTable.id, userId));
+    await db.update(usersTable).set({ passwordHash: hashed }).where(eq(usersTable.id, userId));
     res.json({ success: true, message: "Password updated successfully." });
   } catch (err) {
     req.log.error(err);
