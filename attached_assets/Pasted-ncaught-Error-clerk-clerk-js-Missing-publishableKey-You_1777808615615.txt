@@ -1,0 +1,145 @@
+ncaught Error: @clerk/clerk-js: Missing publishableKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingPublishableKeyError (clerk.browser.js:12:1967)
+    at new nV (clerk.browser.js:18:161823)
+    at clerk.browser.js:18:213920
+    at clerk.browser.js:18:213957
+    at clerk.browser.js:18:213964
+    at clerk.browser.js:1:158
+    at clerk.browser.js:1:223
+throwMissingPublishableKeyError @ clerk.browser.js:12
+nV @ clerk.browser.js:18
+(anonymous) @ clerk.browser.js:18
+(anonymous) @ clerk.browser.js:18
+(anonymous) @ clerk.browser.js:18
+(anonymous) @ clerk.browser.js:1
+(anonymous) @ clerk.browser.js:1Understand this error
+index-CCjgHJX9.js:31 Uncaught TypeError: (b ?? []).filter is not a function
+    at Zt (index-CCjgHJX9.js:31:31696)
+    at gf (index-CCjgHJX9.js:8:34147)
+    at Of (index-CCjgHJX9.js:8:62358)
+    at Av (index-CCjgHJX9.js:8:72867)
+    at tb (index-CCjgHJX9.js:8:106901)
+    at e3 (index-CCjgHJX9.js:8:105966)
+    at am (index-CCjgHJX9.js:8:105798)
+    at Qv (index-CCjgHJX9.js:8:102901)
+    at pb (index-CCjgHJX9.js:8:114476)
+    at Zo (index-CCjgHJX9.js:8:113048)
+Zt @ index-CCjgHJX9.js:31
+gf @ index-CCjgHJX9.js:8
+Of @ index-CCjgHJX9.js:8
+Av @ index-CCjgHJX9.js:8
+tb @ index-CCjgHJX9.js:8
+e3 @ index-CCjgHJX9.js:8
+am @ index-CCjgHJX9.js:8
+Qv @ index-CCjgHJX9.js:8
+pb @ index-CCjgHJX9.js:8
+Zo @ index-CCjgHJX9.js:8
+hb @ index-CCjgHJX9.js:8
+(anonymous) @ index-CCjgHJX9.js:8
+setTimeout
+C5 @ index-CCjgHJX9.js:9
+c @ index-CCjgHJX9.js:9
+batch @ index-CCjgHJX9.js:9
+#a @ index-CCjgHJX9.js:9
+setData @ index-CCjgHJX9.js:9
+fetch @ index-CCjgHJX9.js:9
+await in fetch
+#d @ index-CCjgHJX9.js:9
+onSubscribe @ index-CCjgHJX9.js:9
+subscribe @ index-CCjgHJX9.js:9
+(anonymous) @ index-CCjgHJX9.js:9
+ky @ index-CCjgHJX9.js:8
+$o @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+ps @ index-CCjgHJX9.js:8
+Vv @ index-CCjgHJX9.js:8
+cb @ index-CCjgHJX9.js:8
+nu @ index-CCjgHJX9.js:8
+pb @ index-CCjgHJX9.js:8
+Zo @ index-CCjgHJX9.js:8
+ob @ index-CCjgHJX9.js:8
+rb @ index-CCjgHJX9.js:8
+Xv @ index-CCjgHJX9.js:8
+Qv @ index-CCjgHJX9.js:8
+mb @ index-CCjgHJX9.js:8
+ue @ index-CCjgHJX9.js:1
+postMessage
+fe @ index-CCjgHJX9.js:1
+Q3.e.unstable_scheduleCallback @ index-CCjgHJX9.js:1
+fb @ index-CCjgHJX9.js:8
+hb @ index-CCjgHJX9.js:8
+(anonymous) @ index-CCjgHJX9.js:8Understand this error
+clerk.browser.js:12 Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+q @ clerk.browser.js:12
+load @ clerk.browser.js:18
+getEntryChunks @ index-CCjgHJX9.js:23
+await in getEntryChunks
+pk @ index-CCjgHJX9.js:23
+getOrCreateInstance @ index-CCjgHJX9.js:23
+n6 @ index-CCjgHJX9.js:23
+e6 @ index-CCjgHJX9.js:23
+gf @ index-CCjgHJX9.js:8
+Of @ index-CCjgHJX9.js:8
+Av @ index-CCjgHJX9.js:8
+tb @ index-CCjgHJX9.js:8
+e3 @ index-CCjgHJX9.js:8
+am @ index-CCjgHJX9.js:8
+Qv @ index-CCjgHJX9.js:8
+mb @ index-CCjgHJX9.js:8
+ue @ index-CCjgHJX9.js:1
+postMessage
+fe @ index-CCjgHJX9.js:1
+Q3.e.unstable_scheduleCallback @ index-CCjgHJX9.js:1
+fb @ index-CCjgHJX9.js:8
+hb @ index-CCjgHJX9.js:8
+(anonymous) @ index-CCjgHJX9.js:8Understand this warning
