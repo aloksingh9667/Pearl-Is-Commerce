@@ -1,0 +1,120 @@
+2026-05-03T06:21:17.740395Z	Cloning repository...
+2026-05-03T06:21:18.931297Z	From https://github.com/aloksingh9667/pearlis-frontend
+2026-05-03T06:21:18.931618Z	 * branch            ed5a182769dd2b8554b5445270d21d4201bfa804 -> FETCH_HEAD
+2026-05-03T06:21:18.931686Z	
+2026-05-03T06:21:18.975497Z	HEAD is now at ed5a182 Fix: use pnpm mini-monorepo for Cloudflare Pages build
+2026-05-03T06:21:18.975822Z	
+2026-05-03T06:21:19.013183Z	
+2026-05-03T06:21:19.013504Z	Using v2 root directory strategy
+2026-05-03T06:21:19.024684Z	Success: Finished cloning repository files
+2026-05-03T06:21:20.448653Z	Checking for configuration in a Wrangler configuration file (BETA)
+2026-05-03T06:21:20.449039Z	
+2026-05-03T06:21:21.549528Z	No Wrangler configuration file found. Continuing.
+2026-05-03T06:21:21.782795Z	Detected the following tools from environment: nodejs@20.20.0, pnpm@10.9.0
+2026-05-03T06:21:21.783514Z	Installing nodejs 20.20.0
+2026-05-03T06:21:22.560556Z	Trying to update node-build... ok
+2026-05-03T06:21:22.616851Z	To follow progress, use 'tail -f /tmp/node-build.20260503062122.808.log' or pass --verbose
+2026-05-03T06:21:22.658727Z	Downloading node-v20.20.0-linux-x64.tar.gz...
+2026-05-03T06:21:22.844136Z	-> https://nodejs.org/dist/v20.20.0/node-v20.20.0-linux-x64.tar.gz
+2026-05-03T06:21:24.992872Z	
+2026-05-03T06:21:24.993109Z	WARNING: node-v20.20.0-linux-x64 is in LTS Maintenance mode and nearing its end of life.
+2026-05-03T06:21:24.993158Z	It only receives *critical* security updates, *critical* bug fixes and documentation updates.
+2026-05-03T06:21:24.993191Z	
+2026-05-03T06:21:24.993223Z	Installing node-v20.20.0-linux-x64...
+2026-05-03T06:21:25.549685Z	Installed node-v20.20.0-linux-x64 to /opt/buildhome/.asdf/installs/nodejs/20.20.0
+2026-05-03T06:21:25.550024Z	
+2026-05-03T06:21:26.964954Z	
+2026-05-03T06:21:26.965458Z	changed 1 package in 599ms
+2026-05-03T06:21:26.973873Z	Reshimming asdf nodejs...
+2026-05-03T06:21:29.045424Z	Preparing pnpm@10.9.0 for immediate activation...
+2026-05-03T06:21:31.743208Z	Installing project dependencies: pnpm install
+2026-05-03T06:21:32.189103Z	Scope: all 3 workspace projects
+2026-05-03T06:21:32.376927Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-05-03T06:21:33.382461Z	Progress: resolved 54, reused 0, downloaded 45, added 0
+2026-05-03T06:21:34.378893Z	Progress: resolved 67, reused 0, downloaded 52, added 0
+2026-05-03T06:21:35.506447Z	Progress: resolved 151, reused 0, downloaded 54, added 0
+2026-05-03T06:21:36.504056Z	Progress: resolved 192, reused 0, downloaded 97, added 0
+2026-05-03T06:21:37.513214Z	Progress: resolved 228, reused 0, downloaded 200, added 0
+2026-05-03T06:21:38.517146Z	Progress: resolved 375, reused 0, downloaded 274, added 0
+2026-05-03T06:21:39.518461Z	Progress: resolved 449, reused 0, downloaded 370, added 0
+2026-05-03T06:21:40.520129Z	Progress: resolved 550, reused 0, downloaded 471, added 0
+2026-05-03T06:21:41.130473Z	 WARN  1 deprecated subdependencies found: uuid@8.3.2
+2026-05-03T06:21:41.14615Z	Packages: +549
+2026-05-03T06:21:41.146535Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-05-03T06:21:41.521516Z	Progress: resolved 616, reused 0, downloaded 548, added 172
+2026-05-03T06:21:42.26717Z	Progress: resolved 616, reused 0, downloaded 548, added 549, done
+2026-05-03T06:21:43.033978Z	 WARN  Issues with peer dependencies found
+2026-05-03T06:21:43.034215Z	artifacts/pearlis
+2026-05-03T06:21:43.034327Z	├─┬ @solana/web3.js 1.98.4
+2026-05-03T06:21:43.034548Z	│ └─┬ jayson 4.3.0
+2026-05-03T06:21:43.034679Z	│   └─┬ ws 7.5.10
+2026-05-03T06:21:43.034779Z	│     └── ✕ unmet peer utf-8-validate@^5.0.2: found 6.0.6
+2026-05-03T06:21:43.034896Z	├─┬ react-native 0.85.2
+2026-05-03T06:21:43.034998Z	│ └── ✕ unmet peer react@^19.2.3: found 19.1.0
+2026-05-03T06:21:43.035083Z	├─┬ @clerk/clerk-js 6.8.0
+2026-05-03T06:21:43.035126Z	│ └─┬ @clerk/shared 4.9.0
+2026-05-03T06:21:43.035168Z	│   ├── ✕ unmet peer react@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+2026-05-03T06:21:43.035212Z	│   └── ✕ unmet peer react-dom@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+2026-05-03T06:21:43.035258Z	├─┬ @clerk/react 6.5.0
+2026-05-03T06:21:43.03531Z	│ ├── ✕ unmet peer react@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+2026-05-03T06:21:43.035359Z	│ └── ✕ unmet peer react-dom@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+2026-05-03T06:21:43.0354Z	└─┬ @clerk/themes 2.4.57
+2026-05-03T06:21:43.035437Z	  └─┬ @clerk/shared 3.47.5
+2026-05-03T06:21:43.035477Z	    ├── ✕ unmet peer react@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+2026-05-03T06:21:43.035516Z	    └── ✕ unmet peer react-dom@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+2026-05-03T06:21:43.039242Z	
+2026-05-03T06:21:43.039444Z	╭ Warning ─────────────────────────────────────────────────────────────────────╮
+2026-05-03T06:21:43.039552Z	│                                                                              │
+2026-05-03T06:21:43.039607Z	│   Ignored build scripts: @clerk/shared, browser-tabs-lock, bufferutil,       │
+2026-05-03T06:21:43.039673Z	│   core-js, esbuild, utf-8-validate.                                          │
+2026-05-03T06:21:43.039721Z	│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+2026-05-03T06:21:43.039765Z	│   to run scripts.                                                            │
+2026-05-03T06:21:43.039805Z	│                                                                              │
+2026-05-03T06:21:43.039852Z	╰──────────────────────────────────────────────────────────────────────────────╯
+2026-05-03T06:21:43.039924Z	
+2026-05-03T06:21:43.070207Z	Done in 11.1s using pnpm v10.9.0
+2026-05-03T06:21:44.902621Z	Executing user command: pnpm install && pnpm --filter @workspace/pearlis run build && cp -r artifacts/pearlis/dist/public dist
+2026-05-03T06:21:45.429736Z	Scope: all 3 workspace projects
+2026-05-03T06:21:45.50543Z	Lockfile is up to date, resolution step is skipped
+2026-05-03T06:21:45.598947Z	Already up to date
+2026-05-03T06:21:46.077641Z	
+2026-05-03T06:21:46.077906Z	╭ Warning ─────────────────────────────────────────────────────────────────────╮
+2026-05-03T06:21:46.077979Z	│                                                                              │
+2026-05-03T06:21:46.078034Z	│   Ignored build scripts: @clerk/shared, browser-tabs-lock, bufferutil,       │
+2026-05-03T06:21:46.07808Z	│   core-js, esbuild, utf-8-validate.                                          │
+2026-05-03T06:21:46.078114Z	│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+2026-05-03T06:21:46.07815Z	│   to run scripts.                                                            │
+2026-05-03T06:21:46.078184Z	│                                                                              │
+2026-05-03T06:21:46.078221Z	╰──────────────────────────────────────────────────────────────────────────────╯
+2026-05-03T06:21:46.078256Z	
+2026-05-03T06:21:46.100525Z	Done in 983ms using pnpm v10.9.0
+2026-05-03T06:21:46.717386Z	
+2026-05-03T06:21:46.718228Z	> @workspace/pearlis@0.0.0 build /opt/buildhome/repo/artifacts/pearlis
+2026-05-03T06:21:46.718397Z	> vite build --config vite.config.ts
+2026-05-03T06:21:46.718509Z	
+2026-05-03T06:21:46.955266Z	▲ [WARNING] Cannot find base config file "../../tsconfig.base.json" [tsconfig.json]
+2026-05-03T06:21:46.955503Z	
+2026-05-03T06:21:46.955549Z	    tsconfig.json:2:13:
+2026-05-03T06:21:46.955581Z	      2 │   "extends": "../../tsconfig.base.json",
+2026-05-03T06:21:46.955618Z	        ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-05-03T06:21:46.955647Z	
+2026-05-03T06:21:47.145638Z	[36mvite v7.3.2 [32mbuilding client environment for production...[36m[39m
+2026-05-03T06:21:47.215027Z	[32m✓[39m 0 modules transformed.
+2026-05-03T06:21:47.218829Z	[31m✗[39m Build failed in 31ms
+2026-05-03T06:21:47.219096Z	[31merror during build:
+2026-05-03T06:21:47.219154Z	[31m[vite:build-html] failed to resolve "extends":"../../tsconfig.base.json" in /opt/buildhome/repo/artifacts/pearlis/tsconfig.json[31m
+2026-05-03T06:21:47.21923Z	file: [36m/opt/buildhome/repo/artifacts/pearlis/index.html[31m
+2026-05-03T06:21:47.219294Z	    at resolveExtends (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.2_@types+node@25.6.0_jiti@2.6.1_lightningcss@1.32.0_terser@5.46.2_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:5809:8)
+2026-05-03T06:21:47.219369Z	    at parseExtends (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.2_@types+node@25.6.0_jiti@2.6.1_lightningcss@1.32.0_terser@5.46.2_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:5775:71)
+2026-05-03T06:21:47.219474Z	    at parse$13 (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.2_@types+node@25.6.0_jiti@2.6.1_lightningcss@1.32.0_terser@5.46.2_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:5677:23)
+2026-05-03T06:21:47.219538Z	    at async loadTsconfigJsonForFile (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.2_@types+node@25.6.0_jiti@2.6.1_lightningcss@1.32.0_terser@5.46.2_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:6286:37)
+2026-05-03T06:21:47.2196Z	    at async transformWithEsbuild (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.2_@types+node@25.6.0_jiti@2.6.1_lightningcss@1.32.0_terser@5.46.2_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:6086:55)
+2026-05-03T06:21:47.219656Z	    at async Object.transform (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.2_@types+node@25.6.0_jiti@2.6.1_lightningcss@1.32.0_terser@5.46.2_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:6172:20)
+2026-05-03T06:21:47.219711Z	    at async transform (file:///opt/buildhome/repo/node_modules/.pnpm/rollup@4.60.2/node_modules/rollup/dist/es/shared/node-entry.js:21671:16)
+2026-05-03T06:21:47.219762Z	    at async ModuleLoader.addModuleSource (file:///opt/buildhome/repo/node_modules/.pnpm/rollup@4.60.2/node_modules/rollup/dist/es/shared/node-entry.js:21899:36)[39m
+2026-05-03T06:21:47.250957Z	/opt/buildhome/repo/artifacts/pearlis:
+2026-05-03T06:21:47.251214Z	 ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/pearlis@0.0.0 build: `vite build --config vite.config.ts`
+2026-05-03T06:21:47.251292Z	Exit status 1
+2026-05-03T06:21:47.288821Z	Failed: Error while executing user command. Exited with error code: 1
+2026-05-03T06:21:47.294839Z	Failed: build command exited with code: 1
+2026-05-03T06:21:47.936914Z	Failed: error occurred while running build command
