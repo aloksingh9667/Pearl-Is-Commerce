@@ -260,8 +260,10 @@ export default function ProductPage() {
 
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-7 min-w-0">
               <button onClick={handleAddToCart} disabled={addToCart.isPending || product.stock === 0} className="w-full min-h-14 sm:min-h-14 rounded-full bg-[#0F0F0F] hover:bg-[#1a1a1a] text-white text-[10px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.3em] uppercase font-bold transition-all duration-300 flex items-center justify-center gap-2 px-5 py-4 sm:py-0 disabled:opacity-40 hover:shadow-[0_12px_24px_rgba(15,15,15,0.15)]">{addToCart.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : product.stock === 0 ? "Out of Stock" : "Add to Bag"}</button>
-              <button onClick={handleWishlist} className={`w-full sm:w-14 min-h-14 sm:min-h-14 rounded-full border flex items-center justify-center transition-all duration-300 ${isWishlisted ? "border-[#D4AF37] bg-[#D4AF37]/10 shadow-[0_10px_22px_rgba(212,175,55,0.15)]" : "border-[#0F0F0F]/15 hover:border-[#D4AF37]"}`}><Heart className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isWishlisted ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#0F0F0F]/50"}`} /></button>
-              <button className="w-full sm:w-14 min-h-14 sm:min-h-14 rounded-full border border-[#0F0F0F]/15 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-300 hover:shadow-[0_10px_22px_rgba(15,15,15,0.08)]"><Share2 className="w-4 h-4 text-[#0F0F0F]/50" /></button>
+              <div className="grid grid-cols-2 gap-2 sm:contents">
+                <button onClick={handleWishlist} className={`w-full sm:w-14 min-h-14 sm:min-h-14 rounded-full border flex items-center justify-center transition-all duration-300 ${isWishlisted ? "border-[#D4AF37] bg-[#D4AF37]/10 shadow-[0_10px_22px_rgba(212,175,55,0.15)]" : "border-[#0F0F0F]/15 hover:border-[#D4AF37]"}`}><Heart className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isWishlisted ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#0F0F0F]/50"}`} /></button>
+                <button className="w-full sm:w-14 min-h-14 sm:min-h-14 rounded-full border border-[#0F0F0F]/15 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-300 hover:shadow-[0_10px_22px_rgba(15,15,15,0.08)]"><Share2 className="w-4 h-4 text-[#0F0F0F]/50" /></button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-[#0F0F0F]/8 pt-6 mb-7 min-w-0">
