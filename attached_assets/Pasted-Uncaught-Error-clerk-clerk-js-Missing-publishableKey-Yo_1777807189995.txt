@@ -1,0 +1,55 @@
+Uncaught Error: @clerk/clerk-js: Missing publishableKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingPublishableKeyError (clerk.browser.js:12:1967)
+    at new nV (clerk.browser.js:18:161823)
+    at clerk.browser.js:18:213920
+    at clerk.browser.js:18:213957
+    at clerk.browser.js:18:213964
+    at clerk.browser.js:1:158
+    at clerk.browser.js:1:223Understand this error
+index-DHf8MLyD.js:23 Uncaught Error: No QueryClient set, use QueryClientProvider to set one
+    at jC (index-DHf8MLyD.js:23:46497)
+    at C6 (index-DHf8MLyD.js:23:47561)
+    at Gt (index-DHf8MLyD.js:23:48503)
+    at PC (index-DHf8MLyD.js:23:60551)
+    at AU (index-DHf8MLyD.js:23:65711)
+    at Sf (index-DHf8MLyD.js:8:34147)
+    at Bf (index-DHf8MLyD.js:8:62358)
+    at Rv (index-DHf8MLyD.js:8:72867)
+    at ab (index-DHf8MLyD.js:8:106901)
+    at o3 (index-DHf8MLyD.js:8:105966)Understand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+clerk.browser.js:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+clerk.browser.js:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+clerk.browser.js:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+clerk.browser.js:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+clerk.browser.js:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+clerk.browser.js:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+index-DHf8MLyD.js:23 Uncaught (in promise) q2: Clerk: Failed to load Clerk JS, failed to load script: https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js
+
+(code="failed_to_load_clerk_js")
+
+
+    at r (index-DHf8MLyD.js:23:3446)
+    at index-DHf8MLyD.js:23:3920Caused by: Error: failed to load script: https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js
+    at HTMLScriptElement.<anonymous> (index-DHf8MLyD.js:23:2091)Understand this error
+index-DHf8MLyD.js:23 q2: Clerk: Failed to load Clerk JS
+
+(code="failed_to_load_clerk_js")
+
+
+    at r (index-DHf8MLyD.js:23:3446)
+    at X_ (index-DHf8MLyD.js:23:3816)
+    at bC.getClerkJsEntryChunk (index-DHf8MLyD.js:23:40556)
+    at bC.getEntryChunks (index-DHf8MLyD.js:23:40019)
+    at new bC (index-DHf8MLyD.js:23:37792)
+    at bC.getOrCreateInstance (index-DHf8MLyD.js:23:38207)
+    at f6 (index-DHf8MLyD.js:23:43069)
+    at d6 (index-DHf8MLyD.js:23:42834)
+    at Sf (index-DHf8MLyD.js:8:34147)
+    at Bf (index-DHf8MLyD.js:8:62358)
+getEntryChunks @ index-DHf8MLyD.js:23Understand this error
