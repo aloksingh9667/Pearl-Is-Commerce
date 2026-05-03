@@ -73,6 +73,52 @@ const DEFAULT_SETTINGS: Record<string, any> = {
     ctaLink: "/shop",
     endsAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
+  shopFilters: {
+    priceRanges: [
+      { label: "Under ₹5,000", minINR: 0, maxINR: 5000 },
+      { label: "₹5,000 – ₹15,000", minINR: 5000, maxINR: 15000 },
+      { label: "₹15,000 – ₹50,000", minINR: 15000, maxINR: 50000 },
+      { label: "₹50,000 – ₹1,00,000", minINR: 50000, maxINR: 100000 },
+      { label: "Above ₹1,00,000", minINR: 100000, maxINR: 9999999 },
+    ],
+    materials: ["Gold", "Silver", "Platinum", "Rose Gold", "Diamond", "Pearl", "Gemstone"],
+  },
+  navbarCategories: {
+    excludedSlugs: [] as string[],
+  },
+  sizeGuide: {
+    ringTip: "Wrap a thin strip of paper around your finger, mark where it overlaps, and measure the length in mm. Match it to the circumference column below.",
+    ringWarnTip: "Measure at the end of the day when fingers are at their largest. If between sizes, choose the larger size.",
+    braceletTip: "Use a soft measuring tape or a strip of paper to measure around your wrist just below the wrist bone. Add 1–2 cm for a comfortable fit.",
+    braceletWarnTip: "For bangles, measure the widest part of your hand (knuckles) when fingers are pressed together.",
+    necklaceTip: "Necklace length is measured from end to end including the clasp. The style it creates depends on your neckline and body type.",
+    ringRows: [
+      { in: "5",  us: "5",  mm: "49.3", inch: "1.94\"" },
+      { in: "6",  us: "6",  mm: "51.9", inch: "2.04\"" },
+      { in: "7",  us: "7",  mm: "54.4", inch: "2.14\"" },
+      { in: "8",  us: "8",  mm: "57.0", inch: "2.24\"" },
+      { in: "9",  us: "9",  mm: "59.5", inch: "2.34\"" },
+      { in: "10", us: "10", mm: "62.1", inch: "2.44\"" },
+      { in: "11", us: "11", mm: "64.6", inch: "2.54\"" },
+      { in: "12", us: "12", mm: "67.2", inch: "2.65\"" },
+    ],
+    braceletRows: [
+      { label: "XS",  wrist: "13–14 cm", fit: "Snug fit" },
+      { label: "S",   wrist: "15–16 cm", fit: "Regular fit" },
+      { label: "M",   wrist: "16–17 cm", fit: "Regular fit" },
+      { label: "L",   wrist: "17–18 cm", fit: "Relaxed fit" },
+      { label: "XL",  wrist: "18–19 cm", fit: "Relaxed fit" },
+      { label: "XXL", wrist: "19–21 cm", fit: "Loose fit" },
+    ],
+    necklaceRows: [
+      { length: "14\" / 35 cm", style: "Choker",   description: "Sits at base of neck" },
+      { length: "16\" / 40 cm", style: "Collar",   description: "Just below collarbone" },
+      { length: "18\" / 45 cm", style: "Princess", description: "Most popular length" },
+      { length: "20\" / 50 cm", style: "Matinee",  description: "Hits top of chest" },
+      { length: "24\" / 60 cm", style: "Opera",    description: "Mid-chest drape" },
+      { length: "30\" / 76 cm", style: "Rope",     description: "Below bust line" },
+    ],
+  },
 };
 
 async function ensureSettings() {

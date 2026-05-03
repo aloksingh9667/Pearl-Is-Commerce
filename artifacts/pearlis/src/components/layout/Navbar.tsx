@@ -117,13 +117,16 @@ export function Navbar() {
 
   const cartItemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
-  /* Build jewellery items dynamically from DB categories */
+  /* Build jewellery items dynamically from DB categories, filtered by admin settings */
+  const excludedSlugs: string[] = siteSettings?.navbarCategories?.excludedSlugs ?? [];
   const jewelleryItems = [
     { label: "All Jewellery", href: "/shop" },
-    ...((categoriesData as any[] | undefined) ?? []).map((c: any) => ({
-      label: c.name,
-      href: `/category/${c.slug}`,
-    })),
+    ...((categoriesData as any[] | undefined) ?? [])
+      .filter((c: any) => !excludedSlugs.includes(c.slug))
+      .map((c: any) => ({
+        label: c.name,
+        href: `/category/${c.slug}`,
+      })),
   ];
 
   useEffect(() => {

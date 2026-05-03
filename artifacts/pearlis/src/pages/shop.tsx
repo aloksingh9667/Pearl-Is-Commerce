@@ -7,14 +7,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useLocation } from "wouter";
+import { useGetSettings } from "@/lib/adminApi";
 
-const MATERIALS = ["Gold", "Silver", "Platinum", "Rose Gold", "Diamond", "Pearl", "Gemstone"];
-const PRICE_RANGES = [
-  { label: "Under ₹5,000", min: 0, max: 60 },
-  { label: "₹5,000 – ₹15,000", min: 60, max: 181 },
-  { label: "₹15,000 – ₹50,000", min: 181, max: 603 },
-  { label: "₹50,000 – ₹1,00,000", min: 603, max: 1205 },
-  { label: "Above ₹1,00,000", min: 1205, max: 999999 },
+const DEFAULT_MATERIALS = ["Gold", "Silver", "Platinum", "Rose Gold", "Diamond", "Pearl", "Gemstone"];
+const DEFAULT_PRICE_RANGES = [
+  { label: "Under ₹5,000", minINR: 0, maxINR: 5000 },
+  { label: "₹5,000 – ₹15,000", minINR: 5000, maxINR: 15000 },
+  { label: "₹15,000 – ₹50,000", minINR: 15000, maxINR: 50000 },
+  { label: "₹50,000 – ₹1,00,000", minINR: 50000, maxINR: 100000 },
+  { label: "Above ₹1,00,000", minINR: 100000, maxINR: 9999999 },
 ];
 
 export default function Shop() {
@@ -24,18 +25,30 @@ export default function Shop() {
   const [category, setCategory] = useState<string>(params.get("category") || "");
   const [sort, setSort] = useState<string>(params.get("sort") || "latest");
   const [material, setMaterial] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<{ min: number; max: number } | null>(null);
+  const [priceRange, setPriceRange] = useState<{ label: string; minINR: number; maxINR: number } | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [searchInput, setSearchInput] = useState<string>("");
 
   const { data: categories } = useListCategories();
+  const { data: settings } = useGetSettings();
+  const conversionRate = settings?.general?.conversionRate || 83;
+  const PRICE_RANGES = settings?.shopFilters?.priceRanges?.length
+    ? settings.shopFilters.priceRanges
+    : DEFAULT_PRICE_RANGES;
+  const MATERIALS = settings?.shopFilters?.materials?.length
+    ? settings.shopFilters.materials
+    : DEFAULT_MATERIALS;
+
+  const minPriceUSD = priceRange ? priceRange.minINR / conversionRate : undefined;
+  const maxPriceUSD = priceRange ? priceRange.maxINR / conversionRate : undefined;
+
   const { data: productsData, isLoading } = useListProducts({
     category: category || undefined,
     sort: sort as any,
     limit: 100,
     ...(material ? { material } : {}),
-    ...(priceRange ? { minPrice: priceRange.min, maxPrice: priceRange.max } : {}),
+    ...(priceRange ? { minPrice: minPriceUSD, maxPrice: maxPriceUSD } : {}),
     ...(search ? { search } : {}),
   } as any);
 
@@ -168,9 +181,9 @@ export default function Shop() {
                       {PRICE_RANGES.map(r => (
                         <button
                           key={r.label}
-                          onClick={() => setPriceRange(priceRange?.min === r.min && priceRange?.max === r.max ? null : r)}
+                          onClick={() => setPriceRange(priceRange?.label === r.label ? null : r)}
                           className={`text-left text-xs px-3 py-1.5 transition-all border ${
-                            priceRange?.min === r.min && priceRange?.max === r.max
+                            priceRange?.label === r.label
                               ? "bg-[#0F0F0F] text-white border-[#0F0F0F]"
                               : "text-[#0F0F0F]/60 border-[#0F0F0F]/10 hover:border-[#0F0F0F]/30 hover:text-[#0F0F0F]"
                           }`}
@@ -247,7 +260,7 @@ export default function Shop() {
               )}
               {priceRange && (
                 <span className="inline-flex items-center gap-1 bg-[#D4AF37]/15 text-[#0F0F0F] text-[9px] tracking-wide uppercase px-2 py-1">
-                  {PRICE_RANGES.find(r => r.min === priceRange.min)?.label}
+                  {priceRange.label}
                   <button onClick={() => setPriceRange(null)}><X className="w-3 h-3" /></button>
                 </span>
               )}

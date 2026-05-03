@@ -28,6 +28,11 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 
 // ─── SETTINGS ────────────────────────────────────────────────────────────────
 
+export type PriceRange = { label: string; minINR: number; maxINR: number };
+export type RingRow = { in: string; us: string; mm: string; inch: string };
+export type BraceletRow = { label: string; wrist: string; fit: string };
+export type NecklaceRow = { length: string; style: string; description: string };
+
 export type SiteSettings = {
   branding: { siteName: string; tagline: string; logoUrl: string; faviconUrl: string };
   general: { siteName: string; tagline: string; currency: string; currencySymbol: string; conversionRate: number };
@@ -58,6 +63,23 @@ export type SiteSettings = {
     ctaText: string;
     ctaLink: string;
     endsAt: string;
+  };
+  shopFilters: {
+    priceRanges: PriceRange[];
+    materials: string[];
+  };
+  navbarCategories: {
+    excludedSlugs: string[];
+  };
+  sizeGuide: {
+    ringTip: string;
+    ringWarnTip: string;
+    braceletTip: string;
+    braceletWarnTip: string;
+    necklaceTip: string;
+    ringRows: RingRow[];
+    braceletRows: BraceletRow[];
+    necklaceRows: NecklaceRow[];
   };
 };
 

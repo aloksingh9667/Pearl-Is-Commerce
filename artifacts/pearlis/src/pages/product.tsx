@@ -148,36 +148,55 @@ export default function ProductPage() {
               transition={{ duration: 0.4 }}
               className="min-w-0"
             >
-              {/* Main image */}
+              {/* Main image / video area */}
               <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#F0EDE6] to-[#E8E4DC] aspect-[4/5] sm:aspect-square shadow-[0_8px_48px_rgba(15,15,15,0.08)]">
                 {/* Badge strip */}
                 <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
                   {product.isNew && <span className="px-2.5 py-1 bg-[#D4AF37] text-white text-[8px] tracking-[0.2em] uppercase font-bold rounded-full shadow-sm">New</span>}
                   {product.isTrending && <span className="px-2.5 py-1 bg-[#0F0F0F] text-white text-[8px] tracking-[0.2em] uppercase font-bold rounded-full shadow-sm">Trending</span>}
                 </div>
-                <div
-                  ref={imgRef}
-                  className="absolute inset-0 cursor-zoom-in"
-                  onMouseEnter={() => setIsZoomed(true)}
-                  onMouseLeave={() => setIsZoomed(false)}
-                  onMouseMove={handleMouseMove}
-                  onClick={() => setLightboxOpen(true)}
-                >
-                  {variantFetching && (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#F0EDE6]/80">
-                      <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
-                    </div>
-                  )}
-                  <img
-                    src={dpImages[selectedImage]}
-                    alt={dp?.name || product.name}
-                    className={`w-full h-full object-cover transition-transform duration-700 ${isZoomed ? "scale-115 sm:scale-130" : "scale-100"}`}
-                    style={isZoomed ? { transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` } : {}}
-                    draggable={false}
-                  />
-                </div>
-                {/* Chevron nav */}
-                {dpImages.length > 1 && (
+
+                {selectedImage === -1 && videoUrl ? (
+                  /* Video player in main area */
+                  <div className="absolute inset-0 bg-[#0A0A0A]">
+                    {videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be") ? (
+                      <iframe
+                        src={videoUrl.includes("embed") ? videoUrl : videoUrl.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
+                        className="w-full h-full"
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowFullScreen
+                        title="Product video"
+                      />
+                    ) : (
+                      <video src={videoUrl} controls autoPlay className="w-full h-full object-contain" />
+                    )}
+                  </div>
+                ) : (
+                  <div
+                    ref={imgRef}
+                    className="absolute inset-0 cursor-zoom-in"
+                    onMouseEnter={() => setIsZoomed(true)}
+                    onMouseLeave={() => setIsZoomed(false)}
+                    onMouseMove={handleMouseMove}
+                    onClick={() => setLightboxOpen(true)}
+                  >
+                    {variantFetching && (
+                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#F0EDE6]/80">
+                        <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+                      </div>
+                    )}
+                    <img
+                      src={dpImages[selectedImage] || dpImages[0]}
+                      alt={dp?.name || product.name}
+                      className={`w-full h-full object-cover transition-transform duration-700 ${isZoomed ? "scale-115 sm:scale-130" : "scale-100"}`}
+                      style={isZoomed ? { transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` } : {}}
+                      draggable={false}
+                    />
+                  </div>
+                )}
+
+                {/* Chevron nav — only for images */}
+                {selectedImage !== -1 && dpImages.length > 1 && (
                   <>
                     <button onClick={e => { e.stopPropagation(); setSelectedImage(p => (p - 1 + dpImages.length) % dpImages.length); }} className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
                       <ChevronLeft className="w-4 h-4 text-[#0F0F0F]" />
@@ -187,14 +206,16 @@ export default function ProductPage() {
                     </button>
                   </>
                 )}
-                {/* Zoom hint */}
-                <div className="absolute bottom-4 right-4 text-[8px] tracking-[0.15em] uppercase text-[#0F0F0F]/30 bg-white/70 backdrop-blur-sm px-2 py-1 rounded-full pointer-events-none hidden sm:block">
-                  Tap to zoom
-                </div>
+                {/* Zoom hint — only when viewing image */}
+                {selectedImage !== -1 && (
+                  <div className="absolute bottom-4 right-4 text-[8px] tracking-[0.15em] uppercase text-[#0F0F0F]/30 bg-white/70 backdrop-blur-sm px-2 py-1 rounded-full pointer-events-none hidden sm:block">
+                    Tap to zoom
+                  </div>
+                )}
               </div>
 
-              {/* Thumbnails */}
-              {dpImages.length > 1 && (
+              {/* Thumbnails — images + optional video thumb */}
+              {(dpImages.length > 1 || videoUrl) && (
                 <div className="flex gap-2.5 mt-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
                   {dpImages.map((img: string, i: number) => (
                     <button key={i} onClick={() => setSelectedImage(i)}
@@ -202,6 +223,24 @@ export default function ProductPage() {
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
                   ))}
+                  {/* Video thumbnail */}
+                  {videoUrl && (
+                    <button
+                      onClick={() => setSelectedImage(-1)}
+                      className={`flex-shrink-0 w-16 h-20 sm:w-20 sm:h-24 rounded-2xl overflow-hidden border-2 transition-all duration-200 relative ${selectedImage === -1 ? "border-[#D4AF37] shadow-[0_4px_16px_rgba(212,175,55,0.25)]" : "border-transparent opacity-60 hover:opacity-100"}`}
+                    >
+                      {/* Try YouTube thumbnail or fallback dark bg */}
+                      {videoUrl.includes("youtube") || videoUrl.includes("youtu.be") ? (() => {
+                        const ytId = videoUrl.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/)?.[1];
+                        return ytId ? <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="Video" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-[#0A0A0A]" />;
+                      })() : <div className="w-full h-full bg-[#0A0A0A]" />}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <div className="w-8 h-8 rounded-full bg-[#D4AF37]/90 flex items-center justify-center shadow-lg">
+                          <Play className="w-3.5 h-3.5 text-white fill-white ml-0.5" />
+                        </div>
+                      </div>
+                    </button>
+                  )}
                 </div>
               )}
             </motion.div>

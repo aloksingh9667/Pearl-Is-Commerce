@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Plus, Trash2, Settings, CreditCard, Phone, Share2, Instagram, Video, Zap, Megaphone, Palette, Upload, Tag } from "lucide-react";
+import { Loader2, Save, Plus, Trash2, Settings, CreditCard, Phone, Share2, Instagram, Video, Zap, Megaphone, Palette, Upload, Tag, SlidersHorizontal, Navigation, Ruler } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useGetSettings, useUpdateSetting, type SiteSettings } from "@/lib/adminApi";
+import { useGetSettings, useUpdateSetting, type SiteSettings, type PriceRange, type RingRow, type BraceletRow, type NecklaceRow } from "@/lib/adminApi";
+import { useListCategories } from "@workspace/api-client-react";
 
 const TABS = [
   { id: "branding", label: "Branding", icon: Palette },
@@ -20,6 +21,9 @@ const TABS = [
   { id: "videos", label: "Videos", icon: Video },
   { id: "flashSale", label: "Flash Sale", icon: Zap },
   { id: "homeSale", label: "Sale Section", icon: Tag },
+  { id: "shopFilters", label: "Shop Filters", icon: SlidersHorizontal },
+  { id: "navbarCategories", label: "Navbar", icon: Navigation },
+  { id: "sizeGuide", label: "Size Guide", icon: Ruler },
 ] as const;
 
 type TabId = typeof TABS[number]["id"];
@@ -515,6 +519,201 @@ export default function AdminSettings() {
               )}
             </Section>
           )}
+          {/* SHOP FILTERS */}
+          {activeTab === "shopFilters" && (
+            <Section title="Shop Filters" onSave={() => save("shopFilters" as any)} saving={saving}>
+              <p className="text-sm text-muted-foreground -mt-2 mb-6">
+                Manage the Price Range and Material filter options that appear in the Shop page sidebar.
+              </p>
+
+              {/* Price Ranges */}
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center justify-between">
+                  <Label className="uppercase tracking-widest text-xs text-muted-foreground">Price Ranges (in ₹)</Label>
+                  <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-1.5"
+                    onClick={() => {
+                      const ranges: PriceRange[] = [...((draft as any).shopFilters?.priceRanges || []), { label: "", minINR: 0, maxINR: 0 }];
+                      update("shopFilters" as any, { ...(draft as any).shopFilters, priceRanges: ranges });
+                    }}>
+                    <Plus className="w-3.5 h-3.5" /> Add Range
+                  </Button>
+                </div>
+                {((draft as any).shopFilters?.priceRanges || []).map((r: PriceRange, i: number) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <Input value={r.label} onChange={e => {
+                      const ranges = [...(draft as any).shopFilters.priceRanges];
+                      ranges[i] = { ...ranges[i], label: e.target.value };
+                      update("shopFilters" as any, { ...(draft as any).shopFilters, priceRanges: ranges });
+                    }} className="rounded-none flex-1" placeholder="Label e.g. Under ₹5,000" />
+                    <Input type="number" value={r.minINR} onChange={e => {
+                      const ranges = [...(draft as any).shopFilters.priceRanges];
+                      ranges[i] = { ...ranges[i], minINR: Number(e.target.value) };
+                      update("shopFilters" as any, { ...(draft as any).shopFilters, priceRanges: ranges });
+                    }} className="rounded-none w-28" placeholder="Min ₹" />
+                    <Input type="number" value={r.maxINR} onChange={e => {
+                      const ranges = [...(draft as any).shopFilters.priceRanges];
+                      ranges[i] = { ...ranges[i], maxINR: Number(e.target.value) };
+                      update("shopFilters" as any, { ...(draft as any).shopFilters, priceRanges: ranges });
+                    }} className="rounded-none w-28" placeholder="Max ₹" />
+                    <Button variant="ghost" size="icon" className="rounded-none h-10 w-10 text-muted-foreground hover:text-destructive flex-shrink-0"
+                      onClick={() => {
+                        const ranges = (draft as any).shopFilters.priceRanges.filter((_: any, j: number) => j !== i);
+                        update("shopFilters" as any, { ...(draft as any).shopFilters, priceRanges: ranges });
+                      }}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Materials */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="uppercase tracking-widest text-xs text-muted-foreground">Materials</Label>
+                  <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-1.5"
+                    onClick={() => {
+                      const mats = [...((draft as any).shopFilters?.materials || []), ""];
+                      update("shopFilters" as any, { ...(draft as any).shopFilters, materials: mats });
+                    }}>
+                    <Plus className="w-3.5 h-3.5" /> Add Material
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {((draft as any).shopFilters?.materials || []).map((m: string, i: number) => (
+                    <div key={i} className="flex gap-1 items-center">
+                      <Input value={m} onChange={e => {
+                        const mats = [...(draft as any).shopFilters.materials];
+                        mats[i] = e.target.value;
+                        update("shopFilters" as any, { ...(draft as any).shopFilters, materials: mats });
+                      }} className="rounded-none text-sm" placeholder="e.g. Gold" />
+                      <Button variant="ghost" size="icon" className="rounded-none h-10 w-10 text-muted-foreground hover:text-destructive flex-shrink-0"
+                        onClick={() => {
+                          const mats = (draft as any).shopFilters.materials.filter((_: any, j: number) => j !== i);
+                          update("shopFilters" as any, { ...(draft as any).shopFilters, materials: mats });
+                        }}>
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Section>
+          )}
+
+          {/* NAVBAR CATEGORIES */}
+          {activeTab === "navbarCategories" && <NavbarCategoriesTab draft={draft} update={update} save={save} saving={saving} />}
+
+          {/* SIZE GUIDE */}
+          {activeTab === "sizeGuide" && (
+            <Section title="Size Guide" onSave={() => save("sizeGuide" as any)} saving={saving}>
+              <p className="text-sm text-muted-foreground -mt-2 mb-6">
+                Edit the size tables and tips shown in the Size Guide popup on product pages.
+              </p>
+
+              {/* Ring sizes */}
+              <div className="space-y-3 mb-8">
+                <Label className="uppercase tracking-widest text-xs text-muted-foreground block">Ring Sizes</Label>
+                <Field label="Measurement Tip">
+                  <Textarea value={(draft as any).sizeGuide?.ringTip || ""} onChange={e => updateNested("sizeGuide" as any, "ringTip", e.target.value)} className="rounded-none min-h-[60px]" />
+                </Field>
+                <Field label="Warning Tip">
+                  <Textarea value={(draft as any).sizeGuide?.ringWarnTip || ""} onChange={e => updateNested("sizeGuide" as any, "ringWarnTip", e.target.value)} className="rounded-none min-h-[50px]" />
+                </Field>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-5 gap-1 text-[10px] tracking-widest uppercase text-muted-foreground font-semibold px-1">
+                    <span>India</span><span>US</span><span>mm</span><span>inch</span><span></span>
+                  </div>
+                  {((draft as any).sizeGuide?.ringRows || []).map((r: RingRow, i: number) => (
+                    <div key={i} className="grid grid-cols-5 gap-1 items-center">
+                      {(["in", "us", "mm", "inch"] as const).map(field => (
+                        <Input key={field} value={r[field]} onChange={e => {
+                          const rows = [...(draft as any).sizeGuide.ringRows];
+                          rows[i] = { ...rows[i], [field]: e.target.value };
+                          updateNested("sizeGuide" as any, "ringRows", rows);
+                        }} className="rounded-none text-xs h-8" placeholder={field} />
+                      ))}
+                      <Button variant="ghost" size="icon" className="rounded-none h-8 w-8 text-muted-foreground hover:text-destructive"
+                        onClick={() => updateNested("sizeGuide" as any, "ringRows", (draft as any).sizeGuide.ringRows.filter((_: any, j: number) => j !== i))}>
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-1.5 mt-1"
+                    onClick={() => updateNested("sizeGuide" as any, "ringRows", [...((draft as any).sizeGuide?.ringRows || []), { in: "", us: "", mm: "", inch: "" }])}>
+                    <Plus className="w-3.5 h-3.5" /> Add Row
+                  </Button>
+                </div>
+              </div>
+
+              {/* Bracelet sizes */}
+              <div className="space-y-3 mb-8">
+                <Label className="uppercase tracking-widest text-xs text-muted-foreground block">Bracelet Sizes</Label>
+                <Field label="Measurement Tip">
+                  <Textarea value={(draft as any).sizeGuide?.braceletTip || ""} onChange={e => updateNested("sizeGuide" as any, "braceletTip", e.target.value)} className="rounded-none min-h-[60px]" />
+                </Field>
+                <Field label="Warning Tip">
+                  <Textarea value={(draft as any).sizeGuide?.braceletWarnTip || ""} onChange={e => updateNested("sizeGuide" as any, "braceletWarnTip", e.target.value)} className="rounded-none min-h-[50px]" />
+                </Field>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-4 gap-1 text-[10px] tracking-widest uppercase text-muted-foreground font-semibold px-1">
+                    <span>Label</span><span>Wrist</span><span>Fit</span><span></span>
+                  </div>
+                  {((draft as any).sizeGuide?.braceletRows || []).map((r: BraceletRow, i: number) => (
+                    <div key={i} className="grid grid-cols-4 gap-1 items-center">
+                      {(["label", "wrist", "fit"] as const).map(field => (
+                        <Input key={field} value={r[field]} onChange={e => {
+                          const rows = [...(draft as any).sizeGuide.braceletRows];
+                          rows[i] = { ...rows[i], [field]: e.target.value };
+                          updateNested("sizeGuide" as any, "braceletRows", rows);
+                        }} className="rounded-none text-xs h-8" placeholder={field} />
+                      ))}
+                      <Button variant="ghost" size="icon" className="rounded-none h-8 w-8 text-muted-foreground hover:text-destructive"
+                        onClick={() => updateNested("sizeGuide" as any, "braceletRows", (draft as any).sizeGuide.braceletRows.filter((_: any, j: number) => j !== i))}>
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-1.5 mt-1"
+                    onClick={() => updateNested("sizeGuide" as any, "braceletRows", [...((draft as any).sizeGuide?.braceletRows || []), { label: "", wrist: "", fit: "" }])}>
+                    <Plus className="w-3.5 h-3.5" /> Add Row
+                  </Button>
+                </div>
+              </div>
+
+              {/* Necklace sizes */}
+              <div className="space-y-3">
+                <Label className="uppercase tracking-widest text-xs text-muted-foreground block">Necklace Sizes</Label>
+                <Field label="Measurement Tip">
+                  <Textarea value={(draft as any).sizeGuide?.necklaceTip || ""} onChange={e => updateNested("sizeGuide" as any, "necklaceTip", e.target.value)} className="rounded-none min-h-[60px]" />
+                </Field>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-4 gap-1 text-[10px] tracking-widest uppercase text-muted-foreground font-semibold px-1">
+                    <span>Length</span><span>Style</span><span>Description</span><span></span>
+                  </div>
+                  {((draft as any).sizeGuide?.necklaceRows || []).map((r: NecklaceRow, i: number) => (
+                    <div key={i} className="grid grid-cols-4 gap-1 items-center">
+                      {(["length", "style", "description"] as const).map(field => (
+                        <Input key={field} value={r[field]} onChange={e => {
+                          const rows = [...(draft as any).sizeGuide.necklaceRows];
+                          rows[i] = { ...rows[i], [field]: e.target.value };
+                          updateNested("sizeGuide" as any, "necklaceRows", rows);
+                        }} className="rounded-none text-xs h-8" placeholder={field} />
+                      ))}
+                      <Button variant="ghost" size="icon" className="rounded-none h-8 w-8 text-muted-foreground hover:text-destructive"
+                        onClick={() => updateNested("sizeGuide" as any, "necklaceRows", (draft as any).sizeGuide.necklaceRows.filter((_: any, j: number) => j !== i))}>
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" className="rounded-none text-xs uppercase tracking-widest gap-1.5 mt-1"
+                    onClick={() => updateNested("sizeGuide" as any, "necklaceRows", [...((draft as any).sizeGuide?.necklaceRows || []), { length: "", style: "", description: "" }])}>
+                    <Plus className="w-3.5 h-3.5" /> Add Row
+                  </Button>
+                </div>
+              </div>
+            </Section>
+          )}
+
           {/* HOME SALE SECTION */}
           {activeTab === "homeSale" && (
             <Section title="Homepage Sale Section" onSave={() => save("homeSale")} saving={saving}>
@@ -699,6 +898,60 @@ function IgUploadButton({ accept, label, icon, onUrls }: {
         {uploading ? "Uploading..." : label}
       </Button>
     </>
+  );
+}
+
+/* ── Navbar Categories Tab (needs category list) ── */
+function NavbarCategoriesTab({
+  draft, update, save, saving,
+}: {
+  draft: Partial<SiteSettings>;
+  update: <K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) => void;
+  save: (key: keyof SiteSettings) => void;
+  saving: boolean;
+}) {
+  const { data: categoriesData } = useListCategories();
+  const categories = (categoriesData as any[] | undefined) ?? [];
+  const excluded: string[] = (draft as any).navbarCategories?.excludedSlugs ?? [];
+
+  function toggle(slug: string) {
+    const next = excluded.includes(slug)
+      ? excluded.filter(s => s !== slug)
+      : [...excluded, slug];
+    update("navbarCategories" as any, { excludedSlugs: next } as any);
+  }
+
+  return (
+    <Section title="Navbar — Jewellery Menu" onSave={() => save("navbarCategories" as any)} saving={saving}>
+      <p className="text-sm text-muted-foreground -mt-2 mb-6">
+        Choose which categories appear in the Jewellery dropdown in the navigation bar. All categories are shown by default; uncheck to hide.
+      </p>
+      <div className="space-y-2">
+        {/* "All Jewellery" is always shown */}
+        <div className="flex items-center justify-between px-4 py-3 border border-border bg-muted/30">
+          <div>
+            <p className="text-sm font-medium">All Jewellery</p>
+            <p className="text-xs text-muted-foreground">Links to /shop — always visible</p>
+          </div>
+          <Switch checked disabled />
+        </div>
+        {categories.length === 0 && (
+          <p className="text-xs text-muted-foreground">No categories found. Create categories first.</p>
+        )}
+        {categories.map((cat: any) => {
+          const isVisible = !excluded.includes(cat.slug);
+          return (
+            <div key={cat.id} className="flex items-center justify-between px-4 py-3 border border-border">
+              <div>
+                <p className="text-sm font-medium">{cat.name}</p>
+                <p className="text-xs text-muted-foreground">/category/{cat.slug}</p>
+              </div>
+              <Switch checked={isVisible} onCheckedChange={() => toggle(cat.slug)} />
+            </div>
+          );
+        })}
+      </div>
+    </Section>
   );
 }
 
