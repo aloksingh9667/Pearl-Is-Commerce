@@ -135,9 +135,9 @@ export default function ProductDetail() {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
 
   /* ── base product ── */
-  const { data: product, isLoading } = useGetProduct(productId, { query: { enabled: !!productId } });
-  const { data: relatedProducts } = useGetRelatedProducts(productId, { query: { enabled: !!productId } });
-  const { data: reviews } = useGetProductReviews(productId, { query: { enabled: !!productId } });
+  const { data: product, isLoading } = useGetProduct(productId, { query: { enabled: !!productId, queryKey: ["product", productId] } });
+  const { data: relatedProducts } = useGetRelatedProducts(productId, { query: { enabled: !!productId, queryKey: ["relatedProducts", productId] } });
+  const { data: reviews } = useGetProductReviews(productId, { query: { enabled: !!productId, queryKey: ["productReviews", productId] } });
   const { data: wishlist } = useGetWishlist();
   const addToCart = useAddToCart();
   const addToWishlist = useAddToWishlist();
@@ -152,7 +152,7 @@ export default function ProductDetail() {
 
   const { data: variantProduct, isFetching: variantFetching } = useGetProduct(
     linkedProductId ?? 0,
-    { query: { enabled: !!linkedProductId } }
+    { query: { enabled: !!linkedProductId, queryKey: ["variantProduct", linkedProductId] } }
   );
 
   /* ── display data — variant overrides base ── */
@@ -250,12 +250,12 @@ export default function ProductDetail() {
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
       {/* Back button row */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-2">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-12 sm:pt-20 pb-2">
         <BackButton />
       </div>
       {/* Breadcrumb */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-2 sm:pb-3">
-        <nav className="flex flex-wrap items-center gap-x-1 gap-y-1.5 text-[8px] sm:text-[9px] tracking-[0.14em] sm:tracking-[0.18em] uppercase text-[#0F0F0F]/35 overflow-hidden">
+        <nav className="flex flex-wrap items-center gap-x-1 gap-y-1.5 text-[8px] sm:text-[9px] tracking-[0.12em] sm:tracking-[0.18em] uppercase text-[#0F0F0F]/35 overflow-hidden">
           <Link href="/" className="hover:text-[#D4AF37] transition-colors shrink-0">Home</Link>
           <span className="shrink-0">/</span>
           <Link href="/shop" className="hover:text-[#D4AF37] transition-colors shrink-0">Shop</Link>
@@ -269,15 +269,15 @@ export default function ProductDetail() {
       </div>
 
       {/* ════ MAIN SECTION ════ */}
-      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
+      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-14 sm:pb-24">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 xl:gap-20">
 
           {/* ── LEFT: Images (animate on variant change) ── */}
-          <div className="lg:w-[52%] flex flex-col gap-3">
+          <div className="lg:w-[52%] flex flex-col gap-3 lg:sticky lg:top-28 self-start">
             <AnimatePresence mode="wait">
               <motion.div key={`img-${displayKey}`}
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}>
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.28 }}>
                 <div className="relative">
                   <div ref={imgRef}
                     className="relative overflow-hidden bg-[#F0EDE6] cursor-zoom-in w-full"
@@ -293,22 +293,22 @@ export default function ProductDetail() {
                       </div>
                     )}
                     <img src={dpImages[selectedImage]} alt={dp?.name || product.name}
-                      className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? "scale-150" : "scale-100"}`}
+                      className={`w-full h-full object-cover transition-transform duration-300 ease-out ${isZoomed ? "scale-110 sm:scale-125" : "scale-100"}`}
                       style={isZoomed ? { transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` } : {}}
                       draggable={false} />
                     {!isZoomed && (
-                      <div className="hidden sm:flex absolute bottom-4 right-4 items-center gap-1.5 bg-white/80 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-[#0F0F0F]/60 font-medium">
+                      <div className="hidden sm:flex absolute bottom-4 right-4 items-center gap-1.5 bg-white/80 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-[#0F0F0F]/60 font-medium rounded-full">
                         <ZoomIn className="w-3 h-3" /> Hover to zoom
                       </div>
                     )}
                     {dpImages.length > 1 && (
                       <>
                         <button onClick={e => { e.stopPropagation(); setSelectedImage(p => (p - 1 + dpImages.length) % dpImages.length); }}
-                          className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-10 sm:h-10 bg-white/85 hover:bg-white flex items-center justify-center shadow transition-colors">
+                          className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/92 hover:bg-white flex items-center justify-center shadow transition-all duration-300 hover:scale-105">
                           <ChevronLeft className="w-4 h-4 text-[#0F0F0F]" />
                         </button>
                         <button onClick={e => { e.stopPropagation(); setSelectedImage(p => (p + 1) % dpImages.length); }}
-                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-10 sm:h-10 bg-white/85 hover:bg-white flex items-center justify-center shadow transition-colors">
+                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/92 hover:bg-white flex items-center justify-center shadow transition-all duration-300 hover:scale-105">
                           <ChevronRight className="w-4 h-4 text-[#0F0F0F]" />
                         </button>
                         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
@@ -343,7 +343,7 @@ export default function ProductDetail() {
           <div className="lg:w-[48%] flex flex-col mt-0 lg:mt-0">
 
             {/* Category + badges */}
-            <div className="flex items-center gap-3 mb-3 flex-wrap">
+            <div className="flex items-center gap-2.5 mb-3 flex-wrap">
               {product.category && (
                 <Link href={`/category/${product.category}`}
                   className="flex items-center gap-1.5 text-[9px] tracking-[0.3em] uppercase text-[#D4AF37] font-semibold hover:underline underline-offset-2">
@@ -364,7 +364,7 @@ export default function ProductDetail() {
                 initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.25 }}>
 
-                <h1 className="font-serif text-[1.55rem] sm:text-3xl md:text-4xl xl:text-5xl text-[#0F0F0F] leading-tight mb-4">
+                <h1 className="font-serif text-[1.35rem] sm:text-3xl md:text-4xl xl:text-5xl text-[#0F0F0F] leading-tight mb-4">
                   {dp?.name || product.name}
                 </h1>
 
@@ -382,7 +382,7 @@ export default function ProductDetail() {
                 <div className="w-12 h-px bg-[#D4AF37] mb-5" />
 
                 {/* Price */}
-                <div className="flex items-end gap-2 sm:gap-4 mb-6 flex-wrap">
+                <div className="flex flex-wrap items-end gap-2 sm:gap-4 mb-6">
                   {dpDiscountPrice ? (
                     <>
                       <span className="font-serif text-2xl sm:text-3xl text-[#0F0F0F]">{INR(dpDiscountPrice)}</span>
@@ -412,7 +412,7 @@ export default function ProductDetail() {
                     const isActive = activeVariantIdx === i || (activeVariantIdx === null && i === 0);
                     return (
                       <button key={i} onClick={() => selectVariant(i === 0 && activeVariantIdx === null ? null : i)}
-                        className={`relative px-2.5 sm:px-3 py-1.5 sm:py-2 text-[10px] tracking-[0.12em] sm:tracking-[0.15em] uppercase font-medium border transition-all duration-200 ${
+                        className={`relative px-2.5 sm:px-3 py-1.5 sm:py-2 text-[9px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.15em] uppercase font-medium border transition-all duration-200 ${
                           isActive
                             ? "border-[#D4AF37] bg-[#D4AF37]/8 text-[#0F0F0F]"
                             : "border-[#0F0F0F]/15 text-[#0F0F0F]/50 hover:border-[#D4AF37]/60 hover:text-[#0F0F0F]"
@@ -446,7 +446,7 @@ export default function ProductDetail() {
                 <div className="flex flex-wrap gap-2">
                   {sizes.map(s => (
                     <button key={s} onClick={() => setSelectedSize(s)}
-                      className={`w-9 h-9 sm:w-10 sm:h-10 text-xs sm:text-sm font-medium border transition-all duration-200 ${
+                      className={`w-10 h-10 sm:w-10 sm:h-10 text-xs sm:text-sm font-medium border transition-all duration-200 ${
                         selectedSize === s ? "border-[#D4AF37] bg-[#D4AF37] text-white" : "border-[#0F0F0F]/15 text-[#0F0F0F]/60 hover:border-[#D4AF37]/60"
                       }`}>
                       {s}
@@ -459,7 +459,7 @@ export default function ProductDetail() {
             {/* ── Quantity ── */}
             <div className="mb-6">
               <p className="text-[9px] tracking-[0.25em] uppercase text-[#0F0F0F]/50 font-semibold mb-3">Quantity</p>
-              <div className="flex items-center border border-[#0F0F0F]/15 w-fit">
+              <div className="flex items-center border border-[#0F0F0F]/15 w-fit rounded-full overflow-hidden">
                 <button onClick={() => setQuantity(q => Math.max(1, q - 1))}
                   className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center hover:bg-[#0F0F0F]/5 transition-colors">
                   <Minus className="w-3.5 h-3.5 text-[#0F0F0F]" />
@@ -478,14 +478,14 @@ export default function ProductDetail() {
             {/* ── CTAs ── */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-7">
               <button onClick={handleAddToCart} disabled={addToCart.isPending || product.stock === 0}
-                className="flex-1 h-12 sm:h-14 bg-[#0F0F0F] hover:bg-[#1a1a1a] text-white text-[9px] sm:text-[10px] tracking-[0.22em] sm:tracking-[0.3em] uppercase font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-40">
+                className="flex-1 h-12 sm:h-14 rounded-full bg-[#0F0F0F] hover:bg-[#1a1a1a] text-white text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.3em] uppercase font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-40 hover:shadow-[0_12px_24px_rgba(15,15,15,0.15)]">
                 {addToCart.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : product.stock === 0 ? "Out of Stock" : "Add to Bag"}
               </button>
               <button onClick={handleWishlist}
-                className={`w-full sm:w-14 h-12 sm:h-14 border flex items-center justify-center transition-all duration-200 ${isWishlisted ? "border-[#D4AF37] bg-[#D4AF37]/10" : "border-[#0F0F0F]/15 hover:border-[#D4AF37]"}`}>
+                className={`w-full sm:w-14 h-12 sm:h-14 rounded-full border flex items-center justify-center transition-all duration-300 ${isWishlisted ? "border-[#D4AF37] bg-[#D4AF37]/10 shadow-[0_10px_22px_rgba(212,175,55,0.15)]" : "border-[#0F0F0F]/15 hover:border-[#D4AF37]"}`}>
                 <Heart className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isWishlisted ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#0F0F0F]/50"}`} />
               </button>
-              <button className="w-full sm:w-14 h-12 sm:h-14 border border-[#0F0F0F]/15 hover:border-[#D4AF37] flex items-center justify-center transition-colors">
+              <button className="w-full sm:w-14 h-12 sm:h-14 rounded-full border border-[#0F0F0F]/15 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-300 hover:shadow-[0_10px_22px_rgba(15,15,15,0.08)]">
                 <Share2 className="w-4 h-4 text-[#0F0F0F]/50" />
               </button>
             </div>
@@ -517,7 +517,7 @@ export default function ProductDetail() {
         </div>
 
         {/* ════ TABS — description/specs animate on variant change ════ */}
-        <div className="mt-12 sm:mt-20 border-t border-[#0F0F0F]/8 pt-10 sm:pt-12">
+          <div className="mt-12 sm:mt-20 border-t border-[#0F0F0F]/8 pt-10 sm:pt-12">
           <div className="flex gap-0 border-b border-[#0F0F0F]/8 mb-10 sm:mb-12 overflow-x-auto">
             {TABS.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
