@@ -62,6 +62,7 @@ export default function ProductPage() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [activeVariantIdx, setActiveVariantIdx] = useState<number | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const imgRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
