@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { BrandingApplicator } from "@/components/layout/BrandingApplicator";
 import { Loader2 } from "lucide-react";
 import { ClerkProvider } from "@clerk/react";
+import { publishableKeyFromHost } from "@clerk/react/internal";
 import { useEffect, useRef } from "react";
 import { useClerk } from "@clerk/react";
 
@@ -52,9 +53,10 @@ import AdminLoginPage from "@/pages/admin-login";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-const clerkPubKey =
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ??
-  "pk_test_please_set_VITE_CLERK_PUBLISHABLE_KEY";
+const clerkPubKey = publishableKeyFromHost(
+  window.location.hostname,
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
+);
 
 const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
 

@@ -1,0 +1,342 @@
+clerk.browser.js:12 Uncaught Error: @clerk/clerk-js: Missing publishableKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingPublishableKeyError (clerk.browser.js:12:1967)
+    at new nV (clerk.browser.js:18:161823)
+    at clerk.browser.js:18:213920
+    at clerk.browser.js:18:213957
+    at clerk.browser.js:18:213964
+    at clerk.browser.js:1:158
+    at clerk.browser.js:1:223
+throwMissingPublishableKeyError @ clerk.browser.js:12
+nV @ clerk.browser.js:18
+(anonymous) @ clerk.browser.js:18
+(anonymous) @ clerk.browser.js:18
+(anonymous) @ clerk.browser.js:18
+(anonymous) @ clerk.browser.js:1
+(anonymous) @ clerk.browser.js:1Understand this error
+index-BAXd0uL2.js:31 Uncaught TypeError: (b ?? []).filter is not a function
+    at Zt (index-BAXd0uL2.js:31:31696)
+    at gf (index-BAXd0uL2.js:8:34147)
+    at Of (index-BAXd0uL2.js:8:62358)
+    at Tv (index-BAXd0uL2.js:8:72867)
+    at nb (index-BAXd0uL2.js:8:106901)
+    at t3 (index-BAXd0uL2.js:8:105966)
+    at am (index-BAXd0uL2.js:8:105798)
+    at Xv (index-BAXd0uL2.js:8:102901)
+    at xb (index-BAXd0uL2.js:8:114476)
+    at Zo (index-BAXd0uL2.js:8:113048)
+Zt @ index-BAXd0uL2.js:31
+gf @ index-BAXd0uL2.js:8
+Of @ index-BAXd0uL2.js:8
+Tv @ index-BAXd0uL2.js:8
+nb @ index-BAXd0uL2.js:8
+t3 @ index-BAXd0uL2.js:8
+am @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+xb @ index-BAXd0uL2.js:8
+Zo @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8
+setTimeout
+FT @ index-BAXd0uL2.js:9
+c @ index-BAXd0uL2.js:9
+batch @ index-BAXd0uL2.js:9
+#a @ index-BAXd0uL2.js:9
+setData @ index-BAXd0uL2.js:9
+fetch @ index-BAXd0uL2.js:9
+await in fetch
+#d @ index-BAXd0uL2.js:9
+onSubscribe @ index-BAXd0uL2.js:9
+subscribe @ index-BAXd0uL2.js:9
+(anonymous) @ index-BAXd0uL2.js:9
+Cy @ index-BAXd0uL2.js:8
+$o @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ps @ index-BAXd0uL2.js:8
+Hv @ index-BAXd0uL2.js:8
+ub @ index-BAXd0uL2.js:8
+nu @ index-BAXd0uL2.js:8
+xb @ index-BAXd0uL2.js:8
+Zo @ index-BAXd0uL2.js:8
+lb @ index-BAXd0uL2.js:8
+ab @ index-BAXd0uL2.js:8
+Zv @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+pb @ index-BAXd0uL2.js:8
+ue @ index-BAXd0uL2.js:1
+postMessage
+fe @ index-BAXd0uL2.js:1
+X3.e.unstable_scheduleCallback @ index-BAXd0uL2.js:1
+mb @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8Understand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+index-BAXd0uL2.js:23  GET https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js net::ERR_FAILED 404 (Not Found)
+(anonymous) @ index-BAXd0uL2.js:23
+O_.shouldRetry @ index-BAXd0uL2.js:23
+O_ @ index-BAXd0uL2.js:23
+ok @ index-BAXd0uL2.js:23
+$_ @ index-BAXd0uL2.js:23
+getClerkJsEntryChunk @ index-BAXd0uL2.js:23
+getEntryChunks @ index-BAXd0uL2.js:23
+xk @ index-BAXd0uL2.js:23
+getOrCreateInstance @ index-BAXd0uL2.js:23
+o6 @ index-BAXd0uL2.js:23
+a6 @ index-BAXd0uL2.js:23
+gf @ index-BAXd0uL2.js:8
+Of @ index-BAXd0uL2.js:8
+Tv @ index-BAXd0uL2.js:8
+nb @ index-BAXd0uL2.js:8
+t3 @ index-BAXd0uL2.js:8
+am @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+pb @ index-BAXd0uL2.js:8
+ue @ index-BAXd0uL2.js:1
+postMessage
+fe @ index-BAXd0uL2.js:1
+X3.e.unstable_scheduleCallback @ index-BAXd0uL2.js:1
+mb @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8Understand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+index-BAXd0uL2.js:23  GET https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js net::ERR_FAILED 404 (Not Found)
+(anonymous) @ index-BAXd0uL2.js:23
+O_.shouldRetry @ index-BAXd0uL2.js:23
+O_ @ index-BAXd0uL2.js:23
+await in O_
+ok @ index-BAXd0uL2.js:23
+$_ @ index-BAXd0uL2.js:23
+getClerkJsEntryChunk @ index-BAXd0uL2.js:23
+getEntryChunks @ index-BAXd0uL2.js:23
+xk @ index-BAXd0uL2.js:23
+getOrCreateInstance @ index-BAXd0uL2.js:23
+o6 @ index-BAXd0uL2.js:23
+a6 @ index-BAXd0uL2.js:23
+gf @ index-BAXd0uL2.js:8
+Of @ index-BAXd0uL2.js:8
+Tv @ index-BAXd0uL2.js:8
+nb @ index-BAXd0uL2.js:8
+t3 @ index-BAXd0uL2.js:8
+am @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+pb @ index-BAXd0uL2.js:8
+ue @ index-BAXd0uL2.js:1
+postMessage
+fe @ index-BAXd0uL2.js:1
+X3.e.unstable_scheduleCallback @ index-BAXd0uL2.js:1
+mb @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8Understand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+index-BAXd0uL2.js:23  GET https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js net::ERR_FAILED 404 (Not Found)
+(anonymous) @ index-BAXd0uL2.js:23
+O_.shouldRetry @ index-BAXd0uL2.js:23
+O_ @ index-BAXd0uL2.js:23
+await in O_
+ok @ index-BAXd0uL2.js:23
+$_ @ index-BAXd0uL2.js:23
+getClerkJsEntryChunk @ index-BAXd0uL2.js:23
+getEntryChunks @ index-BAXd0uL2.js:23
+xk @ index-BAXd0uL2.js:23
+getOrCreateInstance @ index-BAXd0uL2.js:23
+o6 @ index-BAXd0uL2.js:23
+a6 @ index-BAXd0uL2.js:23
+gf @ index-BAXd0uL2.js:8
+Of @ index-BAXd0uL2.js:8
+Tv @ index-BAXd0uL2.js:8
+nb @ index-BAXd0uL2.js:8
+t3 @ index-BAXd0uL2.js:8
+am @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+pb @ index-BAXd0uL2.js:8
+ue @ index-BAXd0uL2.js:1
+postMessage
+fe @ index-BAXd0uL2.js:1
+X3.e.unstable_scheduleCallback @ index-BAXd0uL2.js:1
+mb @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8Understand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+index-BAXd0uL2.js:23  GET https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js net::ERR_FAILED 404 (Not Found)
+(anonymous) @ index-BAXd0uL2.js:23
+O_.shouldRetry @ index-BAXd0uL2.js:23
+O_ @ index-BAXd0uL2.js:23
+await in O_
+ok @ index-BAXd0uL2.js:23
+$_ @ index-BAXd0uL2.js:23
+getClerkJsEntryChunk @ index-BAXd0uL2.js:23
+getEntryChunks @ index-BAXd0uL2.js:23
+xk @ index-BAXd0uL2.js:23
+getOrCreateInstance @ index-BAXd0uL2.js:23
+o6 @ index-BAXd0uL2.js:23
+a6 @ index-BAXd0uL2.js:23
+gf @ index-BAXd0uL2.js:8
+Of @ index-BAXd0uL2.js:8
+Tv @ index-BAXd0uL2.js:8
+nb @ index-BAXd0uL2.js:8
+t3 @ index-BAXd0uL2.js:8
+am @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+pb @ index-BAXd0uL2.js:8
+ue @ index-BAXd0uL2.js:1
+postMessage
+fe @ index-BAXd0uL2.js:1
+X3.e.unstable_scheduleCallback @ index-BAXd0uL2.js:1
+mb @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8Understand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+index-BAXd0uL2.js:23  GET https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js net::ERR_FAILED 404 (Not Found)
+(anonymous) @ index-BAXd0uL2.js:23
+O_.shouldRetry @ index-BAXd0uL2.js:23
+O_ @ index-BAXd0uL2.js:23
+await in O_
+ok @ index-BAXd0uL2.js:23
+$_ @ index-BAXd0uL2.js:23
+getClerkJsEntryChunk @ index-BAXd0uL2.js:23
+getEntryChunks @ index-BAXd0uL2.js:23
+xk @ index-BAXd0uL2.js:23
+getOrCreateInstance @ index-BAXd0uL2.js:23
+o6 @ index-BAXd0uL2.js:23
+a6 @ index-BAXd0uL2.js:23
+gf @ index-BAXd0uL2.js:8
+Of @ index-BAXd0uL2.js:8
+Tv @ index-BAXd0uL2.js:8
+nb @ index-BAXd0uL2.js:8
+t3 @ index-BAXd0uL2.js:8
+am @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+pb @ index-BAXd0uL2.js:8
+ue @ index-BAXd0uL2.js:1
+postMessage
+fe @ index-BAXd0uL2.js:1
+X3.e.unstable_scheduleCallback @ index-BAXd0uL2.js:1
+mb @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8Understand this error
+(index):1 Access to script at 'https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js' from origin 'https://pearlis.pages.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+index-BAXd0uL2.js:23  GET https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js net::ERR_FAILED 404 (Not Found)
+(anonymous) @ index-BAXd0uL2.js:23
+O_.shouldRetry @ index-BAXd0uL2.js:23
+O_ @ index-BAXd0uL2.js:23
+await in O_
+ok @ index-BAXd0uL2.js:23
+$_ @ index-BAXd0uL2.js:23
+getClerkJsEntryChunk @ index-BAXd0uL2.js:23
+getEntryChunks @ index-BAXd0uL2.js:23
+xk @ index-BAXd0uL2.js:23
+getOrCreateInstance @ index-BAXd0uL2.js:23
+o6 @ index-BAXd0uL2.js:23
+a6 @ index-BAXd0uL2.js:23
+gf @ index-BAXd0uL2.js:8
+Of @ index-BAXd0uL2.js:8
+Tv @ index-BAXd0uL2.js:8
+nb @ index-BAXd0uL2.js:8
+t3 @ index-BAXd0uL2.js:8
+am @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+pb @ index-BAXd0uL2.js:8
+ue @ index-BAXd0uL2.js:1
+postMessage
+fe @ index-BAXd0uL2.js:1
+X3.e.unstable_scheduleCallback @ index-BAXd0uL2.js:1
+mb @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8Understand this error
+index-BAXd0uL2.js:23 Uncaught (in promise) U2: Clerk: Failed to load Clerk JS, failed to load script: https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js
+
+(code="failed_to_load_clerk_js")
+
+
+    at r (index-BAXd0uL2.js:23:3446)
+    at index-BAXd0uL2.js:23:3920Caused by: Error: failed to load script: https://clerk.pearlis.pages.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js
+    at HTMLScriptElement.<anonymous> (index-BAXd0uL2.js:23:2091)
+r @ index-BAXd0uL2.js:23
+(anonymous) @ index-BAXd0uL2.js:23
+Promise.catch
+$_ @ index-BAXd0uL2.js:23
+getClerkJsEntryChunk @ index-BAXd0uL2.js:23
+getEntryChunks @ index-BAXd0uL2.js:23
+xk @ index-BAXd0uL2.js:23
+getOrCreateInstance @ index-BAXd0uL2.js:23
+o6 @ index-BAXd0uL2.js:23
+a6 @ index-BAXd0uL2.js:23
+gf @ index-BAXd0uL2.js:8
+Of @ index-BAXd0uL2.js:8
+Tv @ index-BAXd0uL2.js:8
+nb @ index-BAXd0uL2.js:8
+t3 @ index-BAXd0uL2.js:8
+am @ index-BAXd0uL2.js:8
+Xv @ index-BAXd0uL2.js:8
+pb @ index-BAXd0uL2.js:8
+ue @ index-BAXd0uL2.js:1
+postMessage
+fe @ index-BAXd0uL2.js:1
+X3.e.unstable_scheduleCallback @ index-BAXd0uL2.js:1
+mb @ index-BAXd0uL2.js:8
+fb @ index-BAXd0uL2.js:8
+(anonymous) @ index-BAXd0uL2.js:8Understand this error
+index-BAXd0uL2.js:23 U2: Clerk: Failed to load Clerk JS
+
+(code="failed_to_load_clerk_js")
+
+
+    at r (index-BAXd0uL2.js:23:3446)
+    at $_ (index-BAXd0uL2.js:23:3816)
+    at xk.getClerkJsEntryChunk (index-BAXd0uL2.js:23:40556)
+    at xk.getEntryChunks (index-BAXd0uL2.js:23:40019)
+    at new xk (index-BAXd0uL2.js:23:37792)
+    at xk.getOrCreateInstance (index-BAXd0uL2.js:23:38207)
+    at o6 (index-BAXd0uL2.js:23:43069)
+    at a6 (index-BAXd0uL2.js:23:42834)
+    at gf (index-BAXd0uL2.js:8:34147)
+    at Of (index-BAXd0uL2.js:8:62358)
