@@ -267,11 +267,9 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <div style={{ height: "124px" }} />
-
       <div className="flex-1 pb-24">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <BackButton className="pt-6 mb-2 block" />
+        <div className="container mx-auto px-4 max-w-7xl pt-24">
+          <BackButton className="mb-4" />
           {/* Header */}
           <div className="py-10 border-b border-border mb-10">
             <h1 className="font-serif text-3xl md:text-4xl">Checkout</h1>

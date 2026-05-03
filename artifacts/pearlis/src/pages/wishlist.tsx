@@ -63,8 +63,8 @@ export default function Wishlist() {
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
 
-      <div className="pt-32 pb-24 max-w-[1440px] mx-auto px-4 md:px-8 w-full flex-1">
-        <BackButton className="mb-3" />
+      <div className="pt-24 pb-24 max-w-[1440px] mx-auto px-4 md:px-8 w-full flex-1">
+        <BackButton className="mb-6" />
 
         {/* Header */}
         <div className="flex items-end justify-between mb-10">

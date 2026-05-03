@@ -249,10 +249,12 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
-      {/* Back + Breadcrumb — single slim row */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-[108px] pb-3 flex items-center gap-3 sm:gap-5">
+      {/* Back button row */}
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-24 pb-2">
         <BackButton />
-        <span className="text-[#0F0F0F]/15 hidden sm:block">|</span>
+      </div>
+      {/* Breadcrumb */}
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-3">
         <nav className="flex items-center gap-1.5 text-[9px] tracking-[0.18em] uppercase text-[#0F0F0F]/35 overflow-hidden">
           <Link href="/" className="hover:text-[#D4AF37] transition-colors shrink-0">Home</Link>
           <span className="shrink-0">/</span>

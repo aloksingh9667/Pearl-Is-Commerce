@@ -277,8 +277,7 @@ export default function VideosPage() {
   return (
     <div className="min-h-screen bg-[#FAF7F2] flex flex-col">
       <Navbar />
-      <div style={{ height: "100px" }} />
-      <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-3">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 pt-24 pb-3">
         <BackButton />
       </div>
 

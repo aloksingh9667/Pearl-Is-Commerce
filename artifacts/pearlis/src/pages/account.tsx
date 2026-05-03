@@ -189,10 +189,8 @@ export default function Account() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <div style={{ height: "100px" }} />
-
       <div className="flex-1 pb-24">
-        <div className="container mx-auto px-4 max-w-5xl pt-10">
+        <div className="container mx-auto px-4 max-w-5xl pt-24">
 
           {/* Header */}
           <div className="py-8 border-b border-border mb-10">

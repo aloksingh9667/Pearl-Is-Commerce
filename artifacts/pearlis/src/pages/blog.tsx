@@ -13,8 +13,8 @@ export default function BlogList() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <div className="pt-32 pb-24 container mx-auto px-6">
-        <BackButton className="mb-3" />
+      <div className="pt-24 pb-24 container mx-auto px-6">
+        <BackButton className="mb-6" />
         <div className="text-center mb-16">
           <h1 className="font-serif text-4xl mb-4">The Journal</h1>
           <div className="w-16 h-px bg-accent mx-auto mb-6"></div>

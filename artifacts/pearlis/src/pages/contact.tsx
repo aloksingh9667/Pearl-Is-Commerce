@@ -73,8 +73,7 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <div style={{ height: "100px" }} />
-      <div className="container mx-auto px-6 py-3">
+      <div className="container mx-auto px-6 pt-24 pb-3">
         <BackButton />
       </div>
 

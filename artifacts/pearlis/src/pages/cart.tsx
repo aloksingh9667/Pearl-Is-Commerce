@@ -41,9 +41,7 @@ export default function Cart() {
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
-      <div style={{ height: "100px" }} />
-
-      <div className="flex-1 max-w-[1200px] mx-auto px-4 md:px-8 pt-4 pb-24 w-full">
+      <div className="flex-1 max-w-[1200px] mx-auto px-4 md:px-8 pt-24 pb-24 w-full">
         <BackButton className="mb-4" />
         {/* Header */}
         <div className="mb-8 md:mb-12">

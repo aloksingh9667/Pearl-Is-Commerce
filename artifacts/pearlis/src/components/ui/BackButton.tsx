@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 
 interface BackButtonProps {
@@ -7,16 +8,45 @@ interface BackButtonProps {
 
 export function BackButton({ className = "", light = false }: BackButtonProps) {
   return (
-    <button
+    <motion.button
       onClick={() => window.history.back()}
-      className={`inline-flex items-center gap-1 text-[9px] font-bold tracking-[0.22em] uppercase transition-all group ${
-        light
-          ? "text-white/60 hover:text-white"
-          : "text-[#D4AF37] hover:text-[#0F0F0F]"
-      } ${className}`}
+      initial={{ opacity: 0, x: -18 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className={`group flex items-center gap-3.5 text-left ${className}`}
     >
-      <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" strokeWidth={2.5} />
-      Back
-    </button>
+      {/* Animated back circle */}
+      <span
+        className="w-10 h-10 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 group-hover:-translate-x-0.5 group-hover:scale-105"
+        style={{
+          borderColor: light ? "rgba(255,255,255,0.35)" : "#D4AF37",
+          color: light ? "rgba(255,255,255,0.85)" : "#D4AF37",
+          backgroundColor: light ? "rgba(255,255,255,0.06)" : "transparent",
+        }}
+      >
+        <ChevronLeft className="w-5 h-5" strokeWidth={1.5} />
+      </span>
+
+      {/* Brand identity text */}
+      <div className="flex flex-col leading-none overflow-hidden">
+        <span
+          className="font-serif text-[1.1rem] tracking-wide transition-colors duration-300 leading-snug"
+          style={{ color: light ? "#ffffff" : "#0F0F0F" }}
+        >
+          The Pearlis Heritage
+        </span>
+        <span
+          className="text-[9.5px] tracking-[0.2em] uppercase mt-[3px] transition-colors duration-300"
+          style={{ color: light ? "rgba(255,255,255,0.55)" : "#D4AF37" }}
+        >
+          Crafting moments of eternal beauty since 1994.
+        </span>
+        {/* Sliding underline on hover */}
+        <span
+          className="block h-px mt-1.5 w-0 group-hover:w-full transition-all duration-500 ease-out"
+          style={{ backgroundColor: light ? "rgba(255,255,255,0.4)" : "#D4AF37" }}
+        />
+      </div>
+    </motion.button>
   );
 }
