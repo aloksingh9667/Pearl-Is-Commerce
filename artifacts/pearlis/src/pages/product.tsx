@@ -250,12 +250,12 @@ export default function ProductDetail() {
     <div className="min-h-screen bg-[#FAF8F3] flex flex-col">
       <Navbar />
       {/* Back button row */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-24 pb-2">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-2">
         <BackButton />
       </div>
       {/* Breadcrumb */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-3">
-        <nav className="flex items-center gap-1.5 text-[9px] tracking-[0.18em] uppercase text-[#0F0F0F]/35 overflow-hidden">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-2 sm:pb-3">
+        <nav className="flex flex-wrap items-center gap-x-1 gap-y-1.5 text-[8px] sm:text-[9px] tracking-[0.14em] sm:tracking-[0.18em] uppercase text-[#0F0F0F]/35 overflow-hidden">
           <Link href="/" className="hover:text-[#D4AF37] transition-colors shrink-0">Home</Link>
           <span className="shrink-0">/</span>
           <Link href="/shop" className="hover:text-[#D4AF37] transition-colors shrink-0">Shop</Link>
@@ -264,13 +264,13 @@ export default function ProductDetail() {
             <Link href={`/category/${product.category}`} className="hover:text-[#D4AF37] transition-colors capitalize shrink-0">{product.category}</Link>
           </>}
           <span className="shrink-0">/</span>
-          <span className="text-[#0F0F0F]/60 truncate min-w-0">{product.name}</span>
+          <span className="text-[#0F0F0F]/60 truncate min-w-0 max-w-full">{product.name}</span>
         </nav>
       </div>
 
       {/* ════ MAIN SECTION ════ */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
-        <div className="flex flex-col lg:flex-row gap-8 xl:gap-20">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 xl:gap-20">
 
           {/* ── LEFT: Images (animate on variant change) ── */}
           <div className="lg:w-[52%] flex flex-col gap-3">
@@ -281,7 +281,7 @@ export default function ProductDetail() {
                 <div className="relative">
                   <div ref={imgRef}
                     className="relative overflow-hidden bg-[#F0EDE6] cursor-zoom-in w-full"
-                    style={{ aspectRatio: "4/5" }}
+                    style={{ aspectRatio: "1/1" }}
                     onMouseEnter={() => setIsZoomed(true)}
                     onMouseLeave={() => setIsZoomed(false)}
                     onMouseMove={handleMouseMove}
@@ -304,11 +304,11 @@ export default function ProductDetail() {
                     {dpImages.length > 1 && (
                       <>
                         <button onClick={e => { e.stopPropagation(); setSelectedImage(p => (p - 1 + dpImages.length) % dpImages.length); }}
-                          className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-white/85 hover:bg-white flex items-center justify-center shadow transition-colors">
+                          className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-10 sm:h-10 bg-white/85 hover:bg-white flex items-center justify-center shadow transition-colors">
                           <ChevronLeft className="w-4 h-4 text-[#0F0F0F]" />
                         </button>
                         <button onClick={e => { e.stopPropagation(); setSelectedImage(p => (p + 1) % dpImages.length); }}
-                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-white/85 hover:bg-white flex items-center justify-center shadow transition-colors">
+                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-10 sm:h-10 bg-white/85 hover:bg-white flex items-center justify-center shadow transition-colors">
                           <ChevronRight className="w-4 h-4 text-[#0F0F0F]" />
                         </button>
                         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
@@ -340,7 +340,7 @@ export default function ProductDetail() {
           </div>
 
           {/* ── RIGHT: Info ── */}
-          <div className="lg:w-[48%] flex flex-col">
+          <div className="lg:w-[48%] flex flex-col mt-0 lg:mt-0">
 
             {/* Category + badges */}
             <div className="flex items-center gap-3 mb-3 flex-wrap">
@@ -364,7 +364,7 @@ export default function ProductDetail() {
                 initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.25 }}>
 
-                <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl xl:text-5xl text-[#0F0F0F] leading-tight mb-4">
+                <h1 className="font-serif text-[1.55rem] sm:text-3xl md:text-4xl xl:text-5xl text-[#0F0F0F] leading-tight mb-4">
                   {dp?.name || product.name}
                 </h1>
 
@@ -382,7 +382,7 @@ export default function ProductDetail() {
                 <div className="w-12 h-px bg-[#D4AF37] mb-5" />
 
                 {/* Price */}
-                <div className="flex items-end gap-3 sm:gap-4 mb-6 flex-wrap">
+                <div className="flex items-end gap-2 sm:gap-4 mb-6 flex-wrap">
                   {dpDiscountPrice ? (
                     <>
                       <span className="font-serif text-2xl sm:text-3xl text-[#0F0F0F]">{INR(dpDiscountPrice)}</span>
@@ -476,22 +476,22 @@ export default function ProductDetail() {
             {product.stock === 0 && <NotifyMeForm productId={productId} />}
 
             {/* ── CTAs ── */}
-            <div className="flex gap-2 sm:gap-3 mb-7">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-7">
               <button onClick={handleAddToCart} disabled={addToCart.isPending || product.stock === 0}
-                className="flex-1 h-12 sm:h-14 bg-[#0F0F0F] hover:bg-[#1a1a1a] text-white text-[10px] tracking-[0.25em] sm:tracking-[0.3em] uppercase font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-40">
+                className="flex-1 h-12 sm:h-14 bg-[#0F0F0F] hover:bg-[#1a1a1a] text-white text-[9px] sm:text-[10px] tracking-[0.22em] sm:tracking-[0.3em] uppercase font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-40">
                 {addToCart.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : product.stock === 0 ? "Out of Stock" : "Add to Bag"}
               </button>
               <button onClick={handleWishlist}
-                className={`w-12 h-12 sm:w-14 sm:h-14 border flex items-center justify-center transition-all duration-200 ${isWishlisted ? "border-[#D4AF37] bg-[#D4AF37]/10" : "border-[#0F0F0F]/15 hover:border-[#D4AF37]"}`}>
+                className={`w-full sm:w-14 h-12 sm:h-14 border flex items-center justify-center transition-all duration-200 ${isWishlisted ? "border-[#D4AF37] bg-[#D4AF37]/10" : "border-[#0F0F0F]/15 hover:border-[#D4AF37]"}`}>
                 <Heart className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isWishlisted ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#0F0F0F]/50"}`} />
               </button>
-              <button className="w-12 h-12 sm:w-14 sm:h-14 border border-[#0F0F0F]/15 hover:border-[#D4AF37] flex items-center justify-center transition-colors">
+              <button className="w-full sm:w-14 h-12 sm:h-14 border border-[#0F0F0F]/15 hover:border-[#D4AF37] flex items-center justify-center transition-colors">
                 <Share2 className="w-4 h-4 text-[#0F0F0F]/50" />
               </button>
             </div>
 
             {/* Trust badges */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 border-t border-[#0F0F0F]/8 pt-6 mb-7">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-[#0F0F0F]/8 pt-6 mb-7">
               {[
                 { icon: Truck, label: "Free Shipping", sub: "Above ₹5,000" },
                 { icon: ShieldCheck, label: "Certified", sub: "BIS Hallmarked" },
@@ -517,7 +517,7 @@ export default function ProductDetail() {
         </div>
 
         {/* ════ TABS — description/specs animate on variant change ════ */}
-        <div className="mt-14 sm:mt-20 border-t border-[#0F0F0F]/8 pt-10 sm:pt-12">
+        <div className="mt-12 sm:mt-20 border-t border-[#0F0F0F]/8 pt-10 sm:pt-12">
           <div className="flex gap-0 border-b border-[#0F0F0F]/8 mb-10 sm:mb-12 overflow-x-auto">
             {TABS.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
